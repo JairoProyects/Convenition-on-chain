@@ -7,53 +7,104 @@ import '../../shared/theme/app_colors.dart';
 class AdvancedSlideToSwap extends StatefulWidget {
   final VoidCallback onSwapCompleted;
 
-  const AdvancedSlideToSwap({Key? key, required this.onSwapCompleted}) : super(key: key);
+  const AdvancedSlideToSwap({Key? key, required this.onSwapCompleted})
+    : super(key: key);
 
   @override
   State<AdvancedSlideToSwap> createState() => _AdvancedSlideToSwapState();
 }
 
-class _AdvancedSlideToSwapState extends State<AdvancedSlideToSwap> {
+class _AdvancedSlideToSwapState extends State<AdvancedSlideToSwap>
+    with SingleTickerProviderStateMixin {
   bool _isSwapping = false;
+  double _dragPosition = 0.0;
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+    _animation = Tween<double>(begin: 0.0, end: 0.0).animate(_controller);
+  }
 
   void _startSwap() {
     setState(() {
       _isSwapping = true;
     });
 
-    // Simular procesamiento de swap
     Future.delayed(const Duration(seconds: 2), () {
       setState(() {
         _isSwapping = false;
+        _dragPosition = 0.0;
       });
       widget.onSwapCompleted();
-      Navigator.of(context).pop(); // Cierra el modal automáticamente después del swap
+      Navigator.of(context).pop();
     });
+  }
+
+  void _handleDragUpdate(DragUpdateDetails details) {
+    setState(() {
+      _dragPosition += details.delta.dx;
+      _dragPosition = _dragPosition.clamp(
+        0.0,
+        MediaQuery.of(context).size.width - 100,
+      );
+    });
+  }
+
+  void _handleDragEnd(DragEndDetails details) {
+    if (_dragPosition > MediaQuery.of(context).size.width * 0.6) {
+      _startSwap();
+    } else {
+      _controller.reset();
+      setState(() {
+        _dragPosition = 0.0;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onHorizontalDragEnd: (details) {
-        if (!_isSwapping) _startSwap();
-      },
-      child: Container(
-        height: 64,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(40),
-          gradient: const LinearGradient(
-            colors: [Color(0xFF1E1139), Color(0xFF2A1A4A)],
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
+      onHorizontalDragUpdate: _handleDragUpdate,
+      onHorizontalDragEnd: _handleDragEnd,
+      child: Stack(
+        children: [
+          Container(
+            height: 64,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(40),
+              gradient: const LinearGradient(
+                colors: [Color(0xFF1E1139), Color(0xFF2A1A4A)],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+              ),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            alignment: Alignment.center,
+            child: Text(
+              _isSwapping ? "Swap processing..." : "Slide to Swap",
+              style: TextStyle(
+                color:
+                    _isSwapping
+                        ? AppColors.textSecondary
+                        : AppColors.accentBlue,
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
           ),
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Container(
-              width: 40,
-              height: 40,
+          Positioned(
+            left: _dragPosition,
+            top: 0,
+            bottom: 0,
+            child: Container(
+              width: 64,
+              height: 64,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(color: AppColors.borderGlow, width: 2),
@@ -61,29 +112,18 @@ class _AdvancedSlideToSwapState extends State<AdvancedSlideToSwap> {
                   colors: [Color(0xFF1E1139), Color(0xFF2A1A4A)],
                 ),
               ),
-              child: const Icon(Icons.person, color: AppColors.accentBlue, size: 20),
-            ),
-            Expanded(
-              child: Center(
-                child: Text(
-                  _isSwapping ? "Swap processing..." : "Slide to Swap",
-                  style: TextStyle(
-                    color: _isSwapping ? AppColors.textSecondary : AppColors.accentBlue,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
+              child: const Icon(
+                Icons.double_arrow_rounded,
+                color: AppColors.accentBlue,
               ),
             ),
-            const Icon(Icons.double_arrow_rounded, color: AppColors.accentBlue),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 }
 
-// Esta función debe moverse a notifications.dart
 void showSwapModal(BuildContext context, VoidCallback onConfirmed) {
   showGeneralDialog(
     context: context,
