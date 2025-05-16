@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
 
 class AgreementDetailsPage extends StatefulWidget {
-  final void Function(String descripcion, String condiciones, DateTime fechaVencimiento) onDetailsCompleted;
+  final Function(String descripcion, String condiciones, DateTime fecha) onDetailsCompleted;
+  final String? initialDescripcion;
+  final String? initialCondiciones;
+  final DateTime? initialFecha;
 
-  const AgreementDetailsPage({super.key, required this.onDetailsCompleted});
+  const AgreementDetailsPage({
+    Key? key,
+    required this.onDetailsCompleted,
+    this.initialDescripcion,
+    this.initialCondiciones,
+    this.initialFecha,
+  }) : super(key: key);
 
   @override
   State<AgreementDetailsPage> createState() => _AgreementDetailsPageState();
@@ -11,15 +20,23 @@ class AgreementDetailsPage extends StatefulWidget {
 
 class _AgreementDetailsPageState extends State<AgreementDetailsPage> {
   final _formKey = GlobalKey<FormState>();
-  final _descripcionController = TextEditingController();
-  final _condicionesController = TextEditingController();
+  late TextEditingController _descripcionController;
+  late TextEditingController _condicionesController;
   DateTime? _fechaVencimiento;
+
+  @override
+  void initState() {
+    super.initState();
+    _descripcionController = TextEditingController(text: widget.initialDescripcion ?? '');
+    _condicionesController = TextEditingController(text: widget.initialCondiciones ?? '');
+    _fechaVencimiento = widget.initialFecha;
+  }
 
   void _pickDate() async {
     final now = DateTime.now();
     final picked = await showDatePicker(
       context: context,
-      initialDate: now,
+      initialDate: _fechaVencimiento ?? now,
       firstDate: now,
       lastDate: DateTime(now.year + 5),
     );

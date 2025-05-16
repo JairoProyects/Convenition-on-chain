@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 import '../domains/convenio_model.dart';
 import 'agreement_details_page.dart';
+import '../../shared/util/validators.dart';
+import '../../shared/util/notifications.dart';
 
 class CreateAgreementPage extends StatefulWidget {
   const CreateAgreementPage({Key? key}) : super(key: key);
@@ -24,6 +26,9 @@ class _CreateAgreementPageState extends State<CreateAgreementPage> {
       context,
       MaterialPageRoute(
         builder: (context) => AgreementDetailsPage(
+          initialDescripcion: _descripcion,
+          initialCondiciones: _condiciones,
+          initialFecha: _fechaVencimiento,
           onDetailsCompleted: (descripcion, condiciones, fecha) {
             setState(() {
               _descripcion = descripcion;
@@ -52,9 +57,7 @@ class _CreateAgreementPageState extends State<CreateAgreementPage> {
 
       // Aquí iría la futura llamada a starknet_service.createAgreement(convenio);
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Convenio listo para enviarse a la blockchain")),
-      );
+      showToast("Convenio listo para enviarse a la blockchain", bgColor: Colors.green);
 
       _formKey.currentState!.reset();
       _montoController.clear();
@@ -65,9 +68,7 @@ class _CreateAgreementPageState extends State<CreateAgreementPage> {
         _fechaVencimiento = null;
       });
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Faltan los detalles del convenio")),
-      );
+      showToast("Faltan los detalles del convenio", bgColor: Colors.red);
     }
   }
 
@@ -85,16 +86,14 @@ class _CreateAgreementPageState extends State<CreateAgreementPage> {
                 controller: _montoController,
                 decoration: const InputDecoration(labelText: "Monto acordado (₡)"),
                 keyboardType: TextInputType.number,
-                validator: (value) =>
-                    value == null || value.isEmpty ? "Este campo es obligatorio" : null,
+                validator: (value) => validatePositiveNumber(value, fieldName: "Monto"),
               ),
               const SizedBox(height: 12),
               TextFormField(
                 controller: _participantesController,
                 decoration: const InputDecoration(labelText: "Número de participantes"),
                 keyboardType: TextInputType.number,
-                validator: (value) =>
-                    value == null || value.isEmpty ? "Este campo es obligatorio" : null,
+                validator: (value) => validateInteger(value, fieldName: "Participantes"),
               ),
               const SizedBox(height: 20),
               ElevatedButton.icon(
@@ -102,14 +101,14 @@ class _CreateAgreementPageState extends State<CreateAgreementPage> {
                 icon: const Icon(Icons.description),
                 label: Text(
                   _descripcion != null
-                      ? "Detalles completados"
-                      : "Agregar detalles del convenio",
+                      ? "Detalles Completados"
+                      : "Agregar Detalles del Convenio",
                 ),
               ),
               const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: _submitForm,
-                child: const Text("Crear convenio"),
+                child: const Text("Crear Convenio"),
               ),
             ],
           ),
