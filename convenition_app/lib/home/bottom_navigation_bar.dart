@@ -23,22 +23,10 @@ class _MenuTopTabsPageState extends State<MenuTopTabsPage> {
   ];
 
   final List<BottomNavigationBarItem> _bottomNavItems = const [
-    BottomNavigationBarItem(
-      icon: Icon(Icons.home_outlined),
-      label: 'Home',
-    ),
-    BottomNavigationBarItem(
-      icon: Icon(Icons.edit_document),
-      label: 'Crear',
-    ),
-    BottomNavigationBarItem(
-      icon: Icon(Icons.article_outlined),
-      label: 'Ver',
-    ),
-    BottomNavigationBarItem(
-      icon: Icon(Icons.person_outline),
-      label: 'Perfil',
-    ),
+    BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'Home'),
+    BottomNavigationBarItem(icon: Icon(Icons.edit_document), label: 'Crear'),
+    BottomNavigationBarItem(icon: Icon(Icons.article_outlined), label: 'Ver'),
+    BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Perfil'),
   ];
 
   void _onNavTapped(int index) {
@@ -51,17 +39,17 @@ class _MenuTopTabsPageState extends State<MenuTopTabsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: AppColors.backgroundMain,
-        ),
+        decoration: const BoxDecoration(gradient: AppColors.backgroundMain),
         child: SafeArea(child: _screens[_selectedIndex]),
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onNavTapped,
         backgroundColor: AppColors.panelBackground,
-        selectedItemColor: AppColors.accentBlue,      // ✅ Azul claro para item activo
-        unselectedItemColor: AppColors.textSecondary,  // ✅ Gris para item inactivo
+        selectedItemColor:
+            AppColors.accentBlue, // ✅ Azul claro para item activo
+        unselectedItemColor: AppColors.textSecondary,
+        // ✅ Gris para item inactivo
         type: BottomNavigationBarType.fixed,
         items: _bottomNavItems,
       ),

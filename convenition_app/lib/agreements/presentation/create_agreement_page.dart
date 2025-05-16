@@ -6,6 +6,7 @@ import '../../shared/util/validators.dart';
 import '../../shared/util/notifications.dart';
 import '../../shared/theme/app_colors.dart';
 import '../../shared/theme/app_text_styles.dart';
+import '../../home/custom_app_bar.dart';
 
 class CreateAgreementPage extends StatefulWidget {
   const CreateAgreementPage({Key? key}) : super(key: key);
@@ -27,18 +28,19 @@ class _CreateAgreementPageState extends State<CreateAgreementPage> {
     await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => AgreementDetailsPage(
-          initialDescripcion: _descripcion,
-          initialCondiciones: _condiciones,
-          initialFecha: _fechaVencimiento,
-          onDetailsCompleted: (descripcion, condiciones, fecha) {
-            setState(() {
-              _descripcion = descripcion;
-              _condiciones = condiciones;
-              _fechaVencimiento = fecha;
-            });
-          },
-        ),
+        builder:
+            (context) => AgreementDetailsPage(
+              initialDescripcion: _descripcion,
+              initialCondiciones: _condiciones,
+              initialFecha: _fechaVencimiento,
+              onDetailsCompleted: (descripcion, condiciones, fecha) {
+                setState(() {
+                  _descripcion = descripcion;
+                  _condiciones = condiciones;
+                  _fechaVencimiento = fecha;
+                });
+              },
+            ),
       ),
     );
   }
@@ -59,19 +61,23 @@ class _CreateAgreementPageState extends State<CreateAgreementPage> {
         vencimiento: _fechaVencimiento!,
       );
 
-      showSwapModal(
+      showSwapModal(context, () {
+        _formKey.currentState!.reset();
+        _montoController.clear();
+        _participantesController.clear();
+        setState(() {
+          _descripcion = null;
+          _condiciones = null;
+          _fechaVencimiento = null;
+        });
+      });
+
+      // Mostrar modal de éxito después del swap
+      /* showConfirmationModal(
         context,
-        () {
-          _formKey.currentState!.reset();
-          _montoController.clear();
-          _participantesController.clear();
-          setState(() {
-            _descripcion = null;
-            _condiciones = null;
-            _fechaVencimiento = null;
-          });
-        },
-      );
+        message:
+            "Convenio creado exitosamente y listo para enviarse a la blockchain.",
+      ); */
     } else {
       showConfirmationModal(
         context,
@@ -84,14 +90,13 @@ class _CreateAgreementPageState extends State<CreateAgreementPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: const Text(
-          "Nuevo Convenio",
-          style: TextStyle(color: AppColors.textPrimary),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(56),
+        child: Container(
+          color: Colors.transparent,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          child: const CustomAppBar(),
         ),
-        centerTitle: true,
       ),
       body: Container(
         decoration: const BoxDecoration(gradient: AppColors.backgroundMain),
@@ -118,8 +123,9 @@ class _CreateAgreementPageState extends State<CreateAgreementPage> {
                       labelText: "Monto acordado (₡)",
                     ),
                     keyboardType: TextInputType.number,
-                    validator: (value) =>
-                        validatePositiveNumber(value, fieldName: "Monto"),
+                    validator:
+                        (value) =>
+                            validatePositiveNumber(value, fieldName: "Monto"),
                   ),
                   const SizedBox(height: 12),
                   TextFormField(
@@ -128,8 +134,9 @@ class _CreateAgreementPageState extends State<CreateAgreementPage> {
                       labelText: "Número de participantes",
                     ),
                     keyboardType: TextInputType.number,
-                    validator: (value) =>
-                        validateInteger(value, fieldName: "Participantes"),
+                    validator:
+                        (value) =>
+                            validateInteger(value, fieldName: "Participantes"),
                   ),
                   const SizedBox(height: 20),
                   ElevatedButton.icon(

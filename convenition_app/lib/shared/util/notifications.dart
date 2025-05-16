@@ -20,14 +20,17 @@ void showConfirmationModal(
         filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
         child: Center(
           child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 32),
+            width: MediaQuery.of(context).size.width * 0.9,
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
               color: AppColors.panelBackground,
               borderRadius: BorderRadius.circular(24),
             ),
-            child: Material(
-              color: Colors.transparent,
+            child: Theme(
+              data: ThemeData(
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+              ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -38,6 +41,7 @@ void showConfirmationModal(
                       color: AppColors.textPrimary,
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
+                      decoration: TextDecoration.none,
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -84,27 +88,34 @@ void showSwapModal(BuildContext context, VoidCallback onConfirmed) {
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
           child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 32),
+            width: MediaQuery.of(context).size.width * 0.9,
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
               color: AppColors.panelBackground,
               borderRadius: BorderRadius.circular(24),
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text(
-                  "Desliza para confirmar el contrato",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: AppColors.textPrimary,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
+            child: Theme(
+              data: ThemeData(
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    "Desliza para confirmar el contrato",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: AppColors.textPrimary,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      decoration: TextDecoration.none,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 20),
-                AdvancedSlideToSwap(onSwapCompleted: onConfirmed),
-              ],
+                  const SizedBox(height: 20),
+                  AdvancedSlideToSwap(onSwapCompleted: onConfirmed),
+                ],
+              ),
             ),
           ),
         ),

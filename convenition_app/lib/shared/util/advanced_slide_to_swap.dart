@@ -8,7 +8,7 @@ class AdvancedSlideToSwap extends StatefulWidget {
   final VoidCallback onSwapCompleted;
 
   const AdvancedSlideToSwap({Key? key, required this.onSwapCompleted})
-    : super(key: key);
+      : super(key: key);
 
   @override
   State<AdvancedSlideToSwap> createState() => _AdvancedSlideToSwapState();
@@ -90,11 +90,10 @@ class _AdvancedSlideToSwapState extends State<AdvancedSlideToSwap>
               _isSwapping ? "Swap processing..." : "Slide to Swap",
               style: TextStyle(
                 color:
-                    _isSwapping
-                        ? AppColors.textSecondary
-                        : AppColors.accentBlue,
+                    _isSwapping ? AppColors.textSecondary : AppColors.accentBlue,
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
+                decoration: TextDecoration.none,
               ),
             ),
           ),
@@ -136,7 +135,7 @@ void showSwapModal(BuildContext context, VoidCallback onConfirmed) {
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
           child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 32),
+            width: MediaQuery.of(context).size.width * 0.9,
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
               color: AppColors.panelBackground,
@@ -145,16 +144,17 @@ void showSwapModal(BuildContext context, VoidCallback onConfirmed) {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
+                Text(
                   "Desliza para confirmar el contrato",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: AppColors.textPrimary,
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
+                    decoration: TextDecoration.none,
                   ),
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: 20),
                 AdvancedSlideToSwap(onSwapCompleted: onConfirmed),
               ],
             ),

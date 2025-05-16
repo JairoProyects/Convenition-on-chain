@@ -3,7 +3,8 @@ import '../../../shared/theme/app_colors.dart';
 import '../../../shared/theme/app_text_styles.dart';
 
 class AgreementDetailsPage extends StatefulWidget {
-  final Function(String descripcion, String condiciones, DateTime fecha) onDetailsCompleted;
+  final Function(String descripcion, String condiciones, DateTime fecha)
+  onDetailsCompleted;
   final String? initialDescripcion;
   final String? initialCondiciones;
   final DateTime? initialFecha;
@@ -25,12 +26,17 @@ class _AgreementDetailsPageState extends State<AgreementDetailsPage> {
   late TextEditingController _descripcionController;
   late TextEditingController _condicionesController;
   DateTime? _fechaVencimiento;
+  bool _fechaInvalida = false;
 
   @override
   void initState() {
     super.initState();
-    _descripcionController = TextEditingController(text: widget.initialDescripcion ?? '');
-    _condicionesController = TextEditingController(text: widget.initialCondiciones ?? '');
+    _descripcionController = TextEditingController(
+      text: widget.initialDescripcion ?? '',
+    );
+    _condicionesController = TextEditingController(
+      text: widget.initialCondiciones ?? '',
+    );
     _fechaVencimiento = widget.initialFecha;
   }
 
@@ -60,22 +66,26 @@ class _AgreementDetailsPageState extends State<AgreementDetailsPage> {
     if (picked != null) {
       setState(() {
         _fechaVencimiento = picked;
+        _fechaInvalida = false;
       });
     }
   }
 
   void _submitDetails() {
-    if (_formKey.currentState!.validate() && _fechaVencimiento != null) {
+    final isValid = _formKey.currentState!.validate();
+    final isFechaValid = _fechaVencimiento != null;
+
+    setState(() {
+      _fechaInvalida = !isFechaValid;
+    });
+
+    if (isValid && isFechaValid) {
       widget.onDetailsCompleted(
         _descripcionController.text,
         _condicionesController.text,
         _fechaVencimiento!,
       );
       Navigator.pop(context);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Por favor completá todos los campos.")),
-      );
     }
   }
 
@@ -93,65 +103,99 @@ class _AgreementDetailsPageState extends State<AgreementDetailsPage> {
         elevation: 0,
       ),
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: AppColors.backgroundMain,
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Theme(
-            data: ThemeData.dark().copyWith(
-              inputDecorationTheme: InputDecorationTheme(
-                filled: true,
-                fillColor: AppColors.panelBackground,
-                labelStyle: const TextStyle(color: AppColors.textSecondary),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
+        decoration: const BoxDecoration(gradient: AppColors.backgroundMain),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Theme(
+              data: ThemeData.dark().copyWith(
+                inputDecorationTheme: InputDecorationTheme(
+                  filled: true,
+                  fillColor: AppColors.panelBackground,
+                  labelStyle: const TextStyle(color: AppColors.textSecondary),
+                  errorStyle: const TextStyle(color: Colors.redAccent),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
               ),
-            ),
-            child: Form(
-              key: _formKey,
-              child: ListView(
-                children: [
-                  TextFormField(
-                    controller: _descripcionController,
-                    maxLines: 3,
-                    decoration: const InputDecoration(labelText: "Descripción del convenio"),
-                    validator: (value) => value == null || value.isEmpty ? "Campo obligatorio" : null,
-                  ),
-                  const SizedBox(height: 12),
-                  TextFormField(
-                    controller: _condicionesController,
-                    maxLines: 4,
-                    decoration: const InputDecoration(labelText: "Condiciones adicionales"),
-                    validator: (value) => value == null || value.isEmpty ? "Campo obligatorio" : null,
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    _fechaVencimiento != null
-                        ? "Fecha seleccionada: ${_fechaVencimiento!.toLocal().toString().split(' ')[0]}"
-                        : "Seleccioná la fecha de vencimiento",
-                    style: const TextStyle(color: AppColors.textSecondary),
-                  ),
-                  const SizedBox(height: 6),
-                  ElevatedButton(
-                    onPressed: _pickDate,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.accentBlue,
-                      foregroundColor: Colors.black,
+              child: Form(
+                key: _formKey,
+                child: ListView(
+                  children: [
+                    TextFormField(
+                      controller: _descripcionController,
+                      maxLines: 3,
+                      decoration: const InputDecoration(
+                        labelText: "Descripción del convenio",
+                      ),
+                      validator:
+                          (value) =>
+                              value == null || value.isEmpty
+                                  ? "Este campo es obligatorio"
+                                  : null,
                     ),
-                    child: const Text("Seleccionar fecha"),
-                  ),
-                  const SizedBox(height: 24),
-                  ElevatedButton(
-                    onPressed: _submitDetails,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.accentBlue,
-                      foregroundColor: Colors.black,
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      controller: _condicionesController,
+                      maxLines: 4,
+                      decoration: const InputDecoration(
+                        labelText: "Condiciones adicionales",
+                      ),
+                      validator:
+                          (value) =>
+                              value == null || value.isEmpty
+                                  ? "Este campo es obligatorio"
+                                  : null,
                     ),
-                    child: const Text("Guardar detalles"),
-                  ),
-                ],
+                    const SizedBox(height: 12),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          _fechaVencimiento != null
+                              ? "Fecha seleccionada: ${_fechaVencimiento!.toLocal().toString().split(' ')[0]}"
+                              : "Seleccioná la fecha de vencimiento",
+                          style: TextStyle(
+                            color:
+                                _fechaInvalida
+                                    ? Colors.redAccent
+                                    : AppColors.textSecondary,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        ElevatedButton(
+                          onPressed: _pickDate,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.accentBlue,
+                            foregroundColor: Colors.black,
+                          ),
+                          child: const Text("Seleccionar fecha"),
+                        ),
+                        if (_fechaInvalida)
+                          const Padding(
+                            padding: EdgeInsets.only(top: 6.0),
+                            child: Text(
+                              "Debés seleccionar una fecha",
+                              style: TextStyle(
+                                color: Colors.redAccent,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    ElevatedButton(
+                      onPressed: _submitDetails,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.accentBlue,
+                        foregroundColor: Colors.black,
+                      ),
+                      child: const Text("Guardar detalles"),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
