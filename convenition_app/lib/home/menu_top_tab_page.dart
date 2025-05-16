@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'home_page.dart';
-import 'create_agreement_page.dart';
-import 'view_agreement_page.dart';
+import '../agreements/presentation/create_agreement_page.dart';
+import '../agreements/presentation/view_agreement_page.dart';
 
 class MenuTopTabsPage extends StatefulWidget {
   const MenuTopTabsPage({super.key});

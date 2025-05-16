@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
-import '../models/convenio_model.dart';
+import '../domains/convenio_model.dart';
 import 'agreement_details_page.dart';
 
 class CreateAgreementPage extends StatefulWidget {

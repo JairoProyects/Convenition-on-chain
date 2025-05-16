@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'pages/menu_top_tab_page.dart';
+import 'home/menu_top_tab_page.dart';
 
 void main() {
   runApp(const MyApp());
