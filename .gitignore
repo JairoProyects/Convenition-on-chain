@@ -1,0 +1,52 @@
+# Flutter/Dart build files
+build/
+.dart_tool/
+.packages
+.pub-cache/
+.pub/
+.melos_tool/
+
+# IDEs
+# IntelliJ / Android Studio
+*.iml
+.idea/
+.android/
+.gradle/
+
+# VS Code
+.vscode/
+history/
+
+# Xcode (para proyectos iOS/macOS)
+ios/Flutter/App.framework
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/ServiceDefinitions.json
+ios/Pods/
+ios/.symlinks/
+ios/Runner.xcworkspace/
+ios/Flutter/ephemeral/
+macos/Flutter/ephemeral/
+macos/Pods/
+macos/Runner.xcworkspace/
+
+# Objets y logs
+*.log
+*.lock
+*.tmp
+*.swp
+
+# Environment / Credentials
+.env
+*.env
+*.keystore
+*.jks
+key.properties
+
+# Misc
+.DS_Store
+Thumbs.db
+
+# Firebase / Google Services
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
