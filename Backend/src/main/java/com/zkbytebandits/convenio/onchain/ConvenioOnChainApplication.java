@@ -1,4 +1,4 @@
-package com.Product.Convenio.onChain;
+package com.zkbytebandits.convenio.onchain;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
