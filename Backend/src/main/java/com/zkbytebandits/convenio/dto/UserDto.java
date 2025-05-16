@@ -1,5 +1,4 @@
 package com.zkbytebandits.convenio.dto;
-
 import com.zkbytebandits.convenio.entity.User.Status;
 import lombok.*;
 
