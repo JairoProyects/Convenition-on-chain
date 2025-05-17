@@ -7,8 +7,7 @@ import '../../shared/theme/app_colors.dart';
 class AdvancedSlideToSwap extends StatefulWidget {
   final VoidCallback onSwapCompleted;
 
-  const AdvancedSlideToSwap({Key? key, required this.onSwapCompleted})
-      : super(key: key);
+  const AdvancedSlideToSwap({super.key, required this.onSwapCompleted});
 
   @override
   State<AdvancedSlideToSwap> createState() => _AdvancedSlideToSwapState();

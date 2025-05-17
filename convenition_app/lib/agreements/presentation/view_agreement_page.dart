@@ -4,7 +4,7 @@ import '../../shared/theme/app_text_styles.dart';
 import '../../home/custom_app_bar.dart';
 
 class ViewAgreementPage extends StatelessWidget {
-  const ViewAgreementPage({Key? key}) : super(key: key);
+  const ViewAgreementPage({super.key});
 
   @override
   Widget build(BuildContext context) {

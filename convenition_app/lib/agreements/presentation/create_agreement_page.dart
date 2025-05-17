@@ -5,11 +5,12 @@ import 'agreement_details_page.dart';
 import '../../shared/util/validators.dart';
 import '../../shared/util/notifications.dart';
 import '../../shared/theme/app_colors.dart';
-import '../../shared/theme/app_text_styles.dart';
 import '../../home/custom_app_bar.dart';
+import '../services/starknet_service.dart';
+import 'package:starknet/starknet.dart';
 
 class CreateAgreementPage extends StatefulWidget {
-  const CreateAgreementPage({Key? key}) : super(key: key);
+  const CreateAgreementPage({super.key});
 
   @override
   State<CreateAgreementPage> createState() => _CreateAgreementPageState();
@@ -23,6 +24,25 @@ class _CreateAgreementPageState extends State<CreateAgreementPage> {
   String? _descripcion;
   String? _condiciones;
   DateTime? _fechaVencimiento;
+  bool _firmado = false;
+  String _estado = 'Idle';
+  final List<String> _firmas = [];
+
+  late StarknetService starknetService;
+
+  @override
+  void initState() {
+    super.initState();
+    final account = getAccount(
+      accountAddress: Felt.fromHexString(
+        "0x07fae9932307e3f44cc3523e1f50979cc89ed7928f41b5a2d4c9cf648100d0d5",
+      ),
+      privateKey: Felt.fromHexString(
+        "0x05757c5161e7313276902aabf5cc0a89fd67e4b8ab4d270818ce2f228aa9f2f8",
+      ),
+    );
+    starknetService = StarknetService(account);
+  }
 
   void _abrirDetalles() async {
     await Navigator.push(
@@ -45,7 +65,7 @@ class _CreateAgreementPageState extends State<CreateAgreementPage> {
     );
   }
 
-  void _submitForm() {
+  void _submitForm() async {
     if (_formKey.currentState!.validate() &&
         _descripcion != null &&
         _fechaVencimiento != null) {
@@ -53,15 +73,36 @@ class _CreateAgreementPageState extends State<CreateAgreementPage> {
         id: const Uuid().v4(),
         timestamp: DateTime.now(),
         monto: double.parse(_montoController.text),
-        firmado: false,
+        firmado: _firmado,
         participantes: int.parse(_participantesController.text),
         hash: "0x${DateTime.now().millisecondsSinceEpoch.toRadixString(16)}",
         descripcion: _descripcion!,
         condiciones: _condiciones ?? '',
         vencimiento: _fechaVencimiento!,
+        firmas: _firmas,
+        estado: _estado,
       );
 
-      showSwapModal(context, () {
+      showConfirmationModal(
+        context,
+        message: "Enviando convenio a la blockchain...",
+      );
+
+      try {
+        final txHash = await starknetService.createConvenio(
+          descripcion: convenio.descripcion,
+          condiciones: convenio.condiciones,
+          vencimiento: convenio.vencimiento,
+        );
+
+        Navigator.pop(context);
+
+        showConfirmationModal(
+          context,
+          message:
+              "Convenio creado exitosamente.\\nTx Hash: \${txHash.toHexString()}",
+        );
+
         _formKey.currentState!.reset();
         _montoController.clear();
         _participantesController.clear();
@@ -69,15 +110,20 @@ class _CreateAgreementPageState extends State<CreateAgreementPage> {
           _descripcion = null;
           _condiciones = null;
           _fechaVencimiento = null;
+          _firmado = false;
+          _estado = 'Idle';
+          _firmas.clear();
         });
-      });
+      } catch (e) {
+        Navigator.pop(context);
+        showConfirmationModal(
+          context,
+          message: "Error al crear convenio:\\n\${e.toString()}",
+          buttonText: "Cerrar",
+        );
 
-      // Mostrar modal de éxito después del swap
-      /* showConfirmationModal(
-        context,
-        message:
-            "Convenio creado exitosamente y listo para enviarse a la blockchain.",
-      ); */
+        print(e.toString());
+      }
     } else {
       showConfirmationModal(
         context,
@@ -151,6 +197,41 @@ class _CreateAgreementPageState extends State<CreateAgreementPage> {
                           ? "Detalles Completados"
                           : "Agregar Detalles del Convenio",
                     ),
+                  ),
+                  const SizedBox(height: 12),
+                  SwitchListTile(
+                    title: const Text("¿Convenio ya firmado?"),
+                    value: _firmado,
+                    onChanged: (value) {
+                      setState(() {
+                        _firmado = value;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  DropdownButtonFormField<String>(
+                    decoration: const InputDecoration(
+                      labelText: "Estado del convenio",
+                    ),
+                    value: _estado,
+                    onChanged: (value) {
+                      if (value != null) {
+                        setState(() {
+                          _estado = value;
+                        });
+                      }
+                    },
+                    items: const [
+                      DropdownMenuItem(value: 'Idle', child: Text('Idle')),
+                      DropdownMenuItem(
+                        value: 'SignedByOne',
+                        child: Text('Firmado por uno'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'Completed',
+                        child: Text('Completado'),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 24),
                   ElevatedButton(

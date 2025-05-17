@@ -7,13 +7,13 @@ class CustomAppBar extends StatelessWidget {
   final Function(String)? onSearchChanged;
 
   const CustomAppBar({
-    Key? key,
+    super.key,
     this.onSearchChanged,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController _controller = TextEditingController();
+    final TextEditingController controller = TextEditingController();
 
     return Row(
       children: [
@@ -41,7 +41,7 @@ class CustomAppBar extends StatelessWidget {
                 const SizedBox(width: 8),
                 Expanded(
                   child: TextField(
-                    controller: _controller,
+                    controller: controller,
                     onChanged: onSearchChanged,
                     style: AppTextStyles.body,
                     decoration: const InputDecoration(

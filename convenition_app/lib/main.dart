@@ -35,7 +35,6 @@ class MyApp extends StatelessWidget {
         colorScheme: const ColorScheme.dark().copyWith(
           primary: AppColors.accentBlue,
           onPrimary: AppColors.textPrimary,
-          onBackground: AppColors.textPrimary,
           onSurface: AppColors.textPrimary,
         ),
       ),

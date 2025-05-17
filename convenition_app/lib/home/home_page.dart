@@ -5,7 +5,7 @@ import '../agreements/domains/convenio_model.dart';
 import 'custom_app_bar.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -22,29 +22,7 @@ class _HomePageState extends State<HomePage> {
 
     // Simulación de convenios
     allConvenios = [
-      Convenio(
-        id: '1',
-        timestamp: DateTime.now(),
-        monto: 100.0,
-        firmado: true,
-        participantes: 3,
-        hash: 'abc123',
-        descripcion: 'Cute Cube Cool',
-        condiciones: 'Condición A',
-        vencimiento: DateTime.now().add(const Duration(days: 30)),
-      ),
-      Convenio(
-        id: '2',
-        timestamp: DateTime.now(),
-        monto: 150.0,
-        firmado: false,
-        participantes: 2,
-        hash: 'xyz789',
-        descripcion: 'Liquid Wave',
-        condiciones: 'Condición B',
-        vencimiento: DateTime.now().add(const Duration(days: 60)),
-      ),
-      // Agrega más si necesitas
+      
     ];
 
     filteredConvenios = List.from(allConvenios);

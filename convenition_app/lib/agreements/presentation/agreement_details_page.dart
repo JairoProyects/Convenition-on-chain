@@ -10,12 +10,12 @@ class AgreementDetailsPage extends StatefulWidget {
   final DateTime? initialFecha;
 
   const AgreementDetailsPage({
-    Key? key,
+    super.key,
     required this.onDetailsCompleted,
     this.initialDescripcion,
     this.initialCondiciones,
     this.initialFecha,
-  }) : super(key: key);
+  });
 
   @override
   State<AgreementDetailsPage> createState() => _AgreementDetailsPageState();
@@ -55,8 +55,7 @@ class _AgreementDetailsPageState extends State<AgreementDetailsPage> {
               onPrimary: AppColors.textPrimary,
               surface: AppColors.panelBackground,
               onSurface: AppColors.textPrimary,
-            ),
-            dialogBackgroundColor: AppColors.modalBackground,
+            ), dialogTheme: DialogThemeData(backgroundColor: AppColors.modalBackground),
           ),
           child: child!,
         );
