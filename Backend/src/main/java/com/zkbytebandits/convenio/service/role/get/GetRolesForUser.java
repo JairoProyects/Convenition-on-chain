@@ -7,8 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.zkbytebandits.convenio.dto.RoleDto;
 import com.zkbytebandits.convenio.mapper.role.RoleMapper;
-import com.zkbytebandits.convenio.repository.UserRoleRepository;
-
+import com.zkbytebandits.convenio.repository.userRole.UserRoleRepository;
 
 import lombok.RequiredArgsConstructor;
 

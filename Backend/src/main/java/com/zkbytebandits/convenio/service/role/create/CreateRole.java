@@ -4,7 +4,8 @@ import org.springframework.stereotype.Service;
 
 import com.zkbytebandits.convenio.dto.RoleDto;
 import com.zkbytebandits.convenio.entity.Role;
-import com.zkbytebandits.convenio.repository.RoleRepository;
+import com.zkbytebandits.convenio.repository.role.RoleRepository;
+
 import lombok.RequiredArgsConstructor;
 
 @Service

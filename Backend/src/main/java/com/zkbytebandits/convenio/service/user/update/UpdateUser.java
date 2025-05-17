@@ -7,7 +7,7 @@ import com.zkbytebandits.convenio.dto.UpdateUserRequest;
 import com.zkbytebandits.convenio.dto.UserDto;
 import com.zkbytebandits.convenio.entity.User;
 import com.zkbytebandits.convenio.mapper.user.UserMapper;
-import com.zkbytebandits.convenio.repository.UserRepository;
+import com.zkbytebandits.convenio.repository.user.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 

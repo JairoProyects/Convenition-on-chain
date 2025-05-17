@@ -4,7 +4,9 @@ import java.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 import com.zkbytebandits.convenio.dto.AssignRoleRequest;
 import com.zkbytebandits.convenio.entity.*;
-import com.zkbytebandits.convenio.repository.*;
+import com.zkbytebandits.convenio.repository.role.RoleRepository;
+import com.zkbytebandits.convenio.repository.user.UserRepository;
+import com.zkbytebandits.convenio.repository.userRole.UserRoleRepository;
 
 import lombok.RequiredArgsConstructor;
 

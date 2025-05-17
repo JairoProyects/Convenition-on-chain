@@ -1,4 +1,4 @@
-package com.zkbytebandits.convenio.repository;
+package com.zkbytebandits.convenio.repository.userRole;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,7 +1,9 @@
 package com.zkbytebandits.convenio.service.user.delete;
 
 import org.springframework.stereotype.Service;
-import com.zkbytebandits.convenio.repository.UserRepository;
+
+import com.zkbytebandits.convenio.repository.user.UserRepository;
+
 import lombok.RequiredArgsConstructor;
 
 @Service

@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 
 import com.zkbytebandits.convenio.dto.UserDto;
 import com.zkbytebandits.convenio.mapper.user.UserMapper;
-import com.zkbytebandits.convenio.repository.UserRepository;
+import com.zkbytebandits.convenio.repository.user.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 

@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import com.zkbytebandits.convenio.dto.*;
 import com.zkbytebandits.convenio.mapper.user.*;
-import com.zkbytebandits.convenio.repository.*;
+import com.zkbytebandits.convenio.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service

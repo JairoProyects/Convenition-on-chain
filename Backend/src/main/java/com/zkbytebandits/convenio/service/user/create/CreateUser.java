@@ -4,8 +4,7 @@ import java.time.LocalDateTime;
 
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
-
-import com.zkbytebandits.convenio.repository.*;
+import com.zkbytebandits.convenio.repository.user.UserRepository;
 import com.zkbytebandits.convenio.dto.*;
 import com.zkbytebandits.convenio.entity.*;
 import com.zkbytebandits.convenio.entity.User.Status;
