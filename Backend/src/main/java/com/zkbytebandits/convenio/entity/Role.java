@@ -1,16 +1,14 @@
 package com.zkbytebandits.convenio.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "roles")
@@ -26,4 +24,9 @@ public class Role {
     private String name;
 
     private String description;
+
+    // Updated to reflect relationship through UserRole
+    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY) // 'role' is the field in UserRole
+    private Set<UserRole> userRoles = new HashSet<>();
+
 }
