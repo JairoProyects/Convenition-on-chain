@@ -1,0 +1,17 @@
+[package]
+name = "convenio_on_chain"
+version = "0.1.0"
+authors = ["Your Name"]
+edition = "2024_07"
+
+[dependencies]
+starknet = { version = "2.11.4", features = ["starknet"] }
+cairo_test = { version = "2.11.4", features = ["starknet"] }
+
+[lib]
+name = "convenio_on_chain"
+path = "src/lib.cairo"
+
+[contract]
+name = "convenio_contract"
+path = "src/contracts/convenio_contract.cairo"
