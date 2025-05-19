@@ -22,10 +22,10 @@ public class AuditLog {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", referencedColumnName = "userId")
+    @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(name = "actor", length = 255)
+    @Column(name = "actor", length = 255) //Eliminar
     private String actor;
 
     @Column(nullable = false, length = 100)

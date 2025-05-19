@@ -25,6 +25,8 @@ public class Notification {
     @JoinColumn(name = "user_id")
     private User user;
 
+
+   // contract_id
     @Column(nullable = false, length = 500)
     private String message;
 

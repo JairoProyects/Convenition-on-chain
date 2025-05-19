@@ -28,8 +28,10 @@ public class Signature {
     @JoinColumn(name = "contract_id", nullable = false)
     private Contract contract;
 
-    @Column(name = "signer_wallet_address", nullable = false, length = 255)
+    @Column(name = "signer_wallet_address", nullable = false, length = 255) // Fk del wallet
     private String signerWalletAddress;
+
+    // User who signed the contract
 
     @Lob // For potentially large signature data
     @Column(name = "signature_data", nullable = false, columnDefinition = "TEXT")

@@ -31,7 +31,7 @@ public class CreateUser {
                 .username(request.getUsername())
                 .email(request.getEmail())
                 //.passwordHash(BCrypt.hashpw(request.getPassword(), BCrypt.gensalt()))
-                .passwordHash("root") // TODO: Hash the password
+                .passwordHash(request.getPassword()) // TODO: Hash the password
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .status(Status.ACTIVO)
