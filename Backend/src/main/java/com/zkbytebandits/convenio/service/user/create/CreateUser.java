@@ -2,7 +2,7 @@ package com.zkbytebandits.convenio.service.user.create;
 
 import java.time.LocalDateTime;
 
-import org.springframework.security.crypto.bcrypt.BCrypt;
+//import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import com.zkbytebandits.convenio.repository.user.UserRepository;
 import com.zkbytebandits.convenio.dto.*;
@@ -30,7 +30,8 @@ public class CreateUser {
         User user = User.builder()
                 .username(request.getUsername())
                 .email(request.getEmail())
-                .passwordHash(BCrypt.hashpw(request.getPassword(), BCrypt.gensalt()))
+                //.passwordHash(BCrypt.hashpw(request.getPassword(), BCrypt.gensalt()))
+                .passwordHash("root") // TODO: Hash the password
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .status(Status.ACTIVO)
