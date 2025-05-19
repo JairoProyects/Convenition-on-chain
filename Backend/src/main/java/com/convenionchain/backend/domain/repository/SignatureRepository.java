@@ -1,6 +1,6 @@
-package com.zkbytebandits.convenio.repository;
+package com.convenionchain.backend.domain.repository;
 
-import com.zkbytebandits.convenio.entity.Signature;
+import com.convenionchain.backend.domain.entity.Signature;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

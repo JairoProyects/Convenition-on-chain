@@ -1,8 +1,8 @@
-package com.zkbytebandits.convenio.service;
+package com.convenionchain.backend.service;
 
-import com.zkbytebandits.convenio.entity.Notification;
+import com.convenionchain.backend.domain.entity.Notification;
+import com.convenionchain.backend.domain.repository.NotificationRepository;
 import com.zkbytebandits.convenio.entity.User;
-import com.zkbytebandits.convenio.repository.NotificationRepository;
 // Assuming UserRepository will be in com.zkbytebandits.convenio.repository.user.UserRepository
 // import com.zkbytebandits.convenio.repository.user.UserRepository; 
 import org.springframework.beans.factory.annotation.Autowired;

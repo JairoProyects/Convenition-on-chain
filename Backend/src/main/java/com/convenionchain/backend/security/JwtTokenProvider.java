@@ -1,7 +1,7 @@
-package com.zkbytebandits.convenio.security;
+package com.convenionchain.backend.security;
 
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
+//import io.jsonwebtoken.*;
+//import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

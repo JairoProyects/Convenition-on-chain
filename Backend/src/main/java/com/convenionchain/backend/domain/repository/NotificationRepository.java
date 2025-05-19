@@ -1,8 +1,9 @@
-package com.zkbytebandits.convenio.repository;
+package com.convenionchain.backend.domain.repository;
 
-import com.zkbytebandits.convenio.entity.Notification;
+
 // Import User entity when available
 // import com.convenionchain.backend.domain.entity.User;
+import com.convenionchain.backend.domain.entity.Notification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

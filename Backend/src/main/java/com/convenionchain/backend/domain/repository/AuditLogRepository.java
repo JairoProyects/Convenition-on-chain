@@ -1,6 +1,6 @@
-package com.zkbytebandits.convenio.repository;
+package com.convenionchain.backend.domain.repository;
 
-import com.zkbytebandits.convenio.entity.AuditLog;
+import com.convenionchain.backend.domain.entity.AuditLog;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

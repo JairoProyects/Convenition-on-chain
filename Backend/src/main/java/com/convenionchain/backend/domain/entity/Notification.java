@@ -1,4 +1,4 @@
-package com.zkbytebandits.convenio.entity;
+package com.convenionchain.backend.domain.entity;
 
 import com.zkbytebandits.convenio.entity.User;
 
