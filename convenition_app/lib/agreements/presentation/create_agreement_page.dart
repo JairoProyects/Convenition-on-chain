@@ -69,7 +69,7 @@ class _CreateAgreementPageState extends State<CreateAgreementPage> {
     if (_formKey.currentState!.validate() &&
         _descripcion != null &&
         _fechaVencimiento != null) {
-      final convenio = Convenio(
+      final convenio = ConvenioModel(
         id: const Uuid().v4(),
         timestamp: DateTime.now(),
         monto: double.parse(_montoController.text),

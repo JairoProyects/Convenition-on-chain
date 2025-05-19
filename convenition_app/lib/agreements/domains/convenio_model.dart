@@ -1,4 +1,4 @@
-class Convenio {
+class ConvenioModel {
   final String id;                    // ID off-chain o on-chain
   final DateTime timestamp;          // Fecha de creación (off-chain)
   final double monto;                // Valor económico acordado
@@ -14,7 +14,7 @@ class Convenio {
   final List<String> firmas;         // Firmas on-chain
   final String estado;               // Estado: Idle, SignedByOne, Completed
 
-  Convenio({
+  ConvenioModel({
     required this.id,
     required this.timestamp,
     required this.monto,
@@ -29,8 +29,8 @@ class Convenio {
   });
 
   // Método auxiliar si luego conectas con backend
-  factory Convenio.fromJson(Map<String, dynamic> json) {
-    return Convenio(
+  factory ConvenioModel.fromJson(Map<String, dynamic> json) {
+    return ConvenioModel(
       id: json['id'],
       timestamp: DateTime.parse(json['timestamp']),
       monto: json['monto'].toDouble(),

@@ -13,8 +13,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final TextEditingController _searchController = TextEditingController();
-  List<Convenio> allConvenios = []; // llenado simulado abajo
-  List<Convenio> filteredConvenios = [];
+  List<ConvenioModel> allConvenios = []; // llenado simulado abajo
+  List<ConvenioModel> filteredConvenios = [];
 
   @override
   void initState() {
