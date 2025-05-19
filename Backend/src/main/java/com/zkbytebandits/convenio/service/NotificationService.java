@@ -3,8 +3,6 @@ package com.zkbytebandits.convenio.service;
 import com.zkbytebandits.convenio.entity.Notification;
 import com.zkbytebandits.convenio.repository.notification.NotificationRepository;
 import com.zkbytebandits.convenio.entity.User;
-// Assuming UserRepository will be in com.zkbytebandits.convenio.repository.user.UserRepository
-// import com.zkbytebandits.convenio.repository.user.UserRepository; 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,18 +13,16 @@ import java.util.List;
 public class NotificationService {
 
     private final NotificationRepository notificationRepository;
-    // private final UserRepository userRepository; // For fetching User entities if needed
 
     @Autowired
-    public NotificationService(NotificationRepository notificationRepository) { // , UserRepository userRepository) {
+    public NotificationService(NotificationRepository notificationRepository) {
         this.notificationRepository = notificationRepository;
-        // this.userRepository = userRepository;
     }
 
     @Transactional
-    public Notification createNotification(User user, String message, String type, String link) {
+    public Notification createNotification(User actor, String message, String type, String link) {
         Notification notification = Notification.builder()
-                .user(user)
+                .user(actor)
                 .message(message)
                 .type(type)
                 .link(link)
@@ -44,7 +40,7 @@ public class NotificationService {
                 .link(link)
                 .isRead(false)
                 .build();
-        
+
         if (userId != null) {
             System.err.println("Warning: Creating notification with userId. User link will be missing as User entity is not fetched here. Consider fetching User by ID and setting it.");
         }
@@ -53,19 +49,18 @@ public class NotificationService {
 
     @Transactional(readOnly = true)
     public List<Notification> getUnreadNotifications(Long userId) {
-        // This query in NotificationRepository uses n.user.id, which should work if User has an 'id' field named 'userId'
-        return notificationRepository.findByUserIdAndIsReadFalseOrderByCreatedAtDesc(userId);
+        return notificationRepository.findByUserUserIdAndIsReadFalseOrderByCreatedAtDesc(userId);
     }
 
     @Transactional(readOnly = true)
     public List<Notification> getAllNotificationsForUser(Long userId) {
-        return notificationRepository.findByUserIdOrderByCreatedAtDesc(userId);
+        return notificationRepository.findByUserUserIdOrderByCreatedAtDesc(userId);
     }
 
     @Transactional
     public void markNotificationsAsRead(Long userId, List<Long> notificationIds) {
         if (notificationIds == null || notificationIds.isEmpty()) {
-            return; 
+            return;
         }
         notificationRepository.markAsRead(userId, notificationIds);
     }

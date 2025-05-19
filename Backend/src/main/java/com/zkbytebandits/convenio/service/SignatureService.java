@@ -33,7 +33,7 @@ public class SignatureService {
 
     @Transactional(readOnly = true)
     public List<Signature> getSignaturesForContract(Long contractId) {
-        return signatureRepository.findByContractId(contractId);
+        return signatureRepository.findByContractContractId(contractId);
     }
 
     @Transactional(readOnly = true)

@@ -10,7 +10,7 @@ import java.util.List;
 public interface SignatureRepository extends JpaRepository<Signature, Long> {
 
     // Find signatures by contract ID
-    List<Signature> findByContractId(Long contractId);
+    List<Signature> findByContractContractId(Long contractId);
 
     //  Find signatures by signer's wallet address
     List<Signature> findBySignerWalletAddress(String walletAddress);

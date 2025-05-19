@@ -15,13 +15,13 @@ import java.util.List;
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
 
     // Find notifications for a specific user, ordered by creation date descending
-    List<Notification> findByUserIdOrderByCreatedAtDesc(Long userId);
+    List<Notification> findByUserUserIdOrderByCreatedAtDesc(Long userId);
 
     // Find unread notifications for a specific user
-    List<Notification> findByUserIdAndIsReadFalseOrderByCreatedAtDesc(Long userId);
+    List<Notification> findByUserUserIdAndIsReadFalseOrderByCreatedAtDesc(Long userId);
 
     // Count unread notifications for a specific user
-    long countByUserIdAndIsReadFalse(Long userId);
+    long countByUserUserIdAndIsReadFalse(Long userId);
 
 
 
@@ -29,11 +29,11 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
 
     // Mark specific notifications as read for a user
     @Modifying
-    @Query("UPDATE Notification n SET n.isRead = true WHERE n.user.id = :userId AND n.id IN :notificationIds")
+    @Query("UPDATE Notification n SET n.isRead = true WHERE n.user.userId = :userId AND n.id IN :notificationIds")
     void markAsRead(Long userId, List<Long> notificationIds);
 
     // Mark all notifications as read for a user
     @Modifying
-    @Query("UPDATE Notification n SET n.isRead = true WHERE n.user.id = :userId")
+    @Query("UPDATE Notification n SET n.isRead = true WHERE n.user.userId = :userId")
     void markAllAsRead(Long userId);
 } 
