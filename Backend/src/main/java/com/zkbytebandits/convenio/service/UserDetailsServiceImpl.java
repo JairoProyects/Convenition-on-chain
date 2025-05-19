@@ -1,7 +1,6 @@
-package com.convenionchain.backend.service;
+package com.zkbytebandits.convenio.service;
 // Updated imports to use entities from Luis Torres's package
 import com.zkbytebandits.convenio.entity.User;
-import com.zkbytebandits.convenio.entity.Role; // Assuming User entity will have a getRoles() method returning Set<Role>
 import com.zkbytebandits.convenio.entity.UserRole; // Import UserRole
 import com.zkbytebandits.convenio.repository.user.UserRepository; // Assuming UserRepository path
 

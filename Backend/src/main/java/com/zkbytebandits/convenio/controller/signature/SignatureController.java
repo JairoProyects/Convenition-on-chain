@@ -1,7 +1,7 @@
-package com.convenionchain.backend.controller;
+package com.zkbytebandits.convenio.controller.signature;
 
-import com.convenionchain.backend.service.SignatureService;
-import com.convenionchain.backend.domain.entity.Signature;
+import com.zkbytebandits.convenio.service.SignatureService;
+import com.zkbytebandits.convenio.entity.Signature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

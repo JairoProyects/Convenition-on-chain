@@ -1,6 +1,6 @@
-package com.convenionchain.backend.controller;
+package com.zkbytebandits.convenio.controller.userDetails;
 
-import com.convenionchain.backend.service.UserDetailsServiceImpl;
+import com.zkbytebandits.convenio.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

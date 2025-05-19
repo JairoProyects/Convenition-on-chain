@@ -1,7 +1,7 @@
-package com.convenionchain.backend.controller;
+package com.zkbytebandits.convenio.controller.auditLog;
 
-import com.convenionchain.backend.service.AuditLogService;
-import com.convenionchain.backend.domain.entity.AuditLog;
+import com.zkbytebandits.convenio.service.AuditLogService;
+import com.zkbytebandits.convenio.entity.AuditLog;
 import com.zkbytebandits.convenio.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

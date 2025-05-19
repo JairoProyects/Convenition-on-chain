@@ -1,6 +1,5 @@
-package com.convenionchain.backend.domain.entity;
+package com.zkbytebandits.convenio.entity;
 
-import com.zkbytebandits.convenio.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

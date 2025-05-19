@@ -1,6 +1,6 @@
-package com.convenionchain.backend.security;
+package com.zkbytebandits.convenio.security;
 
-//import com.convenionchain.backend.service.UserDetailsServiceImpl;
+//import com.zkbytebandits.convenio.service.UserDetailsServiceImpl;
 //import io.micrometer.common.lang.NonNull;
 //import jakarta.servlet.FilterChain;
 //import jakarta.servlet.ServletException;

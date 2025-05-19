@@ -1,7 +1,7 @@
-package com.convenionchain.backend.controller;
+package com.zkbytebandits.convenio.controller.notification;
 
-import com.convenionchain.backend.service.NotificationService;
-import com.convenionchain.backend.domain.entity.Notification;
+import com.zkbytebandits.convenio.service.NotificationService;
+import com.zkbytebandits.convenio.entity.Notification;
 import com.zkbytebandits.convenio.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

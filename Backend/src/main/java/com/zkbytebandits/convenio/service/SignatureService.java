@@ -1,8 +1,8 @@
-package com.convenionchain.backend.service;
+package com.zkbytebandits.convenio.service;
 // Import Contract entity when available
 // import com.zkbytebandits.convenio.entity.Contract.Contract;
-import com.convenionchain.backend.domain.entity.Signature;
-import com.convenionchain.backend.domain.repository.SignatureRepository;
+import com.zkbytebandits.convenio.entity.Signature;
+import com.zkbytebandits.convenio.repository.signature.SignatureRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -1,4 +1,4 @@
-package com.convenionchain.backend.security;
+package com.zkbytebandits.convenio.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;

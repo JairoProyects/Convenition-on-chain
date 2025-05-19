@@ -1,7 +1,7 @@
-package com.convenionchain.backend.service;
+package com.zkbytebandits.convenio.service;
 
-import com.convenionchain.backend.domain.entity.Notification;
-import com.convenionchain.backend.domain.repository.NotificationRepository;
+import com.zkbytebandits.convenio.entity.Notification;
+import com.zkbytebandits.convenio.repository.notification.NotificationRepository;
 import com.zkbytebandits.convenio.entity.User;
 // Assuming UserRepository will be in com.zkbytebandits.convenio.repository.user.UserRepository
 // import com.zkbytebandits.convenio.repository.user.UserRepository; 
