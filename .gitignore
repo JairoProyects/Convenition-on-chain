@@ -6,6 +6,18 @@ build/
 .pub/
 .melos_tool/
 
+# Flutter specific build artifacts
+*.flutter-plugins
+*.flutter-plugins-dependencies
+.metadata
+ios/Flutter/Generated.xcconfig
+macos/Flutter/Generated.xcconfig
+android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java
+
+# Test Coverage
+coverage/
+lcov.info
+
 # IDEs
 # IntelliJ / Android Studio
 *.iml
@@ -32,7 +44,6 @@ macos/Runner.xcworkspace/
 
 # Objets y logs
 *.log
-*.lock
 *.tmp
 *.swp
 
