@@ -2,49 +2,49 @@ import 'package:flutter/material.dart';
 import 'app_colors.dart';
 
 class AppTextStyles {
-  static const TextStyle heading1 = TextStyle(
-    fontSize: 24,
-    fontWeight: FontWeight.bold,
-    color: AppColors.textPrimary,
-  );
+  static TextStyle heading1(AppColorScheme colors) => TextStyle(
+        fontSize: 24,
+        fontWeight: FontWeight.bold,
+        color: colors.textPrimary,
+      );
 
-  static const TextStyle heading2 = TextStyle(
-    fontSize: 20,
-    fontWeight: FontWeight.bold,
-    color: AppColors.textPrimary,
-  );
+  static TextStyle heading2(AppColorScheme colors) => TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+        color: colors.textPrimary,
+      );
 
-  static const TextStyle subtitle = TextStyle(
-    fontSize: 16,
-    fontWeight: FontWeight.w600,
-    color: AppColors.textSecondary,
-  );
+  static TextStyle subtitle(AppColorScheme colors) => TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w600,
+        color: colors.textSecondary,
+      );
 
-  static const TextStyle body = TextStyle(
-    fontSize: 14,
-    fontWeight: FontWeight.normal,
-    color: AppColors.textPrimary,
-  );
+  static TextStyle body(AppColorScheme colors) => TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.normal,
+        color: colors.textPrimary,
+      );
 
-  static const TextStyle bodyMuted = TextStyle(
-    fontSize: 14,
-    color: AppColors.textSecondary,
-  );
+  static TextStyle bodyMuted(AppColorScheme colors) => TextStyle(
+        fontSize: 14,
+        color: colors.textSecondary,
+      );
 
-  static const TextStyle caption = TextStyle(
-    fontSize: 12,
-    color: AppColors.textSecondary,
-  );
+  static TextStyle caption(AppColorScheme colors) => TextStyle(
+        fontSize: 12,
+        color: colors.textSecondary,
+      );
 
-  static const TextStyle emphasis = TextStyle(
-    fontSize: 14,
-    fontWeight: FontWeight.w500,
-    color: AppColors.textHighlight,
-  );
+  static TextStyle emphasis(AppColorScheme colors) => TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+        color: colors.textHighlight,
+      );
 
-  static const TextStyle button = TextStyle(
-    fontSize: 16,
-    fontWeight: FontWeight.w600,
-    color: AppColors.textPrimary,
-  );
+  static TextStyle button(AppColorScheme colors) => TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w600,
+        color: colors.textPrimary,
+      );
 }

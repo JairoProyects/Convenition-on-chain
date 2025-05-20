@@ -9,6 +9,10 @@ void showConfirmationModal(
   String buttonText = "Okay! Got it",
   VoidCallback? onConfirm,
 }) {
+  final colors = Theme.of(context).brightness == Brightness.dark
+      ? AppColors.dark
+      : AppColors.light;
+
   showGeneralDialog(
     context: context,
     barrierDismissible: true,
@@ -23,7 +27,7 @@ void showConfirmationModal(
             width: MediaQuery.of(context).size.width * 0.9,
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: AppColors.panelBackground,
+              color: colors.panelBackground,
               borderRadius: BorderRadius.circular(24),
             ),
             child: Theme(
@@ -37,8 +41,8 @@ void showConfirmationModal(
                   Text(
                     message,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: AppColors.textPrimary,
+                    style: TextStyle(
+                      color: colors.textPrimary,
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
                       decoration: TextDecoration.none,
@@ -47,7 +51,7 @@ void showConfirmationModal(
                   const SizedBox(height: 20),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.accentBlue,
+                      backgroundColor: colors.accentBlue,
                       foregroundColor: Colors.black,
                       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                       shape: RoundedRectangleBorder(
@@ -77,6 +81,10 @@ void showConfirmationModal(
 }
 
 void showSwapModal(BuildContext context, VoidCallback onConfirmed) {
+  final colors = Theme.of(context).brightness == Brightness.dark
+      ? AppColors.dark
+      : AppColors.light;
+
   showGeneralDialog(
     context: context,
     barrierDismissible: true,
@@ -91,7 +99,7 @@ void showSwapModal(BuildContext context, VoidCallback onConfirmed) {
             width: MediaQuery.of(context).size.width * 0.9,
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: AppColors.panelBackground,
+              color: colors.panelBackground,
               borderRadius: BorderRadius.circular(24),
             ),
             child: Theme(
@@ -102,11 +110,11 @@ void showSwapModal(BuildContext context, VoidCallback onConfirmed) {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text(
+                  Text(
                     "Desliza para confirmar el contrato",
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: AppColors.textPrimary,
+                      color: colors.textPrimary,
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
                       decoration: TextDecoration.none,

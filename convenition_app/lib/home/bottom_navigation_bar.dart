@@ -37,19 +37,21 @@ class _MenuTopTabsPageState extends State<MenuTopTabsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).brightness == Brightness.dark
+        ? AppColors.dark
+        : AppColors.light;
+
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(gradient: AppColors.backgroundMain),
+        decoration: BoxDecoration(gradient: colors.backgroundMain),
         child: SafeArea(child: _screens[_selectedIndex]),
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onNavTapped,
-        backgroundColor: AppColors.panelBackground,
-        selectedItemColor:
-            AppColors.accentBlue, // ✅ Azul claro para item activo
-        unselectedItemColor: AppColors.textSecondary,
-        // ✅ Gris para item inactivo
+        backgroundColor: colors.panelBackground,
+        selectedItemColor: colors.accentBlue,
+        unselectedItemColor: colors.textSecondary,
         type: BottomNavigationBarType.fixed,
         items: _bottomNavItems,
       ),

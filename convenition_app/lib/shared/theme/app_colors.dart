@@ -1,51 +1,102 @@
 import 'package:flutter/material.dart';
 
+class AppColorScheme {
+  final Color textPrimary;
+  final Color textSecondary;
+  final Color textHighlight;
+
+  final Color accentBlue;
+  final Color accentGreen;
+  final Color borderGlow;
+
+  final LinearGradient backgroundMain;
+  final Color panelBackground;
+  final Color modalBackground;
+
+  final Color buttonPrimary;
+  final LinearGradient buttonSlideToSwap;
+
+  final Color successText;
+  final LinearGradient processingIndicator;
+
+  final Color fallbackBackground;
+
+  const AppColorScheme({
+    required this.textPrimary,
+    required this.textSecondary,
+    required this.textHighlight,
+    required this.accentBlue,
+    required this.accentGreen,
+    required this.borderGlow,
+    required this.backgroundMain,
+    required this.panelBackground,
+    required this.modalBackground,
+    required this.buttonPrimary,
+    required this.buttonSlideToSwap,
+    required this.successText,
+    required this.processingIndicator,
+    required this.fallbackBackground,
+  });
+}
+
 class AppColors {
-  // Texto
-  static const Color textPrimary = Color(0xFFFFFFFF);
-  static const Color textSecondary = Color(0xFF8A8A8A);
-  static const Color textHighlight = Color(0xFFFFFFFF);
-
-  // Íconos y acentos
-  static const Color accentBlue = Color(0xFF7BBFD9);
-  static const Color accentGreen = Color(0xFF26A17B);
-  static const Color borderGlow = Color(0xFF4A3A6A);
-
-  // Fondos
-  static const LinearGradient backgroundMain = LinearGradient(
-    begin: Alignment.topCenter,
-    end: Alignment.bottomCenter,
-    colors: [
-      Color(0xFF1A1033), // superior
-      Color(0xFF0D0522), // inferior
-    ],
+  // 🌙 Modo Oscuro
+  static const AppColorScheme dark = AppColorScheme(
+    textPrimary: Color(0xFFFFFFFF),
+    textSecondary: Color(0xFF8A8A8A),
+    textHighlight: Color(0xFFFFFFFF),
+    accentBlue: Color(0xFF7BBFD9),
+    accentGreen: Color(0xFF26A17B),
+    borderGlow: Color(0xFF4A3A6A),
+    backgroundMain: LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [Color(0xFF1A1033), Color(0xFF0D0522)],
+    ),
+    panelBackground: Color(0xFF13091E),
+    modalBackground: Color(0xFF0F0518),
+    buttonPrimary: Color(0xFF7BBFD9),
+    buttonSlideToSwap: LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [Color(0xFF1E1139), Color(0xFF2A1A4A)],
+    ),
+    successText: Color(0xFFFFFFFF),
+    processingIndicator: LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [Color(0xFF4A3A6A), Color(0xFF4A3A6A)],
+    ),
+    fallbackBackground: Color(0xFF1A1033),
   );
 
-  static const Color panelBackground = Color(0xFF13091E);
-  static const Color modalBackground = Color(0xFF0F0518);
-
-  // Botones
-  static const Color buttonPrimary = Color(0xFF7BBFD9); // Botón "Got it"
-  static const LinearGradient buttonSlideToSwap = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    colors: [
-      Color(0xFF1E1139),
-      Color(0xFF2A1A4A),
-    ],
+  // ☀️ Modo Claro
+  static final AppColorScheme light = AppColorScheme(
+    textPrimary: Colors.black,
+    textSecondary: Colors.grey.shade600,
+    textHighlight: Colors.black,
+    accentBlue: Colors.blue,
+    accentGreen: Colors.green.shade600,
+    borderGlow: Colors.grey.shade400,
+    backgroundMain: const LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [Colors.white, Colors.white],
+    ),
+    panelBackground: Colors.grey.shade100,
+    modalBackground: Colors.white,
+    buttonPrimary: Colors.blue,
+    buttonSlideToSwap: const LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [Color(0xFFE3E3E3), Color(0xFFD5D5D5)],
+    ),
+    successText: Colors.black,
+    processingIndicator: const LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [Color(0xFFCCCCCC), Color(0xFFAAAAAA)],
+    ),
+    fallbackBackground: Colors.white,
   );
-
-  // Estados
-  static const Color successText = Color(0xFFFFFFFF);
-  static const LinearGradient processingIndicator = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    colors: [
-      Color(0xFF4A3A6A),
-      Color(0xFF4A3A6A),
-    ],
-  );
-
-  // Fondo de fallback (ej. splash o error)
-  static const Color fallbackBackground = Color(0xFF1A1033);
 }

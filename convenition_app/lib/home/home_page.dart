@@ -13,37 +13,37 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final TextEditingController _searchController = TextEditingController();
-  List<ConvenioModel> allConvenios = []; // llenado simulado abajo
+  List<ConvenioModel> allConvenios = [];
   List<ConvenioModel> filteredConvenios = [];
 
   @override
   void initState() {
     super.initState();
-
-    // Simulación de convenios
-    allConvenios = [];
-
+    allConvenios = []; // Simulación de convenios
     filteredConvenios = List.from(allConvenios);
   }
 
   void _searchConvenios(String query) {
     setState(() {
-      filteredConvenios =
-          allConvenios
-              .where(
-                (c) =>
-                    c.descripcion.toLowerCase().contains(query.toLowerCase()) ||
-                    c.condiciones.toLowerCase().contains(query.toLowerCase()),
-              )
-              .toList();
+      filteredConvenios = allConvenios
+          .where(
+            (c) =>
+                c.descripcion.toLowerCase().contains(query.toLowerCase()) ||
+                c.condiciones.toLowerCase().contains(query.toLowerCase()),
+          )
+          .toList();
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).brightness == Brightness.dark
+        ? AppColors.dark
+        : AppColors.light;
+
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(gradient: AppColors.backgroundMain),
+        decoration: BoxDecoration(gradient: colors.backgroundMain),
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(16),
@@ -54,11 +54,11 @@ class _HomePageState extends State<HomePage> {
                   onSearchChanged: _searchConvenios,
                 ),
                 const SizedBox(height: 16),
-                _buildBreadcrumb(context),
+                _buildBreadcrumb(context, colors),
                 const SizedBox(height: 12),
-                _buildTableHeader(),
+                _buildTableHeader(colors),
                 const SizedBox(height: 8),
-                Expanded(child: _buildConvenioList()),
+                Expanded(child: _buildConvenioList(colors)),
               ],
             ),
           ),
@@ -67,43 +67,43 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildBreadcrumb(BuildContext context) {
+  Widget _buildBreadcrumb(BuildContext context, AppColorScheme colors) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const Text('Convenios Activos', style: AppTextStyles.heading2),
+        Text('Convenios Activos', style: AppTextStyles.heading2(colors)),
         Row(
           children: [
             GestureDetector(
               onTap: () => Navigator.pop(context),
-              child: const Text('Home', style: AppTextStyles.caption),
+              child: Text('Home', style: AppTextStyles.caption(colors)),
             ),
             const SizedBox(width: 4),
-            const Icon(
+            Icon(
               Icons.chevron_right,
-              color: AppColors.textSecondary,
+              color: colors.textSecondary,
               size: 14,
             ),
             const SizedBox(width: 4),
-            const Text('Convenios', style: AppTextStyles.caption),
+            Text('Convenios', style: AppTextStyles.caption(colors)),
           ],
         ),
       ],
     );
   }
 
-  Widget _buildTableHeader() {
+  Widget _buildTableHeader(AppColorScheme colors) {
     return Row(
-      children: const [
-        SizedBox(width: 32), // espacio para el checkbox
-        Expanded(child: Text('Item List', style: AppTextStyles.caption)),
-        SizedBox(width: 16),
-        Text('Opciones', style: AppTextStyles.caption),
+      children: [
+        const SizedBox(width: 32),
+        Expanded(child: Text('Item List', style: AppTextStyles.caption(colors))),
+        const SizedBox(width: 16),
+        Text('Opciones', style: AppTextStyles.caption(colors)),
       ],
     );
   }
 
-  Widget _buildConvenioList() {
+  Widget _buildConvenioList(AppColorScheme colors) {
     return ListView.builder(
       itemCount: filteredConvenios.length,
       itemBuilder: (context, index) {
@@ -112,7 +112,7 @@ class _HomePageState extends State<HomePage> {
           padding: const EdgeInsets.only(bottom: 12),
           child: Container(
             decoration: BoxDecoration(
-              color: AppColors.panelBackground,
+              color: colors.panelBackground,
               borderRadius: BorderRadius.circular(12),
             ),
             padding: const EdgeInsets.all(12),
@@ -127,18 +127,18 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       Text(
                         convenio.descripcion,
-                        style: AppTextStyles.body.copyWith(
+                        style: AppTextStyles.body(colors).copyWith(
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
                         'Participantes: ${convenio.participantes}',
-                        style: AppTextStyles.caption,
+                        style: AppTextStyles.caption(colors),
                       ),
                     ],
                   ),
                 ),
-                const Icon(Icons.more_vert, color: AppColors.textSecondary),
+                Icon(Icons.more_vert, color: colors.textSecondary),
               ],
             ),
           ),
