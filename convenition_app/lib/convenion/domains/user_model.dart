@@ -87,3 +87,44 @@ class UserModel {
     };
   }
 }
+class CreateUserDto {
+  final String username;
+  final String email;
+  final String password;    // el backend espera .getPassword()
+  final String firstName;
+  final String lastName;
+
+  CreateUserDto({
+    required this.username,
+    required this.email,
+    required this.password,
+    required this.firstName,
+    required this.lastName,
+  });
+
+  Map<String,dynamic> toJson() => {
+    'username' : username,
+    'email'    : email,
+    'password' : password,
+    'firstName': firstName,
+    'lastName' : lastName,
+  };
+}
+
+class UpdateUserDto {
+  final String firstName;
+  final String lastName;
+  final String status;      // "ACTIVO", "INACTIVO", etc.
+
+  UpdateUserDto({
+    required this.firstName,
+    required this.lastName,
+    required this.status,
+  });
+
+  Map<String,dynamic> toJson() => {
+    'firstName': firstName,
+    'lastName' : lastName,
+    'status'   : status,
+  };
+}
