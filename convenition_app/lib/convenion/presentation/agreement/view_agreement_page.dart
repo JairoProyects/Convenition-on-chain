@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../../../shared/theme/app_text_styles.dart';
+import '../../../shared/widgets/breadcrumb_widget.dart';
 import '../../../home/custom_app_bar.dart';
 
 class ViewAgreementPage extends StatefulWidget {
@@ -12,47 +13,34 @@ class ViewAgreementPage extends StatefulWidget {
 
 class _ViewAgreementPageState extends State<ViewAgreementPage> {
   final TextEditingController _searchController = TextEditingController();
-
-  final List<Map<String, dynamic>> _allAgreements = [
-    {
-      "title": "Contrato de Servicios",
-      "body": "Ambas partes acuerdan los términos de prestación de servicios...",
-      "expirationDate": "2025-12-01",
-      "signed": true,
-      "hash": "0xA1B2C3D4E5F6...",
-    },
-    {
-      "title": "Convenio de colaboración",
-      "body": "Compromiso de ambas partes en el desarrollo del proyecto...",
-      "expirationDate": "2025-10-15",
-      "signed": false,
-      "hash": "0xDEADBEEF1234...",
-    },
-  ];
-
-  List<Map<String, dynamic>> _filteredAgreements = [];
+  bool _isLoading = true;
+  List<Map<String, dynamic>> agreements = [];
 
   @override
   void initState() {
     super.initState();
-    _filteredAgreements = List.from(_allAgreements);
+    _fetchAgreements();
+  }
+
+  Future<void> _fetchAgreements() async {
+    // Simulación: reemplazar con tu service real
+    await Future.delayed(const Duration(seconds: 1));
+    setState(() {
+      agreements = []; // Aquí colocarás los datos desde tu backend
+      _isLoading = false;
+    });
   }
 
   void _searchAgreements(String query) {
-    setState(() {
-      _filteredAgreements = _allAgreements
-          .where((agreement) =>
-              agreement['title'].toLowerCase().contains(query.toLowerCase()) ||
-              agreement['body'].toLowerCase().contains(query.toLowerCase()))
-          .toList();
-    });
+    // Implementa tu lógica si vas a usar búsqueda local
   }
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).brightness == Brightness.dark
-        ? AppColors.dark
-        : AppColors.light;
+    final colors =
+        Theme.of(context).brightness == Brightness.dark
+            ? AppColors.dark
+            : AppColors.light;
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -70,102 +58,93 @@ class _ViewAgreementPageState extends State<ViewAgreementPage> {
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        decoration: BoxDecoration(
-          gradient: colors.backgroundMain,
-        ),
+        decoration: BoxDecoration(gradient: colors.backgroundMain),
         child: SafeArea(
-          child: ListView.builder(
-            itemCount: _filteredAgreements.length,
-            padding: const EdgeInsets.all(16),
-            itemBuilder: (context, index) {
-              final agreement = _filteredAgreements[index];
-              return Container(
-                margin: const EdgeInsets.only(bottom: 16),
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: colors.panelBackground,
-                  borderRadius: BorderRadius.circular(12),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                BreadcrumbWidget(
+                  items: ['Inicio', 'Convenios', 'Ver'],
+                  colors: colors,
+                  onTap: (index) {
+                    if (index == 0) {
+                      Navigator.popUntil(context, (route) => route.isFirst);
+                    } else if (index == 1) {
+                      Navigator.pop(context);
+                    }
+                  },
                 ),
-                child: InkWell(
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (_) => AlertDialog(
-                        backgroundColor: colors.modalBackground,
-                        title: Text(
-                          agreement['title'],
-                          style: AppTextStyles.heading2(colors),
-                        ),
-                        content: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(agreement['body'], style: AppTextStyles.body(colors)),
-                            const SizedBox(height: 8),
-                            Text("Expira: ${agreement['expirationDate']}",
-                                style: AppTextStyles.bodyMuted(colors)),
-                            Text("Hash: ${agreement['hash']}",
-                                style: AppTextStyles.caption(colors)),
-                            Text(
-                              "Estado: ${agreement['signed'] ? 'Firmado por ambas partes' : 'Pendiente de firma'}",
+                const SizedBox(height: 16),
+                Expanded(
+                  child:
+                      _isLoading
+                          ? const Center(child: CircularProgressIndicator())
+                          : agreements.isEmpty
+                          ? Center(
+                            child: Text(
+                              "No hay convenios disponibles.",
                               style: AppTextStyles.bodyMuted(colors),
                             ),
-                          ],
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: Text(
-                              "Cerrar",
-                              style: TextStyle(color: colors.accentBlue),
-                            ),
+                          )
+                          : ListView.builder(
+                            itemCount: agreements.length,
+                            itemBuilder: (context, index) {
+                              final agreement = agreements[index];
+                              return Container(
+                                margin: const EdgeInsets.only(bottom: 16),
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: colors.panelBackground,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      agreement['title'] ?? '',
+                                      style: AppTextStyles.subtitle(colors),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      agreement['body'] ?? '',
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: AppTextStyles.bodyMuted(colors),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      "Expira: ${agreement['expirationDate'] ?? ''}",
+                                      style: AppTextStyles.caption(colors),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          "Hash: ${agreement['hash'] ?? ''}",
+                                          style: AppTextStyles.caption(colors),
+                                        ),
+                                        Icon(
+                                          (agreement['signed'] ?? false)
+                                              ? Icons.verified_rounded
+                                              : Icons.pending_actions_rounded,
+                                          color:
+                                              (agreement['signed'] ?? false)
+                                                  ? colors.accentBlue
+                                                  : colors.borderGlow,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
                           ),
-                        ],
-                      ),
-                    );
-                  },
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        agreement['title'],
-                        style: AppTextStyles.subtitle(colors),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        agreement['body'],
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: AppTextStyles.bodyMuted(colors),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        "Expira: ${agreement['expirationDate']}",
-                        style: AppTextStyles.caption(colors),
-                      ),
-                      const SizedBox(height: 4),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Hash: ${agreement['hash']}",
-                            style: AppTextStyles.caption(colors),
-                          ),
-                          Icon(
-                            agreement['signed']
-                                ? Icons.verified_rounded
-                                : Icons.pending_actions_rounded,
-                            color: agreement['signed']
-                                ? colors.accentBlue
-                                : colors.borderGlow,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
                 ),
-              );
-            },
+              ],
+            ),
           ),
         ),
       ),

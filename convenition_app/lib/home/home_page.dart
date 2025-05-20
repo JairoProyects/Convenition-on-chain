@@ -3,6 +3,8 @@ import '../../shared/theme/app_colors.dart';
 import '../../shared/theme/app_text_styles.dart';
 import '../convenion/domains/convenio_model.dart';
 import 'custom_app_bar.dart';
+import '../convenion/presentation/agreement/view_agreement_page.dart';
+import '../../shared/widgets/breadcrumb_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -16,30 +18,77 @@ class _HomePageState extends State<HomePage> {
   List<ConvenioModel> allConvenios = [];
   List<ConvenioModel> filteredConvenios = [];
 
+  static const int _itemsPerPage = 5;
+  int _currentPage = 0;
+
   @override
   void initState() {
     super.initState();
-    allConvenios = []; // Simulación de convenios
+
+    // Simulación de convenios
+    allConvenios = List.generate(
+      10,
+      (index) => ConvenioModel(
+        id: "$index",
+        timestamp: DateTime.now(),
+        monto: 1000.0,
+        firmado: index % 2 == 0,
+        participantes: 3,
+        hash: "0xHASH$index",
+        descripcion: "Convenio $index",
+        condiciones: "Condiciones $index",
+        vencimiento: DateTime.now().add(const Duration(days: 30)),
+        firmas: [],
+        estado: "Idle",
+      ),
+    );
+
     filteredConvenios = List.from(allConvenios);
   }
 
   void _searchConvenios(String query) {
     setState(() {
-      filteredConvenios = allConvenios
-          .where(
-            (c) =>
-                c.descripcion.toLowerCase().contains(query.toLowerCase()) ||
-                c.condiciones.toLowerCase().contains(query.toLowerCase()),
-          )
-          .toList();
+      _currentPage = 0;
+      filteredConvenios =
+          allConvenios
+              .where(
+                (c) =>
+                    c.descripcion.toLowerCase().contains(query.toLowerCase()) ||
+                    c.condiciones.toLowerCase().contains(query.toLowerCase()),
+              )
+              .toList();
     });
+  }
+
+  void _nextPage() {
+    if ((_currentPage + 1) * _itemsPerPage < filteredConvenios.length) {
+      setState(() {
+        _currentPage++;
+      });
+    }
+  }
+
+  void _previousPage() {
+    if (_currentPage > 0) {
+      setState(() {
+        _currentPage--;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).brightness == Brightness.dark
-        ? AppColors.dark
-        : AppColors.light;
+    final colors =
+        Theme.of(context).brightness == Brightness.dark
+            ? AppColors.dark
+            : AppColors.light;
+
+    final start = _currentPage * _itemsPerPage;
+    final end = (_currentPage + 1) * _itemsPerPage;
+    final paginatedList = filteredConvenios.sublist(
+      start,
+      end > filteredConvenios.length ? filteredConvenios.length : end,
+    );
 
     return Scaffold(
       body: Container(
@@ -58,7 +107,9 @@ class _HomePageState extends State<HomePage> {
                 const SizedBox(height: 12),
                 _buildTableHeader(colors),
                 const SizedBox(height: 8),
-                Expanded(child: _buildConvenioList(colors)),
+                Expanded(child: _buildConvenioList(paginatedList, colors)),
+                const SizedBox(height: 12),
+                _buildPaginationControls(colors),
               ],
             ),
           ),
@@ -72,21 +123,14 @@ class _HomePageState extends State<HomePage> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text('Convenios Activos', style: AppTextStyles.heading2(colors)),
-        Row(
-          children: [
-            GestureDetector(
-              onTap: () => Navigator.pop(context),
-              child: Text('Home', style: AppTextStyles.caption(colors)),
-            ),
-            const SizedBox(width: 4),
-            Icon(
-              Icons.chevron_right,
-              color: colors.textSecondary,
-              size: 14,
-            ),
-            const SizedBox(width: 4),
-            Text('Convenios', style: AppTextStyles.caption(colors)),
-          ],
+        BreadcrumbWidget(
+          items: ['Inicio', 'Convenios'],
+          colors: colors,
+          onTap: (index) {
+            if (index == 0) {
+              Navigator.pop(context); // Solo ejemplo
+            }
+          },
         ),
       ],
     );
@@ -96,54 +140,103 @@ class _HomePageState extends State<HomePage> {
     return Row(
       children: [
         const SizedBox(width: 32),
-        Expanded(child: Text('Item List', style: AppTextStyles.caption(colors))),
-        const SizedBox(width: 16),
-        Text('Opciones', style: AppTextStyles.caption(colors)),
+        Expanded(
+          child: Text('Lista de Convenios', style: AppTextStyles.caption(colors)),
+        ),
+        TextButton(
+          onPressed: () {
+            print("Navegando a ViewAgreementPage desde encabezado de tabla");
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const ViewAgreementPage()),
+            );
+          },
+          child: Text(
+            'Ver más',
+            style: AppTextStyles.caption(colors).copyWith(
+              color: colors.accentBlue,
+              decoration: TextDecoration.underline,
+            ),
+          ),
+        ),
       ],
     );
   }
 
-  Widget _buildConvenioList(AppColorScheme colors) {
+  Widget _buildConvenioList(List<ConvenioModel> list, AppColorScheme colors) {
     return ListView.builder(
-      itemCount: filteredConvenios.length,
+      itemCount: list.length,
       itemBuilder: (context, index) {
-        final convenio = filteredConvenios[index];
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 12),
-          child: Container(
-            decoration: BoxDecoration(
-              color: colors.panelBackground,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            padding: const EdgeInsets.all(12),
-            child: Row(
-              children: [
-                Checkbox(value: false, onChanged: (_) {}),
-                ClipRRect(borderRadius: BorderRadius.circular(8)),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        convenio.descripcion,
-                        style: AppTextStyles.body(colors).copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        'Participantes: ${convenio.participantes}',
-                        style: AppTextStyles.caption(colors),
-                      ),
-                    ],
-                  ),
+        final convenio = list[index];
+        return Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: colors.panelBackground,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Checkbox(value: false, onChanged: (_) {}),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      convenio.descripcion,
+                      style: AppTextStyles.body(
+                        colors,
+                      ).copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Participantes: ${convenio.participantes}',
+                      style: AppTextStyles.caption(colors),
+                    ),
+                  ],
                 ),
-                Icon(Icons.more_vert, color: colors.textSecondary),
-              ],
-            ),
+              ),
+              TextButton(
+                onPressed: () {
+                  print("Entrando a detalle individual (no usado)");
+                },
+                child: Text(
+                  "Ver más",
+                  style: TextStyle(color: colors.accentBlue),
+                ),
+              ),
+            ],
           ),
         );
       },
+    );
+  }
+
+  Widget _buildPaginationControls(AppColorScheme colors) {
+    final totalPages = (filteredConvenios.length / _itemsPerPage).ceil();
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        IconButton(
+          icon: const Icon(Icons.chevron_left),
+          color: _currentPage > 0 ? colors.accentBlue : colors.textSecondary,
+          onPressed: _previousPage,
+        ),
+        Text(
+          'Página ${_currentPage + 1} de $totalPages',
+          style: AppTextStyles.caption(colors),
+        ),
+        IconButton(
+          icon: const Icon(Icons.chevron_right),
+          color:
+              (_currentPage + 1) < totalPages
+                  ? colors.accentBlue
+                  : colors.textSecondary,
+          onPressed: _nextPage,
+        ),
+      ],
     );
   }
 }

@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
+import 'package:starknet/starknet.dart';
 import '../../domains/convenio_model.dart';
 import 'agreement_details_page.dart';
 import '../../../shared/util/validators.dart';
 import '../../../shared/util/notifications.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../../../home/custom_app_bar.dart';
+import '../../../shared/widgets/breadcrumb_widget.dart';
 import '../../services/starknet_service.dart';
-import 'package:starknet/starknet.dart';
 
 class CreateAgreementPage extends StatefulWidget {
   const CreateAgreementPage({super.key});
@@ -20,7 +21,7 @@ class _CreateAgreementPageState extends State<CreateAgreementPage> {
   final _formKey = GlobalKey<FormState>();
   final _montoController = TextEditingController();
   final _participantesController = TextEditingController();
-  final TextEditingController _searchController = TextEditingController();
+  final _searchController = TextEditingController();
 
   String? _descripcion;
   String? _condiciones;
@@ -99,8 +100,7 @@ class _CreateAgreementPageState extends State<CreateAgreementPage> {
 
         showConfirmationModal(
           context,
-          message:
-              "Convenio creado exitosamente.\nTx Hash: ${txHash.toHexString()}",
+          message: "Convenio creado exitosamente.\nTx Hash: ${txHash.toHexString()}",
         );
 
         _formKey.currentState!.reset();
@@ -166,6 +166,18 @@ class _CreateAgreementPageState extends State<CreateAgreementPage> {
               key: _formKey,
               child: ListView(
                 children: [
+                  BreadcrumbWidget(
+                    items: ['Inicio', 'Convenios', 'Crear'],
+                    colors: colors,
+                    onTap: (index) {
+                      if (index == 0) {
+                        Navigator.popUntil(context, (route) => route.isFirst);
+                      } else if (index == 1) {
+                        Navigator.pop(context);
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 16),
                   TextFormField(
                     controller: _montoController,
                     decoration: const InputDecoration(
