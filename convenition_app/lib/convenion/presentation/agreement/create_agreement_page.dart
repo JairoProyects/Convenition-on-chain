@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
-import '../domains/convenio_model.dart';
+import '../../domains/convenio_model.dart';
 import 'agreement_details_page.dart';
-import '../../shared/util/validators.dart';
-import '../../shared/util/notifications.dart';
-import '../../shared/theme/app_colors.dart';
-import '../../home/custom_app_bar.dart';
-import '../services/starknet_service.dart';
+import '../../../shared/util/validators.dart';
+import '../../../shared/util/notifications.dart';
+import '../../../shared/theme/app_colors.dart';
+import '../../../home/custom_app_bar.dart';
+import '../../services/starknet_service.dart';
 import 'package:starknet/starknet.dart';
 
 class CreateAgreementPage extends StatefulWidget {
@@ -20,6 +20,7 @@ class _CreateAgreementPageState extends State<CreateAgreementPage> {
   final _formKey = GlobalKey<FormState>();
   final _montoController = TextEditingController();
   final _participantesController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
 
   String? _descripcion;
   String? _condiciones;
@@ -141,7 +142,9 @@ class _CreateAgreementPageState extends State<CreateAgreementPage> {
         child: Container(
           color: Colors.transparent,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          child: const CustomAppBar(),
+          child: CustomAppBar(
+            controller: _searchController,
+          ),
         ),
       ),
       body: Container(

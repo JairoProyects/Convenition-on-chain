@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../shared/theme/app_colors.dart';
-import '../../../shared/theme/app_text_styles.dart';
+import '../../../../shared/theme/app_colors.dart';
 
 class AgreementDetailsPage extends StatefulWidget {
   final Function(String descripcion, String condiciones, DateTime fecha)

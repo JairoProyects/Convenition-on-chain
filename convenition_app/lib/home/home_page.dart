@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../shared/theme/app_colors.dart';
 import '../../shared/theme/app_text_styles.dart';
-import '../agreements/domains/convenio_model.dart';
+import '../convenion/domains/convenio_model.dart';
 import 'custom_app_bar.dart';
 
 class HomePage extends StatefulWidget {
@@ -21,9 +21,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
 
     // Simulación de convenios
-    allConvenios = [
-      
-    ];
+    allConvenios = [];
 
     filteredConvenios = List.from(allConvenios);
   }
@@ -51,7 +49,10 @@ class _HomePageState extends State<HomePage> {
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
-                CustomAppBar(onSearchChanged: _searchConvenios),
+                CustomAppBar(
+                  controller: _searchController,
+                  onSearchChanged: _searchConvenios,
+                ),
                 const SizedBox(height: 16),
                 _buildBreadcrumb(context),
                 const SizedBox(height: 12),
@@ -118,9 +119,7 @@ class _HomePageState extends State<HomePage> {
             child: Row(
               children: [
                 Checkbox(value: false, onChanged: (_) {}),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                ),
+                ClipRRect(borderRadius: BorderRadius.circular(8)),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(

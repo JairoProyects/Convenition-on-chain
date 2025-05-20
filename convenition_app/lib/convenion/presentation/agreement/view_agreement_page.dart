@@ -1,30 +1,55 @@
 import 'package:flutter/material.dart';
-import '../../shared/theme/app_colors.dart';
-import '../../shared/theme/app_text_styles.dart';
-import '../../home/custom_app_bar.dart';
+import '../../../shared/theme/app_colors.dart';
+import '../../../shared/theme/app_text_styles.dart';
+import '../../../home/custom_app_bar.dart';
 
-class ViewAgreementPage extends StatelessWidget {
+class ViewAgreementPage extends StatefulWidget {
   const ViewAgreementPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> agreements = [
-      {
-        "title": "Contrato de Servicios",
-        "body": "Ambas partes acuerdan los términos de prestación de servicios...",
-        "expirationDate": "2025-12-01",
-        "signed": true,
-        "hash": "0xA1B2C3D4E5F6...",
-      },
-      {
-        "title": "Convenio de colaboración",
-        "body": "Compromiso de ambas partes en el desarrollo del proyecto...",
-        "expirationDate": "2025-10-15",
-        "signed": false,
-        "hash": "0xDEADBEEF1234...",
-      },
-    ];
+  State<ViewAgreementPage> createState() => _ViewAgreementPageState();
+}
 
+class _ViewAgreementPageState extends State<ViewAgreementPage> {
+  final TextEditingController _searchController = TextEditingController();
+
+  final List<Map<String, dynamic>> _allAgreements = [
+    {
+      "title": "Contrato de Servicios",
+      "body": "Ambas partes acuerdan los términos de prestación de servicios...",
+      "expirationDate": "2025-12-01",
+      "signed": true,
+      "hash": "0xA1B2C3D4E5F6...",
+    },
+    {
+      "title": "Convenio de colaboración",
+      "body": "Compromiso de ambas partes en el desarrollo del proyecto...",
+      "expirationDate": "2025-10-15",
+      "signed": false,
+      "hash": "0xDEADBEEF1234...",
+    },
+  ];
+
+  List<Map<String, dynamic>> _filteredAgreements = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _filteredAgreements = List.from(_allAgreements);
+  }
+
+  void _searchAgreements(String query) {
+    setState(() {
+      _filteredAgreements = _allAgreements
+          .where((agreement) =>
+              agreement['title'].toLowerCase().contains(query.toLowerCase()) ||
+              agreement['body'].toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: PreferredSize(
@@ -32,7 +57,10 @@ class ViewAgreementPage extends StatelessWidget {
         child: Container(
           color: Colors.transparent,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          child: const CustomAppBar(),
+          child: CustomAppBar(
+            controller: _searchController,
+            onSearchChanged: _searchAgreements,
+          ),
         ),
       ),
       body: Container(
@@ -43,10 +71,10 @@ class ViewAgreementPage extends StatelessWidget {
         ),
         child: SafeArea(
           child: ListView.builder(
-            itemCount: agreements.length,
+            itemCount: _filteredAgreements.length,
             padding: const EdgeInsets.all(16),
             itemBuilder: (context, index) {
-              final agreement = agreements[index];
+              final agreement = _filteredAgreements[index];
               return Container(
                 margin: const EdgeInsets.only(bottom: 16),
                 padding: const EdgeInsets.all(16),
