@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../shared/theme/app_colors.dart';
 import '../shared/theme/app_text_styles.dart';
+import '../shared/theme/theme_provider.dart';
 import '../convenion/presentation/profile/profile_page.dart';
 
 class CustomAppBar extends StatelessWidget {
@@ -15,13 +17,18 @@ class CustomAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final colors = Theme.of(context).brightness == Brightness.dark
+        ? AppColors.dark
+        : AppColors.light;
+
     return Row(
       children: [
         Container(
           width: 36,
           height: 36,
           decoration: BoxDecoration(
-            color: AppColors.accentBlue,
+            color: colors.accentBlue,
             borderRadius: BorderRadius.circular(8),
           ),
           child: const Icon(Icons.camera_alt_rounded, color: Colors.white, size: 20),
@@ -32,21 +39,21 @@ class CustomAppBar extends StatelessWidget {
             height: 36,
             padding: const EdgeInsets.symmetric(horizontal: 12),
             decoration: BoxDecoration(
-              color: AppColors.panelBackground,
+              color: colors.panelBackground,
               borderRadius: BorderRadius.circular(18),
             ),
             child: Row(
               children: [
-                const Icon(Icons.search, color: AppColors.textSecondary, size: 20),
+                Icon(Icons.search, color: colors.textSecondary, size: 20),
                 const SizedBox(width: 8),
                 Expanded(
                   child: TextField(
                     controller: controller,
                     onChanged: onSearchChanged,
-                    style: AppTextStyles.body,
-                    decoration: const InputDecoration(
+                    style: AppTextStyles.body(colors),
+                    decoration: InputDecoration(
                       hintText: 'Buscar...',
-                      hintStyle: AppTextStyles.bodyMuted,
+                      hintStyle: AppTextStyles.bodyMuted(colors),
                       border: InputBorder.none,
                       isCollapsed: true,
                     ),
@@ -57,9 +64,15 @@ class CustomAppBar extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 12),
-        const Icon(Icons.light_mode_outlined, color: AppColors.textSecondary),
+        IconButton(
+          icon: Icon(
+            themeProvider.isDarkMode ? Icons.light_mode : Icons.dark_mode,
+            color: colors.textSecondary,
+          ),
+          onPressed: () => themeProvider.toggleTheme(),
+        ),
         const SizedBox(width: 12),
-        const Icon(Icons.notifications_outlined, color: AppColors.textSecondary),
+        Icon(Icons.notifications_outlined, color: colors.textSecondary),
         const SizedBox(width: 12),
         GestureDetector(
           onTap: () {

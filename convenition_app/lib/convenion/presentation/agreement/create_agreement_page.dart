@@ -49,19 +49,18 @@ class _CreateAgreementPageState extends State<CreateAgreementPage> {
     await Navigator.push(
       context,
       MaterialPageRoute(
-        builder:
-            (context) => AgreementDetailsPage(
-              initialDescripcion: _descripcion,
-              initialCondiciones: _condiciones,
-              initialFecha: _fechaVencimiento,
-              onDetailsCompleted: (descripcion, condiciones, fecha) {
-                setState(() {
-                  _descripcion = descripcion;
-                  _condiciones = condiciones;
-                  _fechaVencimiento = fecha;
-                });
-              },
-            ),
+        builder: (context) => AgreementDetailsPage(
+          initialDescripcion: _descripcion,
+          initialCondiciones: _condiciones,
+          initialFecha: _fechaVencimiento,
+          onDetailsCompleted: (descripcion, condiciones, fecha) {
+            setState(() {
+              _descripcion = descripcion;
+              _condiciones = condiciones;
+              _fechaVencimiento = fecha;
+            });
+          },
+        ),
       ),
     );
   }
@@ -101,7 +100,7 @@ class _CreateAgreementPageState extends State<CreateAgreementPage> {
         showConfirmationModal(
           context,
           message:
-              "Convenio creado exitosamente.\\nTx Hash: \${txHash.toHexString()}",
+              "Convenio creado exitosamente.\nTx Hash: ${txHash.toHexString()}",
         );
 
         _formKey.currentState!.reset();
@@ -119,10 +118,9 @@ class _CreateAgreementPageState extends State<CreateAgreementPage> {
         Navigator.pop(context);
         showConfirmationModal(
           context,
-          message: "Error al crear convenio:\\n\${e.toString()}",
+          message: "Error al crear convenio:\n${e.toString()}",
           buttonText: "Cerrar",
         );
-
         print(e.toString());
       }
     } else {
@@ -136,27 +134,29 @@ class _CreateAgreementPageState extends State<CreateAgreementPage> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).brightness == Brightness.dark
+        ? AppColors.dark
+        : AppColors.light;
+
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(56),
         child: Container(
           color: Colors.transparent,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          child: CustomAppBar(
-            controller: _searchController,
-          ),
+          child: CustomAppBar(controller: _searchController),
         ),
       ),
       body: Container(
-        decoration: const BoxDecoration(gradient: AppColors.backgroundMain),
+        decoration: BoxDecoration(gradient: colors.backgroundMain),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Theme(
-            data: ThemeData.dark().copyWith(
+            data: Theme.of(context).copyWith(
               inputDecorationTheme: InputDecorationTheme(
                 filled: true,
-                fillColor: AppColors.panelBackground,
-                labelStyle: const TextStyle(color: AppColors.textSecondary),
+                fillColor: colors.panelBackground,
+                labelStyle: TextStyle(color: colors.textSecondary),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -172,9 +172,8 @@ class _CreateAgreementPageState extends State<CreateAgreementPage> {
                       labelText: "Monto acordado (₡)",
                     ),
                     keyboardType: TextInputType.number,
-                    validator:
-                        (value) =>
-                            validatePositiveNumber(value, fieldName: "Monto"),
+                    validator: (value) =>
+                        validatePositiveNumber(value, fieldName: "Monto"),
                   ),
                   const SizedBox(height: 12),
                   TextFormField(
@@ -183,16 +182,15 @@ class _CreateAgreementPageState extends State<CreateAgreementPage> {
                       labelText: "Número de participantes",
                     ),
                     keyboardType: TextInputType.number,
-                    validator:
-                        (value) =>
-                            validateInteger(value, fieldName: "Participantes"),
+                    validator: (value) =>
+                        validateInteger(value, fieldName: "Participantes"),
                   ),
                   const SizedBox(height: 20),
                   ElevatedButton.icon(
                     onPressed: _abrirDetalles,
                     icon: const Icon(Icons.description),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.accentBlue,
+                      backgroundColor: colors.accentBlue,
                       foregroundColor: Colors.black,
                     ),
                     label: Text(
@@ -227,20 +225,16 @@ class _CreateAgreementPageState extends State<CreateAgreementPage> {
                     items: const [
                       DropdownMenuItem(value: 'Idle', child: Text('Idle')),
                       DropdownMenuItem(
-                        value: 'SignedByOne',
-                        child: Text('Firmado por uno'),
-                      ),
+                          value: 'SignedByOne', child: Text('Firmado por uno')),
                       DropdownMenuItem(
-                        value: 'Completed',
-                        child: Text('Completado'),
-                      ),
+                          value: 'Completed', child: Text('Completado')),
                     ],
                   ),
                   const SizedBox(height: 24),
                   ElevatedButton(
                     onPressed: _submitForm,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.accentBlue,
+                      backgroundColor: colors.accentBlue,
                       foregroundColor: Colors.black,
                     ),
                     child: const Text("Crear Convenio"),

@@ -1,7 +1,6 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:ui';
-
+import 'package:flutter/material.dart';
 import '../../shared/theme/app_colors.dart';
 
 class AdvancedSlideToSwap extends StatefulWidget {
@@ -68,6 +67,10 @@ class _AdvancedSlideToSwapState extends State<AdvancedSlideToSwap>
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).brightness == Brightness.dark
+        ? AppColors.dark
+        : AppColors.light;
+
     return GestureDetector(
       onHorizontalDragUpdate: _handleDragUpdate,
       onHorizontalDragEnd: _handleDragEnd,
@@ -77,19 +80,16 @@ class _AdvancedSlideToSwapState extends State<AdvancedSlideToSwap>
             height: 64,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(40),
-              gradient: const LinearGradient(
-                colors: [Color(0xFF1E1139), Color(0xFF2A1A4A)],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-              ),
+              gradient: colors.buttonSlideToSwap,
             ),
             padding: const EdgeInsets.symmetric(horizontal: 16),
             alignment: Alignment.center,
             child: Text(
               _isSwapping ? "Swap processing..." : "Slide to Swap",
               style: TextStyle(
-                color:
-                    _isSwapping ? AppColors.textSecondary : AppColors.accentBlue,
+                color: _isSwapping
+                    ? colors.textSecondary
+                    : colors.accentBlue,
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
                 decoration: TextDecoration.none,
@@ -105,14 +105,12 @@ class _AdvancedSlideToSwapState extends State<AdvancedSlideToSwap>
               height: 64,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: AppColors.borderGlow, width: 2),
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF1E1139), Color(0xFF2A1A4A)],
-                ),
+                border: Border.all(color: colors.borderGlow, width: 2),
+                gradient: colors.buttonSlideToSwap,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.double_arrow_rounded,
-                color: AppColors.accentBlue,
+                color: colors.accentBlue,
               ),
             ),
           ),
@@ -123,6 +121,10 @@ class _AdvancedSlideToSwapState extends State<AdvancedSlideToSwap>
 }
 
 void showSwapModal(BuildContext context, VoidCallback onConfirmed) {
+  final colors = Theme.of(context).brightness == Brightness.dark
+      ? AppColors.dark
+      : AppColors.light;
+
   showGeneralDialog(
     context: context,
     barrierDismissible: true,
@@ -137,7 +139,7 @@ void showSwapModal(BuildContext context, VoidCallback onConfirmed) {
             width: MediaQuery.of(context).size.width * 0.9,
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: AppColors.panelBackground,
+              color: colors.panelBackground,
               borderRadius: BorderRadius.circular(24),
             ),
             child: Column(
@@ -147,13 +149,13 @@ void showSwapModal(BuildContext context, VoidCallback onConfirmed) {
                   "Desliza para confirmar el contrato",
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: AppColors.textPrimary,
+                    color: colors.textPrimary,
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
                     decoration: TextDecoration.none,
                   ),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 AdvancedSlideToSwap(onSwapCompleted: onConfirmed),
               ],
             ),

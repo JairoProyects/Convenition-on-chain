@@ -3,7 +3,7 @@ import '../../../../shared/theme/app_colors.dart';
 
 class AgreementDetailsPage extends StatefulWidget {
   final Function(String descripcion, String condiciones, DateTime fecha)
-  onDetailsCompleted;
+      onDetailsCompleted;
   final String? initialDescripcion;
   final String? initialCondiciones;
   final DateTime? initialFecha;
@@ -40,6 +40,10 @@ class _AgreementDetailsPageState extends State<AgreementDetailsPage> {
   }
 
   void _pickDate() async {
+    final colors = Theme.of(context).brightness == Brightness.dark
+        ? AppColors.dark
+        : AppColors.light;
+
     final now = DateTime.now();
     final picked = await showDatePicker(
       context: context,
@@ -48,13 +52,21 @@ class _AgreementDetailsPageState extends State<AgreementDetailsPage> {
       lastDate: DateTime(now.year + 5),
       builder: (context, child) {
         return Theme(
-          data: ThemeData.dark().copyWith(
-            colorScheme: const ColorScheme.dark(
-              primary: AppColors.accentBlue,
-              onPrimary: AppColors.textPrimary,
-              surface: AppColors.panelBackground,
-              onSurface: AppColors.textPrimary,
-            ), dialogTheme: DialogThemeData(backgroundColor: AppColors.modalBackground),
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme(
+              brightness: Theme.of(context).brightness,
+              primary: colors.accentBlue,
+              onPrimary: colors.textPrimary,
+              surface: colors.panelBackground,
+              onSurface: colors.textPrimary,
+              background: colors.panelBackground,
+              onBackground: colors.textPrimary,
+              secondary: colors.accentGreen,
+              onSecondary: colors.textHighlight,
+              error: Colors.red,
+              onError: Colors.white,
+            ),
+            dialogBackgroundColor: colors.modalBackground,
           ),
           child: child!,
         );
@@ -89,28 +101,32 @@ class _AgreementDetailsPageState extends State<AgreementDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).brightness == Brightness.dark
+        ? AppColors.dark
+        : AppColors.light;
+
     return Scaffold(
       extendBodyBehindAppBar: false,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        title: const Text(
+        title: Text(
           "Detalles del Convenio",
-          style: TextStyle(color: AppColors.textPrimary),
+          style: TextStyle(color: colors.textPrimary),
         ),
         centerTitle: true,
         elevation: 0,
       ),
       body: Container(
-        decoration: const BoxDecoration(gradient: AppColors.backgroundMain),
+        decoration: BoxDecoration(gradient: colors.backgroundMain),
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Theme(
-              data: ThemeData.dark().copyWith(
+              data: Theme.of(context).copyWith(
                 inputDecorationTheme: InputDecorationTheme(
                   filled: true,
-                  fillColor: AppColors.panelBackground,
-                  labelStyle: const TextStyle(color: AppColors.textSecondary),
+                  fillColor: colors.panelBackground,
+                  labelStyle: TextStyle(color: colors.textSecondary),
                   errorStyle: const TextStyle(color: Colors.redAccent),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -127,11 +143,10 @@ class _AgreementDetailsPageState extends State<AgreementDetailsPage> {
                       decoration: const InputDecoration(
                         labelText: "Descripción del convenio",
                       ),
-                      validator:
-                          (value) =>
-                              value == null || value.isEmpty
-                                  ? "Este campo es obligatorio"
-                                  : null,
+                      validator: (value) =>
+                          value == null || value.isEmpty
+                              ? "Este campo es obligatorio"
+                              : null,
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
@@ -140,11 +155,10 @@ class _AgreementDetailsPageState extends State<AgreementDetailsPage> {
                       decoration: const InputDecoration(
                         labelText: "Condiciones adicionales",
                       ),
-                      validator:
-                          (value) =>
-                              value == null || value.isEmpty
-                                  ? "Este campo es obligatorio"
-                                  : null,
+                      validator: (value) =>
+                          value == null || value.isEmpty
+                              ? "Este campo es obligatorio"
+                              : null,
                     ),
                     const SizedBox(height: 12),
                     Column(
@@ -155,17 +169,16 @@ class _AgreementDetailsPageState extends State<AgreementDetailsPage> {
                               ? "Fecha seleccionada: ${_fechaVencimiento!.toLocal().toString().split(' ')[0]}"
                               : "Seleccioná la fecha de vencimiento",
                           style: TextStyle(
-                            color:
-                                _fechaInvalida
-                                    ? Colors.redAccent
-                                    : AppColors.textSecondary,
+                            color: _fechaInvalida
+                                ? Colors.redAccent
+                                : colors.textSecondary,
                           ),
                         ),
                         const SizedBox(height: 6),
                         ElevatedButton(
                           onPressed: _pickDate,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.accentBlue,
+                            backgroundColor: colors.accentBlue,
                             foregroundColor: Colors.black,
                           ),
                           child: const Text("Seleccionar fecha"),
@@ -187,7 +200,7 @@ class _AgreementDetailsPageState extends State<AgreementDetailsPage> {
                     ElevatedButton(
                       onPressed: _submitDetails,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.accentBlue,
+                        backgroundColor: colors.accentBlue,
                         foregroundColor: Colors.black,
                       ),
                       child: const Text("Guardar detalles"),

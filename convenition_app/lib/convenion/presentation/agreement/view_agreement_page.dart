@@ -50,6 +50,10 @@ class _ViewAgreementPageState extends State<ViewAgreementPage> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).brightness == Brightness.dark
+        ? AppColors.dark
+        : AppColors.light;
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: PreferredSize(
@@ -66,8 +70,8 @@ class _ViewAgreementPageState extends State<ViewAgreementPage> {
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: AppColors.backgroundMain,
+        decoration: BoxDecoration(
+          gradient: colors.backgroundMain,
         ),
         child: SafeArea(
           child: ListView.builder(
@@ -79,7 +83,7 @@ class _ViewAgreementPageState extends State<ViewAgreementPage> {
                 margin: const EdgeInsets.only(bottom: 16),
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: AppColors.panelBackground,
+                  color: colors.panelBackground,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: InkWell(
@@ -87,26 +91,34 @@ class _ViewAgreementPageState extends State<ViewAgreementPage> {
                     showDialog(
                       context: context,
                       builder: (_) => AlertDialog(
-                        backgroundColor: AppColors.modalBackground,
-                        title: Text(agreement['title'], style: AppTextStyles.heading2),
+                        backgroundColor: colors.modalBackground,
+                        title: Text(
+                          agreement['title'],
+                          style: AppTextStyles.heading2(colors),
+                        ),
                         content: Column(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(agreement['body'], style: AppTextStyles.body),
+                            Text(agreement['body'], style: AppTextStyles.body(colors)),
                             const SizedBox(height: 8),
-                            Text("Expira: ${agreement['expirationDate']}", style: AppTextStyles.bodyMuted),
-                            Text("Hash: ${agreement['hash']}", style: AppTextStyles.caption),
+                            Text("Expira: ${agreement['expirationDate']}",
+                                style: AppTextStyles.bodyMuted(colors)),
+                            Text("Hash: ${agreement['hash']}",
+                                style: AppTextStyles.caption(colors)),
                             Text(
                               "Estado: ${agreement['signed'] ? 'Firmado por ambas partes' : 'Pendiente de firma'}",
-                              style: AppTextStyles.bodyMuted,
+                              style: AppTextStyles.bodyMuted(colors),
                             ),
                           ],
                         ),
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.pop(context),
-                            child: const Text("Cerrar", style: TextStyle(color: AppColors.accentBlue)),
+                            child: Text(
+                              "Cerrar",
+                              style: TextStyle(color: colors.accentBlue),
+                            ),
                           ),
                         ],
                       ),
@@ -115,18 +127,21 @@ class _ViewAgreementPageState extends State<ViewAgreementPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(agreement['title'], style: AppTextStyles.subtitle),
+                      Text(
+                        agreement['title'],
+                        style: AppTextStyles.subtitle(colors),
+                      ),
                       const SizedBox(height: 8),
                       Text(
                         agreement['body'],
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: AppTextStyles.bodyMuted,
+                        style: AppTextStyles.bodyMuted(colors),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         "Expira: ${agreement['expirationDate']}",
-                        style: AppTextStyles.caption,
+                        style: AppTextStyles.caption(colors),
                       ),
                       const SizedBox(height: 4),
                       Row(
@@ -134,15 +149,15 @@ class _ViewAgreementPageState extends State<ViewAgreementPage> {
                         children: [
                           Text(
                             "Hash: ${agreement['hash']}",
-                            style: AppTextStyles.caption,
+                            style: AppTextStyles.caption(colors),
                           ),
                           Icon(
                             agreement['signed']
                                 ? Icons.verified_rounded
                                 : Icons.pending_actions_rounded,
                             color: agreement['signed']
-                                ? AppColors.accentBlue
-                                : AppColors.borderGlow,
+                                ? colors.accentBlue
+                                : colors.borderGlow,
                           ),
                         ],
                       ),
