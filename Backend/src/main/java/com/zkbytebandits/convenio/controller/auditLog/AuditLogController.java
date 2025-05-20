@@ -1,6 +1,7 @@
 package com.zkbytebandits.convenio.controller.auditLog;
 
-import com.zkbytebandits.convenio.service.AuditLogService;
+import com.zkbytebandits.convenio.service.auditLog.create.CreateAuditLogService;
+import com.zkbytebandits.convenio.service.auditLog.get.GetAuditLogService;
 import com.zkbytebandits.convenio.entity.AuditLog;
 import com.zkbytebandits.convenio.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +22,13 @@ import java.time.LocalDateTime;
 @RequestMapping("/api/auditlogs")
 public class AuditLogController {
 
-    private final AuditLogService auditLogService;
+    private final CreateAuditLogService createAuditLogService;
+    private final GetAuditLogService getAuditLogService;
 
     @Autowired
-    public AuditLogController(AuditLogService auditLogService) {
-        this.auditLogService = auditLogService;
+    public AuditLogController(CreateAuditLogService createAuditLogService, GetAuditLogService getAuditLogService) {
+        this.createAuditLogService = createAuditLogService;
+        this.getAuditLogService = getAuditLogService;
     }
 
     // DTO for recordEvent requests
@@ -40,26 +43,21 @@ public class AuditLogController {
     @PostMapping("/record")
     public ResponseEntity<Void> recordEvent(@RequestBody RecordEventRequest request) {
         if (request.details != null) {
-            auditLogService.recordEvent(request.user, request.action, request.resourceType, request.resourceId, request.details);
+            createAuditLogService.recordEvent(request.user, request.action, request.resourceType, request.resourceId, request.details);
         } else {
-            auditLogService.recordEvent(request.user, request.action, request.resourceType, request.resourceId);
+            createAuditLogService.recordEvent(request.user, request.action, request.resourceType, request.resourceId);
         }
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/actor")
-    public Page<AuditLog> findByActor(@RequestParam String actor, Pageable pageable) {
-        return auditLogService.findByActor(actor, pageable);
-    }
-
     @GetMapping("/action")
     public Page<AuditLog> findByAction(@RequestParam String action, Pageable pageable) {
-        return auditLogService.findByAction(action, pageable);
+        return getAuditLogService.findByAction(action, pageable);
     }
 
     @GetMapping("/resource")
     public Page<AuditLog> findByResourceTypeAndResourceId(@RequestParam String resourceType, @RequestParam String resourceId, Pageable pageable) {
-        return auditLogService.findByResourceTypeAndResourceId(resourceType, resourceId, pageable);
+        return getAuditLogService.findByResourceTypeAndResourceId(resourceType, resourceId, pageable);
     }
 
     @GetMapping("/timestamp")
@@ -67,6 +65,6 @@ public class AuditLogController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startTime,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endTime,
             Pageable pageable) {
-        return auditLogService.findByTimestampBetween(startTime, endTime, pageable);
+        return getAuditLogService.findByTimestampBetween(startTime, endTime, pageable);
     }
 } 

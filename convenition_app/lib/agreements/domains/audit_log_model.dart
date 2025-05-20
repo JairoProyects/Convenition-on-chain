@@ -3,7 +3,6 @@ import 'user_model.dart';
 class AuditLogModel {
   final int? id;
   final UserModel? user;
-  final String? actor;
   final String? action;
   final String? resourceType;
   final String? resourceId;
@@ -13,7 +12,6 @@ class AuditLogModel {
   AuditLogModel({
     this.id,
     this.user,
-    this.actor,
     this.action,
     this.resourceType,
     this.resourceId,
@@ -28,7 +26,6 @@ class AuditLogModel {
           json['user'] == null
               ? null
               : UserModel.fromJson(json['user'] as Map<String, dynamic>),
-      actor: json['actor'] as String?,
       action: json['action'] as String?,
       resourceType: json['resourceType'] as String?,
       resourceId: json['resourceId'] as String?,
@@ -44,7 +41,6 @@ class AuditLogModel {
     return {
       'id': id,
       'user': user?.toJson(),
-      'actor': actor,
       'action': action,
       'resourceType': resourceType,
       'resourceId': resourceId,

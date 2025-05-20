@@ -1,25 +1,21 @@
-package com.zkbytebandits.convenio.service;
+package com.zkbytebandits.convenio.service.auditLog.create;
 
 import com.zkbytebandits.convenio.entity.AuditLog;
-import com.zkbytebandits.convenio.repository.auditLog.AuditLogRepository;
 import com.zkbytebandits.convenio.entity.User;
+import com.zkbytebandits.convenio.repository.auditLog.AuditLogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-
 @Service
-public class AuditLogService {
+public class CreateAuditLogService {
 
     private final AuditLogRepository auditLogRepository;
 
     @Autowired
-    public AuditLogService(AuditLogRepository auditLogRepository) {
+    public CreateAuditLogService(AuditLogRepository auditLogRepository) {
         this.auditLogRepository = auditLogRepository;
     }
 
@@ -30,8 +26,6 @@ public class AuditLogService {
     @Async // Make logging asynchronous so it doesn't slow down the main operation
     @Transactional(propagation = Propagation.REQUIRES_NEW) // Ensure audit log is saved even if parent transaction rolls back
     public void recordEvent(User user, String action, String resourceType, String resourceId, String details) {
-        // Search user by email or ID if needed
-        // User userEntity = userRepository.findByEmail(user).orElse(null); // Example if you have a user repository
         AuditLog logEntry = AuditLog.builder()
                 .user(user)
                 .action(action)
@@ -48,26 +42,5 @@ public class AuditLogService {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void recordEvent(User user, String action, String resourceType, String resourceId) {
         recordEvent(user, action, resourceType, resourceId, null);
-    }
-
-    // Methods to retrieve audit logs (could be expanded based on needs)
-    @Transactional(readOnly = true)
-    public Page<AuditLog> findByActor(String actor, Pageable pageable) {
-        return auditLogRepository.findByActor(actor, pageable);
-    }
-
-    @Transactional(readOnly = true)
-    public Page<AuditLog> findByAction(String action, Pageable pageable) {
-        return auditLogRepository.findByAction(action, pageable);
-    }
-
-    @Transactional(readOnly = true)
-    public Page<AuditLog> findByResourceTypeAndResourceId(String resourceType, String resourceId, Pageable pageable) {
-        return auditLogRepository.findByResourceTypeAndResourceId(resourceType, resourceId, pageable);
-    }
-
-    @Transactional(readOnly = true)
-    public Page<AuditLog> findByTimestampBetween(LocalDateTime startTime, LocalDateTime endTime, Pageable pageable) {
-        return auditLogRepository.findByTimestampBetween(startTime, endTime, pageable);
     }
 } 

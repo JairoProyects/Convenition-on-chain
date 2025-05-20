@@ -56,25 +56,6 @@ class AuditLogService {
   // These methods are simplified to not include pagination/sorting parameters for now.
   // They will return a List instead of a Page.
 
-  Future<List<AuditLogModel>> findByActor(String actor) async {
-    final response = await http.get(Uri.parse('$_baseUrl/actor?actor=\$actor'));
-    if (response.statusCode == 200) {
-      // Assuming the backend returns a list of AuditLog items, not a Page object for simplicity
-      List<dynamic> body = jsonDecode(response.body);
-      // If backend returns Page object, parsing will be: jsonDecode(response.body)['content']
-      return body
-          .map(
-            (dynamic item) =>
-                AuditLogModel.fromJson(item as Map<String, dynamic>),
-          )
-          .toList();
-    } else {
-      throw Exception(
-        'Failed to find audit logs by actor \$actor. Status: \${response.statusCode}',
-      );
-    }
-  }
-
   Future<List<AuditLogModel>> findByAction(String action) async {
     final response = await http.get(
       Uri.parse('$_baseUrl/action?action=\$action'),

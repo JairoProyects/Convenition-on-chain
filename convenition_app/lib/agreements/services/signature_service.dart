@@ -43,12 +43,8 @@ class SignatureService {
     }
   }
 
-  Future<List<SignatureModel>> getSignaturesBySigner(
-    String walletAddress,
-  ) async {
-    final response = await http.get(
-      Uri.parse('$_baseUrl/signer/\$walletAddress'),
-    );
+  Future<List<SignatureModel>> getSignaturesByWalletId(int walletId) async {
+    final response = await http.get(Uri.parse('$_baseUrl/wallet/\$walletId'));
     if (response.statusCode == 200) {
       List<dynamic> body = jsonDecode(response.body);
       return body
@@ -59,7 +55,7 @@ class SignatureService {
           .toList();
     } else {
       throw Exception(
-        'Failed to load signatures for signer \$walletAddress. Status: \${response.statusCode}',
+        'Failed to load signatures for wallet \$walletId. Status: \${response.statusCode}',
       );
     }
   }

@@ -12,7 +12,7 @@ public interface SignatureRepository extends JpaRepository<Signature, Long> {
     // Find signatures by contract ID
     List<Signature> findByContractContractId(Long contractId);
 
-    //  Find signatures by signer's wallet address
-    List<Signature> findBySignerWalletAddress(String walletAddress);
+    // Find signatures by signer's wallet ID
+    List<Signature> findByWalletWalletId(Long walletId);
 
 } 

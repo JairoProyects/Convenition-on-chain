@@ -1,6 +1,7 @@
 package com.zkbytebandits.convenio.controller.signature;
 
-import com.zkbytebandits.convenio.service.SignatureService;
+import com.zkbytebandits.convenio.service.signature.create.CreateSignatureService;
+import com.zkbytebandits.convenio.service.signature.get.GetSignatureService;
 import com.zkbytebandits.convenio.entity.Signature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,25 +17,27 @@ import java.util.List;
 @RequestMapping("/api/signatures")
 public class SignatureController {
 
-    private final SignatureService signatureService;
+    private final CreateSignatureService createSignatureService;
+    private final GetSignatureService getSignatureService;
 
     @Autowired
-    public SignatureController(SignatureService signatureService) {
-        this.signatureService = signatureService;
+    public SignatureController(CreateSignatureService createSignatureService, GetSignatureService getSignatureService) {
+        this.createSignatureService = createSignatureService;
+        this.getSignatureService = getSignatureService;
     }
 
     @PostMapping
     public Signature saveSignature(@RequestBody Signature signature) {
-        return signatureService.saveSignature(signature);
+        return createSignatureService.saveSignature(signature);
     }
 
     @GetMapping("/contract/{contractId}")
     public List<Signature> getSignaturesForContract(@PathVariable Long contractId) {
-        return signatureService.getSignaturesForContract(contractId);
+        return getSignatureService.getSignaturesForContract(contractId);
     }
 
-    @GetMapping("/signer/{walletAddress}")
-    public List<Signature> getSignaturesBySigner(@PathVariable String walletAddress) {
-        return signatureService.getSignaturesBySigner(walletAddress);
+    @GetMapping("/wallet/{walletId}")
+    public List<Signature> getSignaturesByWalletId(@PathVariable Long walletId) {
+        return getSignatureService.getSignaturesByWalletId(walletId);
     }
 } 

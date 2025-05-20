@@ -1,16 +1,20 @@
 import 'contract_model.dart';
+import 'user_model.dart';
+import 'wallet_model.dart';
 
 class SignatureModel {
   final int? id;
   final ContractModel? contract;
-  final String? signerWalletAddress;
+  final WalletModel? wallet;
+  final UserModel? user;
   final String? signatureData;
   final DateTime? signedAt;
 
   SignatureModel({
     this.id,
     this.contract,
-    this.signerWalletAddress,
+    this.wallet,
+    this.user,
     this.signatureData,
     this.signedAt,
   });
@@ -24,7 +28,14 @@ class SignatureModel {
               : ContractModel.fromJson(
                 json['contract'] as Map<String, dynamic>,
               ),
-      signerWalletAddress: json['signerWalletAddress'] as String?,
+      wallet:
+          json['wallet'] == null
+              ? null
+              : WalletModel.fromJson(json['wallet'] as Map<String, dynamic>),
+      user:
+          json['user'] == null
+              ? null
+              : UserModel.fromJson(json['user'] as Map<String, dynamic>),
       signatureData: json['signatureData'] as String?,
       signedAt:
           json['signedAt'] == null
@@ -37,7 +48,8 @@ class SignatureModel {
     return {
       'id': id,
       'contract': contract?.toJson(),
-      'signerWalletAddress': signerWalletAddress,
+      'wallet': wallet?.toJson(),
+      'user': user?.toJson(),
       'signatureData': signatureData,
       'signedAt': signedAt?.toIso8601String(),
     };

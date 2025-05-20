@@ -9,6 +9,10 @@ import org.hibernate.annotations.CreationTimestamp;
 
 // Assuming Contract entity is com.zkbytebandits.convenio.entity.Contract.Contract
 import com.zkbytebandits.convenio.entity.Contract.Contract;
+// Assuming Wallet entity is com.zkbytebandits.convenio.entity.Wallet
+import com.zkbytebandits.convenio.entity.Wallet;
+// Assuming User entity is com.zkbytebandits.convenio.entity.User
+import com.zkbytebandits.convenio.entity.User;
 
 import java.time.LocalDateTime;
 
@@ -28,10 +32,13 @@ public class Signature {
     @JoinColumn(name = "contract_id", nullable = false)
     private Contract contract;
 
-    @Column(name = "signer_wallet_address", nullable = false, length = 255) // Fk del wallet
-    private String signerWalletAddress;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "wallet_id", nullable = false) // FK to Wallet
+    private Wallet wallet;
 
-    // User who signed the contract
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false) // FK to User
+    private User user;
 
     @Lob // For potentially large signature data
     @Column(name = "signature_data", nullable = false, columnDefinition = "TEXT")

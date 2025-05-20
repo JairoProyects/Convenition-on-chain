@@ -1,6 +1,8 @@
 package com.zkbytebandits.convenio.controller.notification;
 
-import com.zkbytebandits.convenio.service.NotificationService;
+import com.zkbytebandits.convenio.service.notification.create.CreateNotificationService;
+import com.zkbytebandits.convenio.service.notification.get.GetNotificationService;
+import com.zkbytebandits.convenio.service.notification.update.UpdateNotificationService;
 import com.zkbytebandits.convenio.entity.Notification;
 import com.zkbytebandits.convenio.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +21,17 @@ import java.util.List;
 @RequestMapping("/api/notifications")
 public class NotificationController {
 
-    private final NotificationService notificationService;
+    private final CreateNotificationService createNotificationService;
+    private final GetNotificationService getNotificationService;
+    private final UpdateNotificationService updateNotificationService;
 
     @Autowired
-    public NotificationController(NotificationService notificationService) {
-        this.notificationService = notificationService;
+    public NotificationController(CreateNotificationService createNotificationService,
+                                  GetNotificationService getNotificationService,
+                                  UpdateNotificationService updateNotificationService) {
+        this.createNotificationService = createNotificationService;
+        this.getNotificationService = getNotificationService;
+        this.updateNotificationService = updateNotificationService;
     }
 
     // Inner DTO for createNotification requests
@@ -41,33 +49,33 @@ public class NotificationController {
 
     @PostMapping("/user")
     public Notification createNotificationWithUser(@RequestBody CreateNotificationRequest request) {
-        return notificationService.createNotification(request.user, request.message, request.type, request.link);
+        return createNotificationService.createNotification(request.user, request.message, request.type, request.link);
     }
 
     @PostMapping("/userid")
     public Notification createNotificationWithUserId(@RequestBody CreateNotificationRequest request) {
-        return notificationService.createNotification(request.userId, request.message, request.type, request.link);
+        return createNotificationService.createNotification(request.userId, request.message, request.type, request.link);
     }
 
     @GetMapping("/unread/{userId}")
     public List<Notification> getUnreadNotifications(@PathVariable Long userId) {
-        return notificationService.getUnreadNotifications(userId);
+        return getNotificationService.getUnreadNotifications(userId);
     }
 
     @GetMapping("/all/{userId}")
     public List<Notification> getAllNotificationsForUser(@PathVariable Long userId) {
-        return notificationService.getAllNotificationsForUser(userId);
+        return getNotificationService.getAllNotificationsForUser(userId);
     }
 
     @PutMapping("/read/{userId}")
     public ResponseEntity<Void> markNotificationsAsRead(@PathVariable Long userId, @RequestBody MarkAsReadRequest request) {
-        notificationService.markNotificationsAsRead(userId, request.notificationIds);
+        updateNotificationService.markNotificationsAsRead(userId, request.notificationIds);
         return ResponseEntity.ok().build();
     }
 
     @PutMapping("/read/all/{userId}")
     public ResponseEntity<Void> markAllNotificationsAsRead(@PathVariable Long userId) {
-        notificationService.markAllNotificationsAsRead(userId);
+        updateNotificationService.markAllNotificationsAsRead(userId);
         return ResponseEntity.ok().build();
     }
 } 

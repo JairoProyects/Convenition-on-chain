@@ -11,9 +11,6 @@ import java.time.LocalDateTime;
 @Repository
 public interface AuditLogRepository extends JpaRepository<AuditLog, Long> {
 
-    // Find logs by actor
-    Page<AuditLog> findByActor(String actor, Pageable pageable);
-
     // Find logs by action
     Page<AuditLog> findByAction(String action, Pageable pageable);
 
@@ -22,8 +19,5 @@ public interface AuditLogRepository extends JpaRepository<AuditLog, Long> {
 
     // Find logs within a specific time range
     Page<AuditLog> findByTimestampBetween(LocalDateTime startTime, LocalDateTime endTime, Pageable pageable);
-
-    // Find logs by actor and action
-    Page<AuditLog> findByActorAndAction(String actor, String action, Pageable pageable);
 
 } 

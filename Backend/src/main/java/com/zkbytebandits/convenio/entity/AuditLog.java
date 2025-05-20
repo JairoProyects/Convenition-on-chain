@@ -25,9 +25,6 @@ public class AuditLog {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(name = "actor", length = 255) //Eliminar
-    private String actor;
-
     @Column(nullable = false, length = 100)
     private String action; // "CONTRACT_CREATED", "SIGNATURE_ADDED"
 
