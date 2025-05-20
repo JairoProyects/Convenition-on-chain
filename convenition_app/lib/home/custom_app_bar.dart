@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import '../shared/theme/app_colors.dart';
 import '../shared/theme/app_text_styles.dart';
-import '../agreements/presentation/profile/profile_page.dart';
+import '../convenion/presentation/profile/profile_page.dart';
 
 class CustomAppBar extends StatelessWidget {
   final Function(String)? onSearchChanged;
+  final TextEditingController controller;
 
   const CustomAppBar({
     super.key,
+    required this.controller,
     this.onSearchChanged,
   });
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController controller = TextEditingController();
-
     return Row(
       children: [
         Container(
