@@ -39,8 +39,8 @@ class _AdvancedSlideToSwapState extends State<AdvancedSlideToSwap>
         _isSwapping = false;
         _dragPosition = 0.0;
       });
-      widget.onSwapCompleted();
-      Navigator.of(context).pop();
+      Navigator.of(context).pop(); // cerrar el modal primero
+      widget.onSwapCompleted(); // luego hacer pushReplacement
     });
   }
 
@@ -67,9 +67,10 @@ class _AdvancedSlideToSwapState extends State<AdvancedSlideToSwap>
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).brightness == Brightness.dark
-        ? AppColors.dark
-        : AppColors.light;
+    final colors =
+        Theme.of(context).brightness == Brightness.dark
+            ? AppColors.dark
+            : AppColors.light;
 
     return GestureDetector(
       onHorizontalDragUpdate: _handleDragUpdate,
@@ -85,11 +86,9 @@ class _AdvancedSlideToSwapState extends State<AdvancedSlideToSwap>
             padding: const EdgeInsets.symmetric(horizontal: 16),
             alignment: Alignment.center,
             child: Text(
-              _isSwapping ? "Swap processing..." : "Slide to Swap",
+              _isSwapping ? "Procesando..." : "Desliza para confirmar",
               style: TextStyle(
-                color: _isSwapping
-                    ? colors.textSecondary
-                    : colors.accentBlue,
+                color: _isSwapping ? colors.textSecondary : colors.accentBlue,
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
                 decoration: TextDecoration.none,
@@ -108,10 +107,7 @@ class _AdvancedSlideToSwapState extends State<AdvancedSlideToSwap>
                 border: Border.all(color: colors.borderGlow, width: 2),
                 gradient: colors.buttonSlideToSwap,
               ),
-              child: Icon(
-                Icons.double_arrow_rounded,
-                color: colors.accentBlue,
-              ),
+              child: Icon(Icons.double_arrow_rounded, color: colors.accentBlue),
             ),
           ),
         ],
@@ -121,9 +117,10 @@ class _AdvancedSlideToSwapState extends State<AdvancedSlideToSwap>
 }
 
 void showSwapModal(BuildContext context, VoidCallback onConfirmed) {
-  final colors = Theme.of(context).brightness == Brightness.dark
-      ? AppColors.dark
-      : AppColors.light;
+  final colors =
+      Theme.of(context).brightness == Brightness.dark
+          ? AppColors.dark
+          : AppColors.light;
 
   showGeneralDialog(
     context: context,
