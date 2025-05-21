@@ -25,21 +25,19 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    // Simulación de convenios
+    // Simulación de convenios con nuevo modelo actualizado
     allConvenios = List.generate(
       10,
       (index) => ConvenioModel(
         id: "$index",
         timestamp: DateTime.now(),
-        monto: 1000.0,
-        firmado: index % 2 == 0,
-        participantes: 3,
+        monto: 1000.0 + index,
+        moneda: index % 2 == 0 ? '₡' : 'Ξ',
         hash: "0xHASH$index",
         descripcion: "Convenio $index",
-        condiciones: "Condiciones $index",
+        condiciones: "Condiciones del convenio número $index",
         vencimiento: DateTime.now().add(const Duration(days: 30)),
         firmas: [],
-        estado: "Idle",
       ),
     );
 
@@ -49,14 +47,11 @@ class _HomePageState extends State<HomePage> {
   void _searchConvenios(String query) {
     setState(() {
       _currentPage = 0;
-      filteredConvenios =
-          allConvenios
-              .where(
-                (c) =>
-                    c.descripcion.toLowerCase().contains(query.toLowerCase()) ||
-                    c.condiciones.toLowerCase().contains(query.toLowerCase()),
-              )
-              .toList();
+      filteredConvenios = allConvenios
+          .where((c) =>
+              c.descripcion.toLowerCase().contains(query.toLowerCase()) ||
+              c.condiciones.toLowerCase().contains(query.toLowerCase()))
+          .toList();
     });
   }
 
@@ -79,9 +74,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final colors =
-        Theme.of(context).brightness == Brightness.dark
-            ? AppColors.dark
-            : AppColors.light;
+        Theme.of(context).brightness == Brightness.dark ? AppColors.dark : AppColors.light;
 
     final start = _currentPage * _itemsPerPage;
     final end = (_currentPage + 1) * _itemsPerPage;
@@ -128,7 +121,7 @@ class _HomePageState extends State<HomePage> {
           colors: colors,
           onTap: (index) {
             if (index == 0) {
-              Navigator.pop(context); // Solo ejemplo
+              Navigator.pop(context);
             }
           },
         ),
@@ -145,7 +138,6 @@ class _HomePageState extends State<HomePage> {
         ),
         TextButton(
           onPressed: () {
-            print("Navegando a ViewAgreementPage desde encabezado de tabla");
             Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => const ViewAgreementPage()),
@@ -186,13 +178,16 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     Text(
                       convenio.descripcion,
-                      style: AppTextStyles.body(
-                        colors,
-                      ).copyWith(fontWeight: FontWeight.bold),
+                      style: AppTextStyles.body(colors).copyWith(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Participantes: ${convenio.participantes}',
+                      'Monto: ${convenio.moneda}${convenio.monto.toStringAsFixed(2)}',
+                      style: AppTextStyles.caption(colors),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'Expira: ${convenio.vencimiento.toLocal().toString().split(' ')[0]}',
                       style: AppTextStyles.caption(colors),
                     ),
                   ],
@@ -200,7 +195,7 @@ class _HomePageState extends State<HomePage> {
               ),
               TextButton(
                 onPressed: () {
-                  print("Entrando a detalle individual (no usado)");
+                  // Aquí puede ir navegación a detalle
                 },
                 child: Text(
                   "Ver más",
@@ -231,9 +226,7 @@ class _HomePageState extends State<HomePage> {
         IconButton(
           icon: const Icon(Icons.chevron_right),
           color:
-              (_currentPage + 1) < totalPages
-                  ? colors.accentBlue
-                  : colors.textSecondary,
+              (_currentPage + 1) < totalPages ? colors.accentBlue : colors.textSecondary,
           onPressed: _nextPage,
         ),
       ],

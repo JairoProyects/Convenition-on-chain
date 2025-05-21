@@ -4,7 +4,7 @@ enum UserStatus {
   activo,
   inactivo,
   bloqueado,
-  unknown; // Added for deserialization robustness
+  unknown;
 
   static UserStatus fromString(String? statusString) {
     if (statusString == null) return UserStatus.unknown;
@@ -24,24 +24,26 @@ class UserModel {
   final int? userId;
   final String? username;
   final String? email;
-  final String? passwordHash;
   final String? firstName;
   final String? lastName;
+  final UserStatus? status;
+
+  // Campos opcionales
+  final String? passwordHash;
   final DateTime? createdAt;
   final DateTime? updatedAt;
-  final UserStatus? status;
   final List<UserRoleModel>? userRoles;
 
   UserModel({
     this.userId,
     this.username,
     this.email,
-    this.passwordHash,
     this.firstName,
     this.lastName,
+    this.status,
+    this.passwordHash,
     this.createdAt,
     this.updatedAt,
-    this.status,
     this.userRoles,
   });
 
@@ -50,25 +52,19 @@ class UserModel {
       userId: json['userId'] as int?,
       username: json['username'] as String?,
       email: json['email'] as String?,
-      passwordHash: json['passwordHash'] as String?,
       firstName: json['firstName'] as String?,
       lastName: json['lastName'] as String?,
-      createdAt:
-          json['createdAt'] == null
-              ? null
-              : DateTime.tryParse(json['createdAt'] as String),
-      updatedAt:
-          json['updatedAt'] == null
-              ? null
-              : DateTime.tryParse(json['updatedAt'] as String),
-      status:
-          json['status'] == null
-              ? null
-              : UserStatus.fromString(json['status'] as String?),
-      userRoles:
-          (json['userRoles'] as List<dynamic>?)
-              ?.map((e) => UserRoleModel.fromJson(e as Map<String, dynamic>))
-              .toList(),
+      status: UserStatus.fromString(json['status'] as String?),
+      passwordHash: json['passwordHash'] as String?,
+      createdAt: json['createdAt'] != null
+          ? DateTime.tryParse(json['createdAt'])
+          : null,
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.tryParse(json['updatedAt'])
+          : null,
+      userRoles: (json['userRoles'] as List<dynamic>?)
+          ?.map((e) => UserRoleModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
   }
 
@@ -77,20 +73,22 @@ class UserModel {
       'userId': userId,
       'username': username,
       'email': email,
-      'passwordHash': passwordHash,
       'firstName': firstName,
       'lastName': lastName,
+      'status': status?.toJson(),
+      'passwordHash': passwordHash,
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
-      'status': status?.toJson(),
       'userRoles': userRoles?.map((e) => e.toJson()).toList(),
     };
   }
 }
+
+// DTO para creación de usuario
 class CreateUserDto {
   final String username;
   final String email;
-  final String password;    // el backend espera .getPassword()
+  final String password;
   final String firstName;
   final String lastName;
 
@@ -102,19 +100,20 @@ class CreateUserDto {
     required this.lastName,
   });
 
-  Map<String,dynamic> toJson() => {
-    'username' : username,
-    'email'    : email,
-    'password' : password,
-    'firstName': firstName,
-    'lastName' : lastName,
-  };
+  Map<String, dynamic> toJson() => {
+        'username': username,
+        'email': email,
+        'password': password,
+        'firstName': firstName,
+        'lastName': lastName,
+      };
 }
 
+// DTO para actualización de usuario
 class UpdateUserDto {
   final String firstName;
   final String lastName;
-  final String status;      // "ACTIVO", "INACTIVO", etc.
+  final String status;
 
   UpdateUserDto({
     required this.firstName,
@@ -122,9 +121,9 @@ class UpdateUserDto {
     required this.status,
   });
 
-  Map<String,dynamic> toJson() => {
-    'firstName': firstName,
-    'lastName' : lastName,
-    'status'   : status,
-  };
+  Map<String, dynamic> toJson() => {
+        'firstName': firstName,
+        'lastName': lastName,
+        'status': status,
+      };
 }
