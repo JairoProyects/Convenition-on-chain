@@ -23,7 +23,8 @@ public class UserController {
     private final UpdateUser updateUser;
     private final DeleteUser deleteUser;
 
-    @PostMapping
+
+    @PostMapping("/register")
     public ResponseEntity<UserDto> create(@RequestBody CreateUserRequest request) {
         return ResponseEntity.ok(createUser.execute(request));
     }
