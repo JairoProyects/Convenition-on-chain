@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../shared/theme/app_colors.dart';
+import './register_page.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -14,9 +15,10 @@ class LoginPage extends StatelessWidget {
       ),
     );
 
-    final colors = Theme.of(context).brightness == Brightness.dark
-        ? AppColors.dark
-        : AppColors.light;
+    final colors =
+        Theme.of(context).brightness == Brightness.dark
+            ? AppColors.dark
+            : AppColors.light;
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -70,10 +72,7 @@ class LoginPage extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text(
                     'Bienvenido de nuevo',
-                    style: TextStyle(
-                      color: colors.textSecondary,
-                      fontSize: 16,
-                    ),
+                    style: TextStyle(color: colors.textSecondary, fontSize: 16),
                   ),
                   const SizedBox(height: 32),
                   _buildGoogleButton(),
@@ -92,7 +91,12 @@ class LoginPage extends StatelessWidget {
                       ),
                       TextButton(
                         onPressed: () {
-                          // Navegar a registro
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const RegisterPage(),
+                            ),
+                          );
                         },
                         child: Text(
                           'Registrarse',
@@ -165,9 +169,7 @@ class LoginPage extends StatelessWidget {
       width: double.infinity,
       height: 56,
       decoration: BoxDecoration(
-        border: Border.all(
-          color: colors.textSecondary.withOpacity(0.5),
-        ),
+        border: Border.all(color: colors.textSecondary.withOpacity(0.5)),
         borderRadius: BorderRadius.circular(28),
       ),
       child: Material(
