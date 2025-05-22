@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'home/bottom_navigation_bar.dart';
+import './convenion/presentation/login/login_page.dart';
 import 'shared/theme/app_colors.dart';
 import 'shared/theme/app_text_styles.dart';
 import 'shared/theme/theme_provider.dart';
@@ -34,8 +34,6 @@ class MyApp extends StatelessWidget {
         onPrimary: colors.textPrimary,
         secondary: colors.accentGreen,
         onSecondary: colors.textHighlight,
-        background: Colors.transparent,
-        onBackground: colors.textPrimary,
         surface: colors.panelBackground,
         onSurface: colors.textPrimary,
         error: Colors.red,
@@ -66,7 +64,7 @@ class MyApp extends StatelessWidget {
       themeMode: themeProvider.themeMode,
       theme: _buildTheme(AppColors.light, Brightness.light),
       darkTheme: _buildTheme(AppColors.dark, Brightness.dark),
-      home: const MenuTopTabsPage(),
+      home: const LoginPage(),
     );
   }
 }

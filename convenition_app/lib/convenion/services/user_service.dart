@@ -7,7 +7,7 @@ class UserService {
   final _baseUrl = ApiConfig.users;
 
   Future<List<UserModel>> getAllUsers() async {
-    final response = await http.get(Uri.parse('$_baseUrl'));
+    final response = await http.get(Uri.parse(_baseUrl));
     if (response.statusCode == 200) {
       final List<dynamic> usersJson = jsonDecode(response.body);
       return usersJson.map((json) => UserModel.fromJson(json)).toList();
@@ -31,7 +31,7 @@ class UserService {
   // POST /users → crea uno nuevo
   Future<UserModel> createUser(CreateUserDto userDto) async {
     final response = await http.post(
-      Uri.parse('$_baseUrl'),
+      Uri.parse(_baseUrl),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(userDto.toJson()),
     );

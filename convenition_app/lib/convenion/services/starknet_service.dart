@@ -1,8 +1,6 @@
 import 'dart:convert';
-import 'package:crypto/crypto.dart';
 import 'package:starknet/starknet.dart';
 import 'package:starknet_provider/starknet_provider.dart';
-import 'package:http/http.dart' as http;
 
 class StarknetService {
   // Dirección del contrato ConvenioCore (ajustar con la real)
