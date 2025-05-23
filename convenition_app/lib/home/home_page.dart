@@ -30,10 +30,11 @@ class _HomePageState extends State<HomePage> {
       10,
       (index) => ConvenioModel(
         id: "$index",
+        externalId: "external-$index",
         timestamp: DateTime.now(),
         monto: 1000.0 + index,
         moneda: index % 2 == 0 ? '₡' : 'Ξ',
-        hash: "0xHASH$index",
+        onChainHash: "0xHASH$index",
         descripcion: "Convenio $index",
         condiciones: "Condiciones del convenio número $index",
         vencimiento: DateTime.now().add(const Duration(days: 30)),

@@ -51,7 +51,7 @@ class AgreementResultPage extends StatelessWidget {
                 const SizedBox(height: 24),
                 _buildSection("Resumen del Convenio", colors, [
                   _infoRow("ID", convenio.id),
-                  _infoRow("Hash", convenio.hash),
+                  _infoRow("Hash", convenio.onChainHash),
                   _infoRow("Monto", "${convenio.moneda} ${convenio.monto}"),
                   _infoRow("Vencimiento", convenio.vencimiento.toLocal().toString().split(" ")[0]),
                   _infoRow("Descripción", convenio.descripcion),

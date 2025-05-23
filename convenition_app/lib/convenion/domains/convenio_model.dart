@@ -1,16 +1,18 @@
 class ConvenioModel {
-  final String id;                     // ID off-chain o on-chain
-  final DateTime timestamp;           // Fecha de creación
-  final double monto;                 // Monto acordado
-  final String moneda;                // Tipo de moneda (₡, $, Ξ, ₿, etc.)
-  final String descripcion;           // Breve descripción
-  final String condiciones;           // Detalles o condiciones
-  final DateTime vencimiento;         // Fecha de vencimiento
-  final List<String> firmas;          // Firmas on-chain
-  final String hash;                  // Hash para referencia on-chain
+  final String id;
+  final String   externalId;
+  final DateTime timestamp;
+  final double   monto;
+  final String   moneda;
+  final String   descripcion;
+  final String   condiciones;
+  final DateTime vencimiento;
+  final List<String> firmas;
+  final String   onChainHash;
 
   ConvenioModel({
     required this.id,
+    required this.externalId,
     required this.timestamp,
     required this.monto,
     required this.moneda,
@@ -18,34 +20,89 @@ class ConvenioModel {
     required this.condiciones,
     required this.vencimiento,
     required this.firmas,
-    required this.hash,
+    required this.onChainHash,
   });
 
-  factory ConvenioModel.fromJson(Map<String, dynamic> json) {
-    return ConvenioModel(
-      id: json['id'],
-      timestamp: DateTime.parse(json['timestamp']),
-      monto: json['monto'].toDouble(),
-      moneda: json['moneda'],
-      descripcion: json['descripcion'],
-      condiciones: json['condiciones'],
-      vencimiento: DateTime.parse(json['vencimiento']),
-      firmas: List<String>.from(json['firmas'] ?? []),
-      hash: json['hash'],
-    );
-  }
+  factory ConvenioModel.fromJson(Map<String, dynamic> json) => ConvenioModel(
+        id:          json['id'] as String,
+        externalId:  json['externalId'] as String,
+        timestamp:   DateTime.parse(json['timestamp'] as String),
+        monto:       (json['monto'] as num).toDouble(),
+        moneda:      json['moneda'] as String,
+        descripcion: json['descripcion'] as String,
+        condiciones: json['condiciones'] as String,
+        vencimiento: DateTime.parse(json['vencimiento'] as String),
+        firmas:      List<String>.from(json['firmas'] as List),
+        onChainHash: json['onChainHash'] as String,
+      );
+
+  Map<String, dynamic> toJson() => {
+        'externalId':   externalId,
+        'monto':        monto,
+        'moneda':       moneda,
+        'descripcion':  descripcion,
+        'condiciones':  condiciones,
+        'vencimiento':  vencimiento.toIso8601String(),
+        'firmas':       firmas,
+        'onChainHash':  onChainHash,
+      };
+}
+
+class CreateConvenioDto {
+  final String   externalId;
+  final double   monto;
+  final String   moneda;
+  final String   descripcion;
+  final String   condiciones;
+  final DateTime vencimiento;
+  final List<String> firmas;
+  final String   onChainHash;
+
+  CreateConvenioDto({
+    required this.externalId,
+    required this.monto,
+    required this.moneda,
+    required this.descripcion,
+    required this.condiciones,
+    required this.vencimiento,
+    required this.firmas,
+    required this.onChainHash,
+  });
+
+  Map<String, dynamic> toJson() => {
+        'externalId':   externalId,
+        'monto':        monto,
+        'moneda':       moneda,
+        'descripcion':  descripcion,
+        'condiciones':  condiciones,
+        'vencimiento':  vencimiento.toIso8601String(),
+        'firmas':       firmas,
+        'onChainHash':  onChainHash,
+      };
+}
+
+class UpdateConvenioDto {
+  final String?   descripcion;
+  final String?   condiciones;
+  final DateTime? vencimiento;
+  final List<String>? firmas;
+  final String?   onChainHash;
+
+  UpdateConvenioDto({
+    this.descripcion,
+    this.condiciones,
+    this.vencimiento,
+    this.firmas,
+    this.onChainHash,
+  });
 
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'timestamp': timestamp.toIso8601String(),
-      'monto': monto,
-      'moneda': moneda,
-      'descripcion': descripcion,
-      'condiciones': condiciones,
-      'vencimiento': vencimiento.toIso8601String(),
-      'firmas': firmas,
-      'hash': hash,
-    };
+    final m = <String, dynamic>{};
+    if (descripcion  != null) m['descripcion']  = descripcion;
+    if (condiciones  != null) m['condiciones']  = condiciones;
+    if (vencimiento  != null) m['vencimiento']  = vencimiento!.toIso8601String();
+    if (firmas       != null) m['firmas']       = firmas;
+    if (onChainHash  != null) m['onChainHash']  = onChainHash;
+    return m;
   }
 }

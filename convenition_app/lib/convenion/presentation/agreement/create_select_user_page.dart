@@ -25,6 +25,7 @@ class _CreateSelectUserPageState extends State<CreateSelectUserPage> {
       // Simulación del convenio cargado previamente (ajustá según tu flujo real)
       final convenioSimulado = ConvenioModel(
         id: 'temp-id',
+        externalId: 'temp-external-id',
         timestamp: DateTime.now(),
         monto: 1500,
         moneda: '₡',
@@ -32,7 +33,7 @@ class _CreateSelectUserPageState extends State<CreateSelectUserPage> {
         condiciones: 'Condiciones básicas del acuerdo.',
         vencimiento: DateTime.now().add(const Duration(days: 30)),
         firmas: [],
-        hash: '0xFAKEHASH1234',
+        onChainHash: '0xFAKEHASH1234',
       );
 
       Navigator.push(
