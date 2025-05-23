@@ -6,9 +6,9 @@ class RegisterPage extends StatefulWidget {
   final bool isDarkMode;
   
   const RegisterPage({
-    Key? key, 
+    super.key, 
     this.isDarkMode = true,
-  }) : super(key: key);
+  });
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();

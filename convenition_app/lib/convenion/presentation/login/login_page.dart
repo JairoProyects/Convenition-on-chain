@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../shared/theme/app_colors.dart';
 import './register_page.dart';
+import '../../../home/bottom_navigation_bar.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -77,7 +78,7 @@ class LoginPage extends StatelessWidget {
                   const SizedBox(height: 32),
                   _buildGoogleButton(),
                   const SizedBox(height: 16),
-                  _buildEmailButton(colors),
+                  _buildEmailButton(context, colors),
                   const SizedBox(height: 24),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -164,7 +165,7 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  Widget _buildEmailButton(AppColorScheme colors) {
+  Widget _buildEmailButton(BuildContext context, AppColorScheme colors) {
     return Container(
       width: double.infinity,
       height: 56,
@@ -178,7 +179,10 @@ class LoginPage extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(28),
           onTap: () {
-            // Lógica de inicio con email
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const MenuTopTabsPage()),
+            );
           },
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
