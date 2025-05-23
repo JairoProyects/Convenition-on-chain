@@ -12,7 +12,7 @@ enum UserStatus {
       return UserStatus.values.firstWhere(
         (e) => e.name.toLowerCase() == statusString.toLowerCase(),
       );
-    } catch (e) {
+    } catch (_) {
       return UserStatus.unknown;
     }
   }
@@ -21,26 +21,28 @@ enum UserStatus {
 }
 
 class UserModel {
-  final int? userId;
-  final String? username;
-  final String? email;
-  final String? firstName;
-  final String? lastName;
-  final UserStatus? status;
+  final int?            id;               // JSON key "id"
+  final String?         username;
+  final String?         email;
+  final String?         firstName;
+  final String?         lastName;
+  final UserStatus?     status;
+  final String?         profileImageUrl;  // nuevo campo
 
-  // Campos opcionales
-  final String? passwordHash;
-  final DateTime? createdAt;
-  final DateTime? updatedAt;
+  // Opcionales
+  final String?             passwordHash;
+  final DateTime?           createdAt;
+  final DateTime?           updatedAt;
   final List<UserRoleModel>? userRoles;
 
   UserModel({
-    this.userId,
+    this.id,
     this.username,
     this.email,
     this.firstName,
     this.lastName,
     this.status,
+    this.profileImageUrl,
     this.passwordHash,
     this.createdAt,
     this.updatedAt,
@@ -49,19 +51,20 @@ class UserModel {
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      userId: json['userId'] as int?,
-      username: json['username'] as String?,
-      email: json['email'] as String?,
-      firstName: json['firstName'] as String?,
-      lastName: json['lastName'] as String?,
-      status: UserStatus.fromString(json['status'] as String?),
-      passwordHash: json['passwordHash'] as String?,
-      createdAt: json['createdAt'] != null
-          ? DateTime.tryParse(json['createdAt'])
-          : null,
-      updatedAt: json['updatedAt'] != null
-          ? DateTime.tryParse(json['updatedAt'])
-          : null,
+      id:              json['id']               as int?,
+      username:        json['username']         as String?,
+      email:           json['email']            as String?,
+      firstName:       json['firstName']        as String?,
+      lastName:        json['lastName']         as String?,
+      status:          UserStatus.fromString(json['status'] as String?),
+      profileImageUrl: json['profileImageUrl']  as String?,
+      passwordHash:    json['passwordHash']     as String?,
+      createdAt:       json['createdAt'] != null
+                          ? DateTime.tryParse(json['createdAt'] as String)
+                          : null,
+      updatedAt:       json['updatedAt'] != null
+                          ? DateTime.tryParse(json['updatedAt'] as String)
+                          : null,
       userRoles: (json['userRoles'] as List<dynamic>?)
           ?.map((e) => UserRoleModel.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -70,17 +73,45 @@ class UserModel {
 
   Map<String, dynamic> toJson() {
     return {
-      'userId': userId,
-      'username': username,
-      'email': email,
-      'firstName': firstName,
-      'lastName': lastName,
-      'status': status?.toJson(),
-      'passwordHash': passwordHash,
-      'createdAt': createdAt?.toIso8601String(),
-      'updatedAt': updatedAt?.toIso8601String(),
-      'userRoles': userRoles?.map((e) => e.toJson()).toList(),
+      'id':              id,
+      'username':        username,
+      'email':           email,
+      'firstName':       firstName,
+      'lastName':        lastName,
+      'status':          status?.toJson(),
+      'profileImageUrl': profileImageUrl,
+      'passwordHash':    passwordHash,
+      'createdAt':       createdAt?.toIso8601String(),
+      'updatedAt':       updatedAt?.toIso8601String(),
+      'userRoles':       userRoles?.map((e) => e.toJson()).toList(),
     };
+  }
+    UserModel copyWith({
+    int?            id,
+    String?         username,
+    String?         email,
+    String?         firstName,
+    String?         lastName,
+    UserStatus?     status,
+    String?         profileImageUrl,
+    String?         passwordHash,
+    DateTime?       createdAt,
+    DateTime?       updatedAt,
+    List<UserRoleModel>? userRoles,
+  }) {
+    return UserModel(
+      id:              id               ?? this.id,
+      username:        username         ?? this.username,
+      email:           email            ?? this.email,
+      firstName:       firstName        ?? this.firstName,
+      lastName:        lastName         ?? this.lastName,
+      status:          status           ?? this.status,
+      profileImageUrl: profileImageUrl  ?? this.profileImageUrl,
+      passwordHash:    passwordHash     ?? this.passwordHash,
+      createdAt:       createdAt        ?? this.createdAt,
+      updatedAt:       updatedAt        ?? this.updatedAt,
+      userRoles:       userRoles        ?? this.userRoles,
+    );
   }
 }
 
@@ -101,11 +132,11 @@ class CreateUserDto {
   });
 
   Map<String, dynamic> toJson() => {
-        'username': username,
-        'email': email,
-        'password': password,
+        'username':  username,
+        'email':     email,
+        'password':  password,
         'firstName': firstName,
-        'lastName': lastName,
+        'lastName':  lastName,
       };
 }
 
@@ -123,7 +154,7 @@ class UpdateUserDto {
 
   Map<String, dynamic> toJson() => {
         'firstName': firstName,
-        'lastName': lastName,
-        'status': status,
+        'lastName':  lastName,
+        'status':    status,
       };
 }

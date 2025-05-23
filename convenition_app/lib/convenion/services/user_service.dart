@@ -17,7 +17,7 @@ class UserService {
   }
 
   // GET /users/{id} → obtiene uno por id
-  Future<UserModel> getUserById(String id) async {
+  Future<UserModel> getUserById(int id) async {
     final response = await http.get(Uri.parse('$_baseUrl/$id'));
     if (response.statusCode == 200) {
       return UserModel.fromJson(jsonDecode(response.body));
@@ -43,7 +43,7 @@ class UserService {
   }
 
   // PUT /users/{id} → actualiza
-  Future<UserModel> updateUser(String id, UpdateUserDto userDto) async {
+  Future<UserModel> updateUser(int id, UpdateUserDto userDto) async {
     final response = await http.put(
       Uri.parse('$_baseUrl/$id'),
       headers: {'Content-Type': 'application/json'},
@@ -59,7 +59,7 @@ class UserService {
   }
 
   // DELETE /users/{id} → borra
-  Future<void> deleteUser(String id) async {
+  Future<void> deleteUser(int id) async {
     final response = await http.delete(Uri.parse('$_baseUrl/$id'));
     if (response.statusCode != 200 && response.statusCode != 204) {
       throw Exception(
