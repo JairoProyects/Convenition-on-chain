@@ -1,20 +1,65 @@
 import 'package:flutter/material.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:qr_flutter/qr_flutter.dart';
+import 'dart:async';
 import '../../../shared/theme/app_colors.dart';
 import '../../../shared/theme/app_text_styles.dart';
-import '../../domains/convenio_model.dart';
 import '../../domains/user_model.dart';
+import '../../domains/convenio_model.dart';
+import '../../services/convenio_service.dart';
 
-class AgreementResultPage extends StatelessWidget {
-  final ConvenioModel convenio;
+class AgreementResultPage extends StatefulWidget {
+  final AgreementDraft draft;
   final UserModel usuario;
+  final String onChainHash;
 
   const AgreementResultPage({
-    super.key,
-    required this.convenio,
+    Key? key,
+    required this.draft,
     required this.usuario,
-  });
+    required this.onChainHash,
+  }) : super(key: key);
+
+  @override
+  State<AgreementResultPage> createState() => _AgreementResultPageState();
+}
+
+class _AgreementResultPageState extends State<AgreementResultPage> {
+  late ConvenioModel? convenio;
+  bool _loading = true;
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _createConvenio();
+  }
+
+  Future<void> _createConvenio() async {
+    try {
+      final dto = CreateConvenioDto(
+        monto: widget.draft.monto,
+        moneda: widget.draft.moneda,
+        descripcion: widget.draft.descripcion,
+        condiciones: widget.draft.condiciones,
+        vencimiento: widget.draft.vencimiento,
+        firmas: [widget.draft.party1, widget.draft.party2],
+        onChainHash: widget.onChainHash,
+      );
+
+      final created = await ConvenioService().createConvenio(dto);
+
+      setState(() {
+        convenio = created;
+        _loading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _error = e.toString();
+        _loading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,132 +67,123 @@ class AgreementResultPage extends StatelessWidget {
         ? AppColors.dark
         : AppColors.light;
 
-    final qrData =
-        "Convenio: ${convenio.descripcion}\nID: ${convenio.id}\nMonto: ${convenio.moneda}${convenio.monto}\nVence: ${convenio.vencimiento.toLocal().toIso8601String()}";
+    if (_loading) {
+      return Scaffold(
+        backgroundColor: colors.backgroundMain.colors.first,
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (_error != null) {
+      return Scaffold(
+        backgroundColor: colors.backgroundMain.colors.first,
+        body: Center(
+          child: Text('Error: $_error', style: TextStyle(color: colors.textPrimary)),
+        ),
+      );
+    }
 
     return Scaffold(
-       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          icon: Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: colors.panelBackground,
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Icons.arrow_back_ios_new,
-              color: colors.textPrimary,
-              size: 16,
-            ),
-          ),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: Text(
-          'Resultado del Convenio',
-          style: TextStyle(
-            color: colors.textPrimary,
-            fontSize: 18,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
+        title: Text('Contrato Confirmado', style: TextStyle(color: colors.textPrimary)),
         centerTitle: true,
+        iconTheme: IconThemeData(color: colors.textPrimary),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.share, color: colors.textPrimary),
+            onPressed: () {
+              Share.share(_buildQrData().trim());
+            },
+            tooltip: 'Compartir Convenio',
+          ),
+        ],
       ),
       body: Container(
         decoration: BoxDecoration(gradient: colors.backgroundMain),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text("¡Contrato Registrado con Éxito!",
-                    style: AppTextStyles.heading2(colors),
-                    textAlign: TextAlign.center),
-                const SizedBox(height: 24),
-                _buildSection("Resumen del Convenio", colors, [
-                  // _infoRow("ID", convenio.id),
-                  _infoRow("Hash", convenio.onChainHash),
-                  _infoRow("Monto", "${convenio.moneda} ${convenio.monto}"),
-                  _infoRow("Vencimiento", convenio.vencimiento.toLocal().toString().split(" ")[0]),
-                  _infoRow("Descripción", convenio.descripcion),
-                  _infoRow("Condiciones", convenio.condiciones),
-                ]),
-                const SizedBox(height: 24),
-                _buildSection("Usuario Asociado", colors, [
-                  _infoRow("Nombre", "${usuario.firstName ?? ''} ${usuario.lastName ?? ''}"),
-                  _infoRow("Username", usuario.username ?? ''),
-                  _infoRow("Email", usuario.email ?? ''),
-                ]),
-                const SizedBox(height: 24),
-                Text("Escaneá o compartí este QR para verificar los datos",
-                    style: AppTextStyles.caption(colors),
-                    textAlign: TextAlign.center),
-                const SizedBox(height: 12),
-                QrImageView(
-                  data: qrData,
-                  version: QrVersions.auto,
-                  size: 180.0,
-                  backgroundColor: Colors.white,
+        padding: const EdgeInsets.all(16),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("¡Convenio creado exitosamente!", style: AppTextStyles.heading1(colors)),
+              const SizedBox(height: 16),
+
+              Text("Hash On-Chain:", style: AppTextStyles.heading2(colors)),
+              SelectableText(widget.onChainHash, style: TextStyle(color: colors.accentBlue)),
+
+              const SizedBox(height: 24),
+
+              Center(
+                child: Column(
+                  children: [
+                    Text(
+                      "Escaneá este código QR para compartir el convenio",
+                      style: AppTextStyles.heading2(colors),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 12),
+                    QrImageView(
+                      data: _buildQrData(),
+                      version: QrVersions.auto,
+                      size: 200.0,
+                      backgroundColor: Colors.white,
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 12),
-                ElevatedButton.icon(
-                  onPressed: () {
-                    Share.share(qrData, subject: "Detalles del convenio");
-                  },
+              ),
+
+              const SizedBox(height: 24),
+
+              _infoTile("Descripción", widget.draft.descripcion),
+              _infoTile("Condiciones", widget.draft.condiciones),
+              _infoTile("Monto", "${widget.draft.moneda} ${widget.draft.monto.toStringAsFixed(2)}"),
+              _infoTile("Vencimiento", widget.draft.vencimiento.toLocal().toString().split(' ')[0]),
+              _infoTile("Destinatario", "${widget.usuario.firstName} ${widget.usuario.lastName}"),
+              _infoTile("Correo", widget.usuario.email ?? 'N/A'),
+
+              const SizedBox(height: 32),
+
+              Center(
+                child: ElevatedButton(
+                  onPressed: () => Navigator.popUntil(context, (r) => r.isFirst),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: colors.accentBlue,
-                    foregroundColor: Colors.black,
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   ),
-                  icon: const Icon(Icons.share),
-                  label: const Text("Compartir"),
+                  child: const Text("Volver al Inicio"),
                 ),
-                const SizedBox(height: 24),
-                ElevatedButton(
-                  onPressed: () => Navigator.popUntil(context, (route) => route.isFirst),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: colors.accentBlue,
-                    foregroundColor: colors.panelBackground,
-                    padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
-                  ),
-                  child: const Text("Finalizar"),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _infoRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
-      child: Row(
-        children: [
-          Text("$label: ", style: const TextStyle(fontWeight: FontWeight.bold)),
-          Expanded(child: Text(value)),
-        ],
-      ),
-    );
+  String _buildQrData() {
+    return '''
+    Descripción: ${widget.draft.descripcion}
+    Condiciones: ${widget.draft.condiciones}
+    Monto: ${widget.draft.moneda} ${widget.draft.monto.toStringAsFixed(2)}
+    Vencimiento: ${widget.draft.vencimiento.toLocal().toString().split(' ')[0]}
+    Destinatario: ${widget.usuario.firstName} ${widget.usuario.lastName}
+    Correo: ${widget.usuario.email ?? 'N/A'}
+    Hash On-Chain: ${widget.onChainHash}
+    ''';
   }
 
-  Widget _buildSection(String title, AppColorScheme colors, List<Widget> content) {
-    return Card(
-      color: colors.panelBackground,
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(title,
-                style: AppTextStyles.heading2(colors).copyWith(fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-            ...content,
-          ],
-        ),
+  Widget _infoTile(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
+          const SizedBox(height: 2),
+          Text(value),
+        ],
       ),
     );
   }

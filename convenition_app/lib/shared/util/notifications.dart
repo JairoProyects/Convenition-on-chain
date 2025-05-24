@@ -80,12 +80,12 @@ void showConfirmationModal(
   );
 }
 
-void showSwapModal(BuildContext context, VoidCallback onConfirmed) {
+Future<void> showSwapModal(BuildContext context, Future<void> Function() onConfirmed) {
   final colors = Theme.of(context).brightness == Brightness.dark
       ? AppColors.dark
       : AppColors.light;
 
-  showGeneralDialog(
+  return showGeneralDialog(
     context: context,
     barrierDismissible: true,
     barrierLabel: "SwapModal",
@@ -121,7 +121,10 @@ void showSwapModal(BuildContext context, VoidCallback onConfirmed) {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  AdvancedSlideToSwap(onSwapCompleted: onConfirmed),
+                  AdvancedSlideToSwap(onSwapCompleted: () async {
+                    await onConfirmed();
+                    Navigator.of(context).pop(); // Cerrar el modal
+                  }),
                 ],
               ),
             ),
