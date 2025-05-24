@@ -1,0 +1,23 @@
+[package]
+name = "convenio_contract" # Using the contract name from the previous turn
+version = "0.1.0"
+edition = "2024_07"
+
+[dependencies]
+starknet = "2.9.2" # Dependency for building Starknet contracts
+
+[dev-dependencies]
+snforge_std = { git = "https://github.com/foundry-rs/starknet-foundry.git", tag = "v0.33.0" } # Dependency for Starknet Foundry tests
+assert_macros = "2.9.2" # Common assertion macros for testing
+
+[[target.starknet-contract]]
+sierra = true # Target to build a Starknet contract and generate the Sierra artifact
+
+[scripts]
+test = "snforge test" # Configure the 'scarb test' command to use snforge
+
+[tool.snforge]
+allow-prebuilt-plugins = ["snforge_std"] # Add this line
+
+[snforge]
+version = "0.32.0"
