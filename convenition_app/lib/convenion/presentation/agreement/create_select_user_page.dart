@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../../../shared/widgets/user_dropdown_search.dart';
 import '../../../shared/widgets/breadcrumb_widget.dart';
-import '../../../home/custom_app_bar.dart';
 import '../../domains/user_model.dart';
 import 'review_agreement_page.dart';
 import '../../domains/convenio_model.dart';
@@ -17,7 +16,6 @@ class CreateSelectUserPage extends StatefulWidget {
 }
 
 class _CreateSelectUserPageState extends State<CreateSelectUserPage> {
-  final TextEditingController _searchController = TextEditingController();
   UserModel? _selectedUser;
 
   void _confirmUser() {
@@ -80,13 +78,34 @@ class _CreateSelectUserPageState extends State<CreateSelectUserPage> {
             : AppColors.light;
 
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(56),
-        child: Container(
-          decoration: BoxDecoration(color: colors.panelBackground),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          child: CustomAppBar(controller: _searchController),
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: colors.panelBackground,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.arrow_back_ios_new,
+              color: colors.textPrimary,
+              size: 16,
+            ),
+          ),
+          onPressed: () => Navigator.of(context).pop(),
         ),
+        title: Text(
+          'Seleccionar Usuario para Contrato',
+          style: TextStyle(
+            color: colors.textPrimary,
+            fontSize: 18,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        centerTitle: true,
       ),
       body: Container(
         decoration: BoxDecoration(gradient: colors.backgroundMain),

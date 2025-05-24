@@ -4,6 +4,7 @@ import '../shared/theme/app_colors.dart';
 import '../shared/theme/app_text_styles.dart';
 import '../shared/theme/theme_provider.dart';
 import '../convenion/presentation/profile/profile_page.dart';
+import '../shared/config/auth_config.dart';
 
 class CustomAppBar extends StatelessWidget {
   final Function(String)? onSearchChanged;
@@ -18,9 +19,10 @@ class CustomAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
-    final colors = Theme.of(context).brightness == Brightness.dark
-        ? AppColors.dark
-        : AppColors.light;
+    final colors =
+        Theme.of(context).brightness == Brightness.dark
+            ? AppColors.dark
+            : AppColors.light;
 
     return Row(
       children: [
@@ -31,7 +33,11 @@ class CustomAppBar extends StatelessWidget {
             color: colors.accentBlue,
             borderRadius: BorderRadius.circular(8),
           ),
-          child: const Icon(Icons.camera_alt_rounded, color: Colors.white, size: 20),
+          child: const Icon(
+            Icons.camera_alt_rounded,
+            color: Colors.white,
+            size: 20,
+          ),
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -75,11 +81,15 @@ class CustomAppBar extends StatelessWidget {
         Icon(Icons.notifications_outlined, color: colors.textSecondary),
         const SizedBox(width: 12),
         GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const ProfilePage(userId: 1)),
-            );
+          onTap: () async {
+            final userId =
+                await AuthConfig.getUserSession();
+            if (context.mounted) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => ProfilePage(userId: userId ?? 0)),
+              );
+            }
           },
           child: Container(
             width: 36,

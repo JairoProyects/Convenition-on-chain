@@ -3,7 +3,6 @@ import '../../../shared/theme/app_colors.dart';
 import '../../../shared/theme/app_text_styles.dart';
 import '../../../shared/widgets/breadcrumb_widget.dart';
 import '../../../shared/util/notifications.dart';
-import '../../../home/custom_app_bar.dart';
 import '../../domains/convenio_model.dart';
 import '../../domains/user_model.dart';
 import './result_agreement_page.dart';
@@ -22,20 +21,40 @@ class ReviewAgreementPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).brightness == Brightness.dark
-        ? AppColors.dark
-        : AppColors.light;
-
-    final searchController = TextEditingController();
+    final colors =
+        Theme.of(context).brightness == Brightness.dark
+            ? AppColors.dark
+            : AppColors.light;
 
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(56),
-        child: Container(
-          decoration: BoxDecoration(color: colors.panelBackground),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          child: CustomAppBar(controller: searchController),
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: colors.panelBackground,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.arrow_back_ios_new,
+              color: colors.textPrimary,
+              size: 16,
+            ),
+          ),
+          onPressed: () => Navigator.of(context).pop(),
         ),
+        title: Text(
+          'Revisión del Convenio',
+          style: TextStyle(
+            color: colors.textPrimary,
+            fontSize: 18,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        centerTitle: true,
       ),
       body: Container(
         decoration: BoxDecoration(gradient: colors.backgroundMain),
@@ -57,12 +76,21 @@ class ReviewAgreementPage extends StatelessWidget {
             _buildSection("Datos del Convenio", colors, [
               _dataRow("Descripción", convenio.descripcion),
               _dataRow("Condiciones", convenio.condiciones),
-              _dataRow("Monto", "${convenio.moneda} ${convenio.monto.toStringAsFixed(2)}"),
-              _dataRow("Vencimiento", convenio.vencimiento.toLocal().toString().split(" ")[0]),
+              _dataRow(
+                "Monto",
+                "${convenio.moneda} ${convenio.monto.toStringAsFixed(2)}",
+              ),
+              _dataRow(
+                "Vencimiento",
+                convenio.vencimiento.toLocal().toString().split(" ")[0],
+              ),
             ]),
             const SizedBox(height: 24),
             _buildSection("Usuario Destinatario", colors, [
-              _dataRow("Nombre", "${usuario.firstName ?? ''} ${usuario.lastName ?? ''}"),
+              _dataRow(
+                "Nombre",
+                "${usuario.firstName ?? ''} ${usuario.lastName ?? ''}",
+              ),
               _dataRow("Username", usuario.username ?? ''),
               _dataRow("Email", usuario.email ?? ''),
               _dataRow("Estado", usuario.status?.name.toUpperCase() ?? ''),
@@ -90,10 +118,11 @@ class ReviewAgreementPage extends StatelessWidget {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => AgreementResultPage(
-                              convenio: convenio,
-                              usuario: usuario,
-                            ),
+                            builder:
+                                (_) => AgreementResultPage(
+                                  convenio: convenio,
+                                  usuario: usuario,
+                                ),
                           ),
                         );
                       });
@@ -127,7 +156,11 @@ class ReviewAgreementPage extends StatelessWidget {
     );
   }
 
-  Widget _buildSection(String title, AppColorScheme colors, List<Widget> children) {
+  Widget _buildSection(
+    String title,
+    AppColorScheme colors,
+    List<Widget> children,
+  ) {
     return Card(
       color: colors.panelBackground,
       child: Padding(
@@ -135,11 +168,12 @@ class ReviewAgreementPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title,
-                style: AppTextStyles.heading2(colors).copyWith(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                )),
+            Text(
+              title,
+              style: AppTextStyles.heading2(
+                colors,
+              ).copyWith(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
             const SizedBox(height: 8),
             ...children,
           ],
