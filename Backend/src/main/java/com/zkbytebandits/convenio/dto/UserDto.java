@@ -13,4 +13,5 @@ public class UserDto {
     private String firstName;
     private String lastName;
     private Status status;
+    private String profileImageUrl;
 }

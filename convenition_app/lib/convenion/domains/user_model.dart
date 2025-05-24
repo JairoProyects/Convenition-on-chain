@@ -60,6 +60,7 @@ class UserModel {
       firstName: json['firstName'] as String?,
       lastName: json['lastName'] as String?,
       status: UserStatus.fromString(json['status'] as String?),
+      profileImageUrl: json['profileImageUrl'] as String?,
       passwordHash: json['passwordHash'] as String?,
       createdAt:
           json['createdAt'] != null
@@ -85,6 +86,7 @@ class UserModel {
       'firstName': firstName,
       'lastName': lastName,
       'status': status?.toJson(),
+      'profileImageUrl': profileImageUrl,
       'passwordHash': passwordHash,
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),

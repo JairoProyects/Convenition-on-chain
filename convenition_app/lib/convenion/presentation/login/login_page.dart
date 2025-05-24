@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import '../../../shared/theme/app_colors.dart';
 import './register_page.dart';
 import './login_email_page.dart';
-import '../../../home/bottom_navigation_bar.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
