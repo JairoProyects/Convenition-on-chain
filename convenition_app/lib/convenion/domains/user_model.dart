@@ -167,3 +167,46 @@ class UpdateUserDto {
     'status': status,
   };
 }
+
+class LoginRequest {
+  final String email;
+  final String clave;
+
+  LoginRequest({required this.email, required this.clave});
+
+  Map<String, dynamic> toJson() {
+    return {
+      'email': email,
+      'clave': clave,
+    };
+  }
+}
+
+class LoginResponse {
+  final int userId;
+  final String username;
+  final String email;
+  final String token;
+  final String firstName;
+  final String lastName;
+
+  LoginResponse({
+    required this.userId,
+    required this.username,
+    required this.email,
+    required this.token,
+    required this.firstName,
+    required this.lastName,
+  });
+
+  factory LoginResponse.fromJson(Map<String, dynamic> json) {
+    return LoginResponse(
+      userId: json['userId'],
+      username: json['username'],
+      email: json['email'],
+      token: json['token'],
+      firstName: json['firstName'],
+      lastName: json['lastName'],
+    );
+  }
+}

@@ -81,4 +81,21 @@ class UserService {
       );
     }
   }
+
+  Future<LoginResponse> loginUser(LoginRequest loginRequest) async {
+    final response = await http.post(
+      Uri.parse('$_baseUrlUser/login'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(loginRequest.toJson()),
+    );
+
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body);
+      return LoginResponse.fromJson(json);
+    } else {
+      throw Exception(
+        'Failed to login. Status: ${response.statusCode} - ${response.body}',
+      );
+    }
+  }
 }

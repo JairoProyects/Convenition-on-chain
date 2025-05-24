@@ -1,6 +1,8 @@
+import 'package:convenition_app/convenion/domains/user_model.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../../../shared/theme/app_colors.dart';
+import '../../services/user_service.dart';
+import '../../../home/bottom_navigation_bar.dart';
 
 class LoginEmailPage extends StatefulWidget {
   final bool isDarkMode;
@@ -65,7 +67,6 @@ class _LoginEmailPageState extends State<LoginEmailPage>
     );
 
     _animationController.forward();
-    _emailController.text = "sophat.leat@intrea.live";
   }
 
   @override
@@ -88,31 +89,54 @@ class _LoginEmailPageState extends State<LoginEmailPage>
     });
 
     _buttonAnimationController.forward();
-    await Future.delayed(const Duration(seconds: 2));
-    _buttonAnimationController.reverse();
 
-    setState(() {
-      _isLoading = false;
-    });
-
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: [
-              Icon(Icons.check_circle, color: Colors.white),
-              const SizedBox(width: 8),
-              const Text('Inicio de sesión exitoso!'),
-            ],
-          ),
-          backgroundColor: colorScheme.accentGreen,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          margin: const EdgeInsets.all(16),
-        ),
+    try {
+      final loginRequest = LoginRequest(
+        email: _emailController.text.trim(),
+        clave: _passwordController.text.trim(),
       );
+
+      final response = await UserService().loginUser(loginRequest);
+
+      // TODO: Guarda token y datos del usuario si es necesario, por ejemplo con SharedPreferences
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: const [
+                Icon(Icons.check_circle, color: Colors.white),
+                SizedBox(width: 8),
+                Text('Inicio de sesión exitoso!'),
+              ],
+            ),
+            backgroundColor: colorScheme.accentGreen,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            margin: const EdgeInsets.all(16),
+          ),
+        );
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const MenuTopTabsPage()),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error al iniciar sesión: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      _buttonAnimationController.reverse();
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -176,7 +200,7 @@ class _LoginEmailPageState extends State<LoginEmailPage>
                             Row(
                               children: [
                                 Text(
-                                  'Hola, ¡bienvenido de nuevo! ',
+                                  'Hola, ¡bienvenido de nuevo!',
                                   style: TextStyle(
                                     fontSize: 24,
                                     fontWeight: FontWeight.bold,
@@ -222,7 +246,7 @@ class _LoginEmailPageState extends State<LoginEmailPage>
                                   return 'Por favor ingrese su correo';
                                 }
                                 if (!RegExp(
-                                  r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}\$',
+                                  r'^[\w\.-]+@[\w\.-]+\.\w{2,}$',
                                 ).hasMatch(value)) {
                                   return 'Por favor ingrese un correo válido';
                                 }
