@@ -9,19 +9,26 @@ pub trait IConvenioContract<TContractState> {
     fn get_signed_one(self: @TContractState) -> bool;
     fn get_signed_two(self: @TContractState) -> bool;
     fn get_status(self: @TContractState) -> (bool, bool, felt252, bool);
+    fn get_amount(self: @TContractState) -> u256;
+    fn get_currency(self: @TContractState) -> felt252;
+    fn get_extra_conditions(self: @TContractState) -> felt252;
+    fn get_expiration_date(self: @TContractState) -> u64;
 }
 
 // Define the contract module
 #[starknet::contract]
 pub mod ConvenioContract {
-    // Updated imports to use 'starknet' directly as recommended by the warnings
     use starknet::{ContractAddress, get_caller_address};
     use starknet::storage::*;
     use core::pedersen::pedersen;
-    use core::num::traits::Zero;
     use core::bool;
+    use core::integer::u64;
+    use core::integer::u256;
+    use core::traits::Into;
+    use core::num::traits::Zero;
 
-    // Define storage variables
+
+    // Storage structure
     #[storage]
     pub struct Storage {
         party_one: felt252,
@@ -30,9 +37,13 @@ pub mod ConvenioContract {
         agreement_hash: felt252,
         signed_one: bool,
         signed_two: bool,
+        amount: u256,
+        currency: felt252,
+        extra_conditions: felt252,
+        expiration_date: u64,
     }
 
-    // Define events
+    // Events
     #[event]
     #[derive(Drop, starknet::Event)]
     pub enum Event {
@@ -46,6 +57,10 @@ pub mod ConvenioContract {
         party_two: felt252,
         agreement_hash: felt252,
         agreement_text: felt252,
+        amount: u256,
+        currency: felt252,
+        extra_conditions: felt252,
+        expiration_date: u64,
     }
 
     #[derive(Drop, starknet::Event)]
@@ -55,13 +70,17 @@ pub mod ConvenioContract {
         signed_two_status: bool,
     }
 
-    // Constructor function
+    // Constructor
     #[constructor]
     pub fn constructor(
         ref self: ContractState,
         party_one: felt252,
         party_two: felt252,
         agreement_text: felt252,
+        amount: u256,
+        currency: felt252,
+        extra_conditions: felt252,
+        expiration_date: u64,
     ) {
         assert(!party_one.is_zero(), 'PartyOne cannot be zero');
         assert(!party_two.is_zero(), 'PartyTwo cannot be zero');
@@ -71,6 +90,10 @@ pub mod ConvenioContract {
         self.party_one.write(party_one);
         self.party_two.write(party_two);
         self.agreement_text.write(agreement_text);
+        self.amount.write(amount);
+        self.currency.write(currency);
+        self.extra_conditions.write(extra_conditions);
+        self.expiration_date.write(expiration_date);
 
         let hash = pedersen(party_one, pedersen(party_two, agreement_text));
         self.agreement_hash.write(hash);
@@ -84,11 +107,15 @@ pub mod ConvenioContract {
                 party_two,
                 agreement_hash: hash,
                 agreement_text,
+                amount,
+                currency,
+                extra_conditions,
+                expiration_date,
             }
         ));
     }
 
-    // Implement the contract interface
+    // Implementación del contrato
     #[abi(embed_v0)]
     pub impl ConvenioContractImpl of super::IConvenioContract<ContractState> {
         fn sign_agreement(ref self: ContractState) {
@@ -120,6 +147,8 @@ pub mod ConvenioContract {
             ));
         }
 
+        // Getters
+
         fn get_party_one(self: @ContractState) -> felt252 {
             self.party_one.read()
         }
@@ -150,6 +179,22 @@ pub mod ConvenioContract {
             let agreement_hash = self.agreement_hash.read();
             let fully_signed = signed_one && signed_two;
             (signed_one, signed_two, agreement_hash, fully_signed)
+        }
+
+        fn get_amount(self: @ContractState) -> u256 {
+            self.amount.read()
+        }
+
+        fn get_currency(self: @ContractState) -> felt252 {
+            self.currency.read()
+        }
+
+        fn get_extra_conditions(self: @ContractState) -> felt252 {
+            self.extra_conditions.read()
+        }
+
+        fn get_expiration_date(self: @ContractState) -> u64 {
+            self.expiration_date.read()
         }
     }
 }
