@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'user_role_model.dart';
 
 enum UserStatus {
@@ -131,6 +133,7 @@ class CreateUserDto {
   final String password;
   final String firstName;
   final String lastName;
+  final File? profileImageUrl;
 
   CreateUserDto({
     required this.identification,
@@ -139,6 +142,7 @@ class CreateUserDto {
     required this.password,
     required this.firstName,
     required this.lastName,
+    required this.profileImageUrl
   });
 
   Map<String, dynamic> toJson() => {
@@ -148,6 +152,7 @@ class CreateUserDto {
     'password': password,
     'firstName': firstName,
     'lastName': lastName,
+    'profileImageUrl' : profileImageUrl
   };
 }
 

@@ -22,8 +22,7 @@ class _CreateSelectUserPageState extends State<CreateSelectUserPage> {
     if (_selectedUser != null) {
       // Simulación del convenio cargado previamente (ajustá según tu flujo real)
       final convenioSimulado = ConvenioModel(
-        id: 'temp-id',
-        externalId: 'temp-external-id',
+        id: 1,
         timestamp: DateTime.now(),
         monto: 1500,
         moneda: '₡',
@@ -32,6 +31,7 @@ class _CreateSelectUserPageState extends State<CreateSelectUserPage> {
         vencimiento: DateTime.now().add(const Duration(days: 30)),
         firmas: [],
         onChainHash: '0xFAKEHASH1234',
+          status: "Activo",
       );
 
       Navigator.push(
@@ -145,11 +145,11 @@ class _CreateSelectUserPageState extends State<CreateSelectUserPage> {
                       child: ElevatedButton(
                         onPressed: _confirmUser,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: colors.accentBlue,
-                          foregroundColor: Colors.black,
+                          backgroundColor: colors.panelBackground,
+                          foregroundColor: colors.accentBlue,
                           padding: const EdgeInsets.symmetric(vertical: 14),
                         ),
-                        child: const Text("Confirmar Contrato"),
+                        child: const Text("Siguiente"),
                       ),
                     ),
                   ],

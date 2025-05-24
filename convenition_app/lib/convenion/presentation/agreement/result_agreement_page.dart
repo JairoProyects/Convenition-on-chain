@@ -68,7 +68,7 @@ class AgreementResultPage extends StatelessWidget {
                     textAlign: TextAlign.center),
                 const SizedBox(height: 24),
                 _buildSection("Resumen del Convenio", colors, [
-                  _infoRow("ID", convenio.id),
+                  // _infoRow("ID", convenio.id),
                   _infoRow("Hash", convenio.onChainHash),
                   _infoRow("Monto", "${convenio.moneda} ${convenio.monto}"),
                   _infoRow("Vencimiento", convenio.vencimiento.toLocal().toString().split(" ")[0]),
@@ -109,7 +109,7 @@ class AgreementResultPage extends StatelessWidget {
                   onPressed: () => Navigator.popUntil(context, (route) => route.isFirst),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: colors.accentBlue,
-                    foregroundColor: Colors.black,
+                    foregroundColor: colors.panelBackground,
                     padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
                   ),
                   child: const Text("Finalizar"),
