@@ -9,6 +9,8 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -53,4 +55,9 @@ public class Convenio {
 
     @Column(name = "on_chain_hash", unique = true)
     private String onChainHash;
-} 
+
+    // Relationship with Users through UserConvenio
+    @OneToMany(mappedBy = "convenio", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private Collection<UserConvenio> userConvenios = new ArrayList<>();
+}

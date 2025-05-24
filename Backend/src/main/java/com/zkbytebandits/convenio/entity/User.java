@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Collection;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -55,6 +56,11 @@ public class User {
     // It's necessary for security purposes
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<UserRole> userRoles = new HashSet<>();
+    
+    // Relationship with Convenios through UserConvenio
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private Collection<UserConvenio> userConvenios = new ArrayList<>();
 
     public enum Status {
         ACTIVO, INACTIVO, BLOQUEADO
