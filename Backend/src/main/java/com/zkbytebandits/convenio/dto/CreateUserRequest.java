@@ -2,7 +2,8 @@ package com.zkbytebandits.convenio.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import lombok.*;
+import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 public class CreateUserRequest {
@@ -21,4 +22,6 @@ public class CreateUserRequest {
 
     private String firstName;
     private String lastName;
+
+    private MultipartFile image; // For profile image upload
 }

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/signatures")
+@RequestMapping("/signatures")
 public class SignatureController {
 
     private final CreateSignatureService createSignatureService;
@@ -31,10 +31,7 @@ public class SignatureController {
         return createSignatureService.saveSignature(signature);
     }
 
-    @GetMapping("/contract/{contractId}")
-    public List<Signature> getSignaturesForContract(@PathVariable Long contractId) {
-        return getSignatureService.getSignaturesForContract(contractId);
-    }
+
 
     @GetMapping("/wallet/{walletId}")
     public List<Signature> getSignaturesByWalletId(@PathVariable Long walletId) {

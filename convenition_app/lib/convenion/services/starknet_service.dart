@@ -14,34 +14,32 @@ class StarknetService {
 
   /// Crear un nuevo convenio on-chain y devolver el hash de transacción
   Future<String> createConvenio({
-  required String party1,
-  required String party2,
-  required String descripcion,
-  required double monto,
-  required String moneda,
-  required String condiciones,
-  required DateTime vencimiento,
-  required String status, // ✅ nuevo campo
-}) async {
-  final txResult = await cuenta.execute(
-    functionCalls: [
-      FunctionCall(
-        contractAddress: factoryAddress,
-        entryPointSelector: getSelectorByName('create_convenio'),
-        calldata: [
-          Felt.fromHexString(party1),
-          Felt.fromHexString(party2),
-          Felt.fromString(descripcion),
-          Felt.fromInt(monto.toInt()),
-          Felt.fromInt(0), // high bits
-          Felt.fromString(moneda),
-          Felt.fromString(condiciones),
-          Felt.fromInt(vencimiento.millisecondsSinceEpoch ~/ 1000),
-          Felt.fromString(status), // ✅ nuevo campo al final
-        ],
-      ),
-    ],
-  );
+    required String party1,
+    required String party2,
+    required String descripcion,
+    required double monto,
+    required String moneda,
+    required String condiciones,
+    required DateTime vencimiento,
+  }) async {
+    final txResult = await cuenta.execute(
+      functionCalls: [
+        FunctionCall(
+          contractAddress: factoryAddress,
+          entryPointSelector: getSelectorByName('create_convenio'),
+          calldata: [
+            Felt.fromHexString(party1),
+            Felt.fromHexString(party2),
+           Felt.fromString(descripcion),
+            Felt.fromInt(monto.toInt()),
+            Felt.fromInt(0), // high bits del monto (usualmente 0)
+            Felt.fromString(moneda),
+            Felt.fromString(condiciones),
+            Felt.fromInt(vencimiento.millisecondsSinceEpoch ~/ 1000),
+          ],
+        ),
+      ],
+    );
 
    return txResult.when(
           result: (res) {
