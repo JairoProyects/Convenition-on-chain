@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../shared/theme/app_colors.dart';
 import './register_page.dart';
+import './login_email_page.dart';
 import '../../../home/bottom_navigation_bar.dart';
 
 class LoginPage extends StatelessWidget {
@@ -181,7 +182,7 @@ class LoginPage extends StatelessWidget {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => const MenuTopTabsPage()),
+              MaterialPageRoute(builder: (_) => const LoginEmailPage()),
             );
           },
           child: Padding(

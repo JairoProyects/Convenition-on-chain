@@ -5,20 +5,27 @@ import '../convenion/presentation/profile/profile_page.dart';
 import '../../shared/theme/app_colors.dart';
 
 class MenuTopTabsPage extends StatefulWidget {
-  const MenuTopTabsPage({super.key});
-  int get userId => 1; // Simulación de ID de usuario, ajustá según tu lógica
+  final int userId;
+
+  const MenuTopTabsPage({super.key, required this.userId});
+
   @override
   State<MenuTopTabsPage> createState() => _MenuTopTabsPageState();
 }
 
 class _MenuTopTabsPageState extends State<MenuTopTabsPage> {
+  late final List<Widget> _screens;
   int _selectedIndex = 0;
 
-  final List<Widget> _screens = const [
-    HomePage(),
-    CreateAgreementPage(),
-    ProfilePage(userId: 1),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _screens = [
+      const HomePage(),
+      const CreateAgreementPage(),
+      ProfilePage(userId: widget.userId),
+    ];
+  }
 
   final List<BottomNavigationBarItem> _bottomNavItems = const [
     BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'Inicio'),
@@ -34,9 +41,10 @@ class _MenuTopTabsPageState extends State<MenuTopTabsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).brightness == Brightness.dark
-        ? AppColors.dark
-        : AppColors.light;
+    final colors =
+        Theme.of(context).brightness == Brightness.dark
+            ? AppColors.dark
+            : AppColors.light;
 
     return Scaffold(
       body: Container(

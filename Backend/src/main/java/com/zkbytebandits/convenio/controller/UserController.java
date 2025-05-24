@@ -6,6 +6,7 @@ import com.zkbytebandits.convenio.service.user.get.GetAllUsers;
 import com.zkbytebandits.convenio.service.user.get.GetUserById;
 import com.zkbytebandits.convenio.service.user.update.UpdateUser;
 import com.zkbytebandits.convenio.service.user.delete.DeleteUser;
+import com.zkbytebandits.convenio.service.user.login.LoginUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,7 @@ public class UserController {
     private final GetUserById getUserById;
     private final UpdateUser updateUser;
     private final DeleteUser deleteUser;
+    private final LoginUser loginUser;
 
 
     @PostMapping("/register")
@@ -48,5 +50,10 @@ public class UserController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         deleteUser.execute(id);
         return ResponseEntity.noContent().build();
+    }
+    
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
+        return ResponseEntity.ok(loginUser.execute(request));
     }
 }

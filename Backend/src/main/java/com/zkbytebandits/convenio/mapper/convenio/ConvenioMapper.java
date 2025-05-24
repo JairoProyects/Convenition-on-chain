@@ -4,7 +4,7 @@ import com.zkbytebandits.convenio.dto.convenio.ConvenioResponse;
 import com.zkbytebandits.convenio.entity.Convenio;
 import org.springframework.stereotype.Component;
 
-import java.util.stream.Collectors;
+
 
 @Component
 public class ConvenioMapper {
@@ -15,7 +15,7 @@ public class ConvenioMapper {
         }
         return ConvenioResponse.builder()
                 .id(convenio.getId())
-                .externalId(convenio.getExternalId())
+                .status(convenio.getStatus())
                 .timestamp(convenio.getTimestamp())
                 .monto(convenio.getMonto())
                 .moneda(convenio.getMoneda())
@@ -28,4 +28,4 @@ public class ConvenioMapper {
     }
 
     // We might not need a toConvenioEntity from ConvenioResponse if all creations/updates go through specific request DTOs
-} 
+}

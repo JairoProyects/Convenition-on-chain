@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../domains/convenio_model.dart';
-import '../domains/convenio_model.dart';
 
 class ConvenioService {
   final String _baseUrl = "http://localhost:8080/api/convenios";

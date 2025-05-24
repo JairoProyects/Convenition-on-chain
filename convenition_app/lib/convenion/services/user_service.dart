@@ -4,10 +4,10 @@ import '../domains/user_model.dart';
 import '../../shared/config/api_config.dart';
 
 class UserService {
-  final _baseUrl = ApiConfig.users;
+  final _baseUrlUser = ApiConfig.users;
 
   Future<List<UserModel>> getAllUsers() async {
-    final response = await http.get(Uri.parse(_baseUrl));
+    final response = await http.get(Uri.parse(_baseUrlUser));
     if (response.statusCode == 200) {
       final List<dynamic> usersJson = jsonDecode(response.body);
       return usersJson.map((json) => UserModel.fromJson(json)).toList();
@@ -17,8 +17,8 @@ class UserService {
   }
 
   // GET /users/{id} → obtiene uno por id
-  Future<UserModel> getUserById(int id) async {
-    final response = await http.get(Uri.parse('$_baseUrl/$id'));
+  Future<UserModel> getUserById(String id) async {
+    final response = await http.get(Uri.parse('$_baseUrlUser/$id'));
     if (response.statusCode == 200) {
       return UserModel.fromJson(jsonDecode(response.body));
     } else {
@@ -28,10 +28,10 @@ class UserService {
     }
   }
 
-  // POST /users → crea uno nuevo
+  // POST /register → crea uno nuevo
   Future<UserModel> createUser(CreateUserDto userDto) async {
     final response = await http.post(
-      Uri.parse(_baseUrl),
+      Uri.parse('$_baseUrlUser/register'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(userDto.toJson()),
     );
@@ -45,7 +45,7 @@ class UserService {
   // PUT /users/{id} → actualiza
   Future<UserModel> updateUser(int id, UpdateUserDto userDto) async {
     final response = await http.put(
-      Uri.parse('$_baseUrl/$id'),
+      Uri.parse('$_baseUrlUser/$id'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(userDto.toJson()),
     );
@@ -59,8 +59,8 @@ class UserService {
   }
 
   // DELETE /users/{id} → borra
-  Future<void> deleteUser(int id) async {
-    final response = await http.delete(Uri.parse('$_baseUrl/$id'));
+  Future<void> deleteUser(String id) async {
+    final response = await http.delete(Uri.parse('$_baseUrlUser/$id'));
     if (response.statusCode != 200 && response.statusCode != 204) {
       throw Exception(
         'Failed to delete user with id $id. Status: ${response.statusCode}',
@@ -69,7 +69,7 @@ class UserService {
   }
 
   Future<UserModel> getUserByEmail(String email) async {
-    final response = await http.get(Uri.parse('$_baseUrl/\$email'));
+    final response = await http.get(Uri.parse('$_baseUrlUser/\$email'));
 
     if (response.statusCode == 200) {
       return UserModel.fromJson(
@@ -78,6 +78,23 @@ class UserService {
     } else {
       throw Exception(
         'Failed to load user with email \$email. Status: \${response.statusCode}',
+      );
+    }
+  }
+
+  Future<LoginResponse> loginUser(LoginRequest loginRequest) async {
+    final response = await http.post(
+      Uri.parse('$_baseUrlUser/login'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(loginRequest.toJson()),
+    );
+
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body);
+      return LoginResponse.fromJson(json);
+    } else {
+      throw Exception(
+        'Failed to login. Status: ${response.statusCode} - ${response.body}',
       );
     }
   }

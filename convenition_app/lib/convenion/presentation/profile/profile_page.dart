@@ -1,29 +1,28 @@
-import 'dart:ffi';
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../../../shared/theme/app_text_styles.dart';
-
+import '../../../shared/config/auth_config.dart';
 import '../../services/user_service.dart';
-import '../../services/user_profile_service.dart';
 import '../../domains/user_model.dart';
+import '../../presentation/login/login_page.dart';
 
 class ProfilePage extends StatefulWidget {
-  final int  userId;
-  const ProfilePage({Key? key, required this.userId}) : super(key: key);
+  final int userId;
+
+  const ProfilePage({super.key, required this.userId});
 
   @override
-  _ProfilePageState createState() => _ProfilePageState();
+  State<ProfilePage> createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  late Future<UserModel> _userFuture;
-  final _picker = ImagePicker();
-  final _firstNameCtrl = TextEditingController();
-  final _lastNameCtrl = TextEditingController();
+  UserModel? _user;
+  bool _isLoading = true;
   bool _isEditing = false;
-  bool _saving = false;
+  final _usernameController = TextEditingController();
+  final _currentPasswordController = TextEditingController();
+  final _newPasswordController = TextEditingController();
+  final _confirmNewPasswordController = TextEditingController();
 
   @override
   void initState() {
@@ -31,52 +30,60 @@ class _ProfilePageState extends State<ProfilePage> {
     _loadUser();
   }
 
-  void _loadUser() {
-    _userFuture = UserService().getUserById(widget.userId);
-    _userFuture.then((user) {
-      _firstNameCtrl.text = user.firstName ?? '';
-      _lastNameCtrl.text = user.lastName ?? '';
-    });
+  Future<void> _loadUser() async {
+    try {
+      final user = await UserService().getUserById(widget.userId.toString());
+      setState(() {
+        _user = user;
+        _usernameController.text = user.username ?? '';
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error al cargar el perfil: $e')));
+    }
   }
 
-  Future<void> _pickAndUploadImage() async {
-    final picked = await _picker.pickImage(source: ImageSource.gallery);
-    if (picked == null) return;
-    final file = File(picked.path);
-    final resp = await UserProfileService().uploadProfileImage(
-      userId: widget.userId,
-      imageFile: file,
-    );
-    // Reload user to get new URL
-    setState(() {
-      _userFuture = Future.value(
-        ( _userFuture ).then((u) => u.copyWith(profileImageUrl: resp.imageUrl))
+  Future<void> _submitChanges() async {
+    if (_newPasswordController.text != _confirmNewPasswordController.text) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Las nuevas contraseñas no coinciden')),
       );
-    });
-  }
+      return;
+    }
 
-  Future<void> _saveProfile() async {
-    setState(() => _saving = true);
-    await UserService().updateUser(
-      widget.userId,
-      UpdateUserDto(
-        firstName: _firstNameCtrl.text,
-        lastName: _lastNameCtrl.text,
-        status: 'activo', // or preserve previous
-      ),
-    );
-    setState(() {
-      _isEditing = false;
-      _saving = false;
-      _loadUser();
-    });
+    try {
+      final dto = UpdateUserDto(
+        username: _usernameController.text,
+        currentPassword: _currentPasswordController.text,
+        newPassword: _newPasswordController.text,
+        confirmNewPassword: _confirmNewPasswordController.text,
+      );
+      final updatedUser = await UserService().updateUser(widget.userId, dto);
+      setState(() {
+        _user = updatedUser;
+        _isEditing = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Perfil actualizado correctamente')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error al actualizar perfil: $e')));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).brightness == Brightness.dark
-        ? AppColors.dark
-        : AppColors.light;
+    final colors =
+        Theme.of(context).brightness == Brightness.dark
+            ? AppColors.dark
+            : AppColors.light;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -90,93 +97,205 @@ class _ProfilePageState extends State<ProfilePage> {
               color: colors.panelBackground,
               shape: BoxShape.circle,
             ),
-            child: Icon(Icons.arrow_back_ios_new,
-                color: colors.textPrimary, size: 16),
+            child: Icon(
+              Icons.arrow_back_ios_new,
+              color: colors.textPrimary,
+              size: 16,
+            ),
           ),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: Text('Profile',
-            style: TextStyle(
-                color: colors.textPrimary,
-                fontSize: 18,
-                fontWeight: FontWeight.w500)),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: Icon(
-              _isEditing ? Icons.check : Icons.edit,
-              color: colors.accentBlue,
-            ),
-            onPressed: _isEditing ? _saveProfile : () {
-              setState(() => _isEditing = true);
-            },
+        title: Text(
+          'Perfil',
+          style: TextStyle(
+            color: colors.textPrimary,
+            fontSize: 18,
+            fontWeight: FontWeight.w500,
           ),
-        ],
+        ),
+        centerTitle: true,
       ),
       body: Container(
         decoration: BoxDecoration(gradient: colors.backgroundMain),
-        child: FutureBuilder<UserModel>(
-          future: _userFuture,
-          builder: (context, snap) {
-            if (snap.connectionState != ConnectionState.done) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            if (snap.hasError) {
-              return Center(child: Text('Error: \${snap.error}'));
-            }
-            final user = snap.data!;
-            return SingleChildScrollView(
-              padding: const EdgeInsets.only(
-                  top: kToolbarHeight + 16, bottom: 32),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  GestureDetector(
-                    onTap: _pickAndUploadImage,
-                    child: CircleAvatar(
-                      radius: 50,
-                      backgroundColor: colors.panelBackground,
-                      backgroundImage: user.profileImageUrl != null
-                          ? NetworkImage(user.profileImageUrl!)
-                          : null,
-                      child: user.profileImageUrl == null
-                          ? Icon(Icons.person, size: 50, color: colors.textSecondary)
-                          : null,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(user.username ?? '',
-                      style: AppTextStyles.heading2(colors)),
-                  const SizedBox(height: 8),
-                  if (_isEditing)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 32.0),
-                      child: Column(
-                        children: [
-                          TextField(
-                            controller: _firstNameCtrl,
-                            decoration: InputDecoration(labelText: 'First Name'),
-                          ),
-                          TextField(
-                            controller: _lastNameCtrl,
-                            decoration: InputDecoration(labelText: 'Last Name'),
-                          ),
-                          const SizedBox(height: 16),
-                          if (_saving) const CircularProgressIndicator(),
-                        ],
+        child:
+            _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : Column(
+                  children: [
+                    Expanded(
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.only(
+                          top: kToolbarHeight + 16,
+                        ),
+                        child: Column(
+                          children: [
+                            Container(
+                              width: 100,
+                              height: 100,
+                              decoration: const BoxDecoration(
+                                shape: BoxShape.circle,
+                                image: DecorationImage(
+                                  image: NetworkImage(
+                                    'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-zaYQe9sngzvu2DSNu5P9ijXuVuQnk0.png',
+                                  ),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              _user != null
+                                  ? '${_user!.firstName ?? ''} ${_user!.lastName ?? ''}'
+                                          .trim()
+                                          .isEmpty
+                                      ? 'Nombre no disponible'
+                                      : '${_user!.firstName ?? ''} ${_user!.lastName ?? ''}'
+                                          .trim()
+                                  : 'Nombre no disponible',
+                              style: AppTextStyles.heading2(colors),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              _user?.email ?? '',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: colors.textSecondary,
+                              ),
+                            ),
+                            const SizedBox(height: 30),
+                            _buildMenuItem(
+                              title:
+                                  _isEditing
+                                      ? 'Cancelar edición'
+                                      : 'Editar perfil',
+                              icon: Icons.edit,
+                              onTap: () {
+                                setState(() {
+                                  _isEditing = !_isEditing;
+                                });
+                              },
+                              colors: colors,
+                            ),
+                            if (_isEditing)
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 20,
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const SizedBox(height: 16),
+                                    TextField(
+                                      controller: _usernameController,
+                                      decoration: const InputDecoration(
+                                        labelText: 'Nombre de usuario',
+                                      ),
+                                    ),
+                                    const SizedBox(height: 12),
+                                    TextField(
+                                      controller: _currentPasswordController,
+                                      obscureText: true,
+                                      decoration: const InputDecoration(
+                                        labelText: 'Contraseña actual',
+                                      ),
+                                    ),
+                                    const SizedBox(height: 12),
+                                    TextField(
+                                      controller: _newPasswordController,
+                                      obscureText: true,
+                                      decoration: const InputDecoration(
+                                        labelText: 'Nueva contraseña',
+                                      ),
+                                    ),
+                                    const SizedBox(height: 12),
+                                    TextField(
+                                      controller: _confirmNewPasswordController,
+                                      obscureText: true,
+                                      decoration: const InputDecoration(
+                                        labelText: 'Confirmar nueva contraseña',
+                                      ),
+                                    ),
+                                    const SizedBox(height: 16),
+                                    ElevatedButton.icon(
+                                      onPressed: _submitChanges,
+                                      icon: const Icon(Icons.save),
+                                      label: const Text('Guardar cambios'),
+                                    ),
+                                    const SizedBox(height: 20),
+                                  ],
+                                ),
+                              ),
+                            _buildMenuItem(
+                              title: 'Ayuda',
+                              icon: Icons.arrow_forward_ios,
+                              onTap: () {},
+                              colors: colors,
+                            ),
+                            const SizedBox(height: 20),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                              ),
+                              child: TextButton.icon(
+                                onPressed: () async {
+                                  await AuthConfig.logout();
+                                  if (context.mounted) {
+                                    Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => const LoginPage(),
+                                      ),
+                                      (route) => false,
+                                    );
+                                  }
+                                },
+                                icon: Icon(
+                                  Icons.logout,
+                                  color: colors.accentBlue,
+                                  size: 18,
+                                ),
+                                label: Text(
+                                  'Cerrar sesión',
+                                  style: TextStyle(
+                                    color: colors.accentBlue,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    )
-                  else ...[
-                    Text('${user.firstName ?? ''} ${user.lastName ?? ''}',
-                        style: AppTextStyles.body(colors)),
-                    const SizedBox(height: 4),
-                    Text(user.email ?? '',
-                        style: TextStyle(fontSize: 14, color: colors.textSecondary)),
+                    ),
                   ],
-                ],
-              ),
-            );
-          },
+                ),
+      ),
+    );
+  }
+
+  Widget _buildMenuItem({
+    required String title,
+    required IconData icon,
+    required VoidCallback onTap,
+    required AppColorScheme colors,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      child: InkWell(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: colors.panelBackground,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(title, style: AppTextStyles.body(colors)),
+              Icon(icon, size: 16, color: colors.textSecondary),
+            ],
+          ),
         ),
       ),
     );

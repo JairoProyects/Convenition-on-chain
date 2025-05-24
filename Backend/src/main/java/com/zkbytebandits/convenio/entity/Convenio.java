@@ -9,6 +9,8 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -23,8 +25,8 @@ public class Convenio {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "external_id", nullable = false, unique = true)
-    private String externalId;
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
@@ -53,4 +55,17 @@ public class Convenio {
 
     @Column(name = "on_chain_hash", unique = true)
     private String onChainHash;
-} 
+
+    // Relationship with Users through UserConvenio
+    @OneToMany(mappedBy = "convenio", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private Collection<UserConvenio> userConvenios = new ArrayList<>();
+    
+    public enum Status {
+        CREATED,
+        IN_PROGRESS,
+        COMPLETED,
+        EXPIRED,
+        CANCELLED
+    }
+}
