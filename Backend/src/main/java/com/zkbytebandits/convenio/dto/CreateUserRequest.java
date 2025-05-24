@@ -6,7 +6,10 @@ import lombok.*;
 
 @Data
 public class CreateUserRequest {
-    
+
+    @NotBlank
+    private String identification;
+
     @NotBlank
     private String username;
 

@@ -43,7 +43,7 @@ class UserService {
   }
 
   // PUT /users/{id} → actualiza
-  Future<UserModel> updateUser(String id, UpdateUserDto userDto) async {
+  Future<UserModel> updateUser(int id, UpdateUserDto userDto) async {
     final response = await http.put(
       Uri.parse('$_baseUrlUser/$id'),
       headers: {'Content-Type': 'application/json'},

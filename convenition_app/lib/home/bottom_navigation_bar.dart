@@ -6,7 +6,7 @@ import '../../shared/theme/app_colors.dart';
 
 class MenuTopTabsPage extends StatefulWidget {
   const MenuTopTabsPage({super.key});
-
+  int get userId => 1; // Simulación de ID de usuario, ajustá según tu lógica
   @override
   State<MenuTopTabsPage> createState() => _MenuTopTabsPageState();
 }
@@ -17,7 +17,7 @@ class _MenuTopTabsPageState extends State<MenuTopTabsPage> {
   final List<Widget> _screens = const [
     HomePage(),
     CreateAgreementPage(),
-    ProfilePage(),
+    ProfilePage(userId: 1),
   ];
 
   final List<BottomNavigationBarItem> _bottomNavItems = const [

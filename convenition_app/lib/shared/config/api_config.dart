@@ -5,6 +5,7 @@ class ApiConfig {
   static const String userDetails = "$baseDomain/api/userdetails";
   static const String users = "$baseDomain/users";
   static const String detailsUsers = "$baseDomain/api/detailsUsers";
+  static String profileImage(int userId) => "$users/$userId/profile-image";
 
   // Endpoints de convenios
   static const String convenios     = "$baseDomain/api/convenios";
