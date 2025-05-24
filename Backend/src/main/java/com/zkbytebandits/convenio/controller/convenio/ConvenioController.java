@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/convenios")
+@RequestMapping("/convenios")
 public class ConvenioController {
 
     private final CreateConvenioService createConvenioService;

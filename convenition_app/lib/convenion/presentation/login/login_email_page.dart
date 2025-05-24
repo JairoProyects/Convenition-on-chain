@@ -8,7 +8,7 @@ import '../../../shared/config/auth_config.dart';
 class LoginEmailPage extends StatefulWidget {
   final bool isDarkMode;
 
-  const LoginEmailPage({Key? key, this.isDarkMode = true}) : super(key: key);
+  const LoginEmailPage({super.key, this.isDarkMode = true});
 
   @override
   State<LoginEmailPage> createState() => _LoginEmailPageState();

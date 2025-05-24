@@ -29,8 +29,7 @@ class _HomePageState extends State<HomePage> {
     allConvenios = List.generate(
       10,
       (index) => ConvenioModel(
-        id: "$index",
-        externalId: "external-$index",
+        id: 1,
         timestamp: DateTime.now(),
         monto: 1000.0 + index,
         moneda: index % 2 == 0 ? '₡' : 'Ξ',
@@ -39,6 +38,7 @@ class _HomePageState extends State<HomePage> {
         condiciones: "Condiciones del convenio número $index",
         vencimiento: DateTime.now().add(const Duration(days: 30)),
         firmas: [],
+        status: "Activo",
       ),
     );
 
