@@ -23,6 +23,6 @@ public class ConvenioDTO {
     private String descripcion;
     private String condiciones;
     private LocalDateTime vencimiento;
-    private List<String> firmas;
+   // private List<String> firmas;
     private String onChainHash;
 }

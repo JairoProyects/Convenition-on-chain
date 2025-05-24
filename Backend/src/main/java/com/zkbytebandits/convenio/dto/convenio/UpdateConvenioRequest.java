@@ -24,7 +24,7 @@ public class UpdateConvenioRequest {
     
     private LocalDateTime vencimiento;
     
-    private List<String> firmas;
+  //  private List<String> firmas;
     
     private String onChainHash;
 }
