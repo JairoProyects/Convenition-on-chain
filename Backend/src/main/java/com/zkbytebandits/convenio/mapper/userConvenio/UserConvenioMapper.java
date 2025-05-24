@@ -1,7 +1,7 @@
 package com.zkbytebandits.convenio.mapper.userConvenio;
 
 import com.zkbytebandits.convenio.dto.UserDto;
-import com.zkbytebandits.convenio.dto.convenio.ConvenioResponse;
+import com.zkbytebandits.convenio.dto.convenio.ConvenioDTO;
 import com.zkbytebandits.convenio.dto.userConvenio.UserConvenioDto;
 import com.zkbytebandits.convenio.entity.Convenio;
 import com.zkbytebandits.convenio.entity.User;
@@ -28,12 +28,12 @@ public class UserConvenioMapper {
         Convenio convenio = userConvenio.getConvenio();
 
         UserDto userDto = UserMapper.toUserDto(user);
-        ConvenioResponse convenioResponse = convenioMapper.toConvenioResponse(convenio);
+        ConvenioDTO convenioResponse = convenioMapper.toDto(convenio);
 
         return UserConvenioDto.builder()
                 .id(userConvenio.getId())
                 .user(userDto)
-                .convenio(convenioResponse)
+//                .convenio(convenioResponse)
                 .assignedAt(userConvenio.getAssignedAt())
                 .role(userConvenio.getRole())
                 .status(userConvenio.getStatus())

@@ -1,7 +1,6 @@
 package com.zkbytebandits.convenio.dto.userConvenio;
 
 import com.zkbytebandits.convenio.dto.UserDto;
-import com.zkbytebandits.convenio.dto.convenio.ConvenioResponse;
 import com.zkbytebandits.convenio.entity.UserConvenio.UserConvenioRole;
 import com.zkbytebandits.convenio.entity.UserConvenio.UserConvenioStatus;
 import lombok.AllArgsConstructor;
@@ -19,7 +18,7 @@ public class UserConvenioDto {
     
     private Long id;
     private UserDto user;
-    private ConvenioResponse convenio;
+//    private  convenio;
     private LocalDateTime assignedAt;
     private UserConvenioRole role;
     private UserConvenioStatus status;
