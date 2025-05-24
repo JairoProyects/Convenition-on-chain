@@ -3,6 +3,8 @@ import '../../../shared/util/validators.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../../../shared/widgets/breadcrumb_widget.dart';
 import 'create_select_user_page.dart';
+import '../../domains/convenio_model.dart';    // Aquí está AgreementDraft
+import '../../domains/user_model.dart';
 
 class CreateAgreementPage extends StatefulWidget {
   const CreateAgreementPage({super.key});
@@ -23,6 +25,14 @@ class _CreateAgreementPageState extends State<CreateAgreementPage> {
 
   final List<String> _opcionesMoneda = ['₡', '\$', 'Ξ', '₿', '€'];
 
+  @override
+  void dispose() {
+    _montoController.dispose();
+    _descripcionController.dispose();
+    _condicionesController.dispose();
+    super.dispose();
+  }
+
   void _pickDate() async {
     final now = DateTime.now();
     final picked = await showDatePicker(
@@ -39,36 +49,46 @@ class _CreateAgreementPageState extends State<CreateAgreementPage> {
     }
   }
 
-  void _goToNextStep() {
-    final isValid = _formKey.currentState!.validate();
-    final isFechaValid = _fechaVencimiento != null;
+  
+ void _goToNextStep() {
+    final isFormValid = _formKey.currentState?.validate() ?? false;
+    final hasDate = _fechaVencimiento != null;
+    setState(() => _fechaInvalida = !hasDate);
 
-    setState(() {
-      _fechaInvalida = !isFechaValid;
-    });
+    if (!isFormValid || !hasDate) return;
 
-    if (isValid && isFechaValid) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder:
-              (context) => CreateSelectUserPage(
-                onUserConfirmed: (user) {
-                  // Guardar en estado, o continuar flujo
-                  print("Usuario seleccionado: ${user.username}");
-                },
-              ),
+    // Construimos el draft con party2 vacío por ahora
+    final draft = AgreementDraft(
+      monto: double.parse(_montoController.text.trim()),
+      moneda: _monedaSeleccionada!,
+      descripcion: _descripcionController.text.trim(),
+      condiciones: _condicionesController.text.trim(),
+      vencimiento: _fechaVencimiento!,
+      party1: 'CURRENT_USER_WALLET_ADDRESS', // define tu wallet actual aquí
+      party2: '',
+    );
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => CreateSelectUserPage(
+          draft: draft,
+          onUserConfirmed: (UserModel user, AgreementDraft updatedDraft) {
+            // Por ahora solo volvemos atrás. ReviewAgreementPage vendrá después.
+            Navigator.pop(context);
+          },
         ),
-      );
-    }
+      ),
+    );
   }
+
+
 
   @override
   Widget build(BuildContext context) {
-    final colors =
-        Theme.of(context).brightness == Brightness.dark
-            ? AppColors.dark
-            : AppColors.light;
+    final colors = Theme.of(context).brightness == Brightness.dark
+        ? AppColors.dark
+        : AppColors.light;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -103,7 +123,7 @@ class _CreateAgreementPageState extends State<CreateAgreementPage> {
       body: Container(
         decoration: BoxDecoration(gradient: colors.backgroundMain),
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16),
           child: Theme(
             data: Theme.of(context).copyWith(
               inputDecorationTheme: InputDecorationTheme(
@@ -122,10 +142,10 @@ class _CreateAgreementPageState extends State<CreateAgreementPage> {
                   BreadcrumbWidget(
                     items: ['Inicio', 'Convenios', 'Crear'],
                     colors: colors,
-                    onTap: (index) {
-                      if (index == 0) {
-                        Navigator.popUntil(context, (route) => route.isFirst);
-                      } else if (index == 1) {
+                    onTap: (idx) {
+                      if (idx == 0) {
+                        Navigator.popUntil(context, (r) => r.isFirst);
+                      } else if (idx == 1) {
                         Navigator.pop(context);
                       }
                     },
@@ -133,59 +153,37 @@ class _CreateAgreementPageState extends State<CreateAgreementPage> {
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _montoController,
-                    decoration: const InputDecoration(
-                      labelText: "Monto acordado",
-                    ),
+                    decoration: const InputDecoration(labelText: "Monto acordado"),
                     keyboardType: TextInputType.number,
-                    validator:
-                        (value) =>
-                            validatePositiveNumber(value, fieldName: "Monto"),
+                    validator: (v) => validatePositiveNumber(v, fieldName: "Monto"),
                   ),
                   const SizedBox(height: 12),
                   DropdownButtonFormField<String>(
-                    decoration: const InputDecoration(
-                      labelText: "Tipo de moneda",
-                    ),
+                    decoration: const InputDecoration(labelText: "Tipo de moneda"),
                     value: _monedaSeleccionada,
-                    onChanged:
-                        (value) => setState(() {
-                          _monedaSeleccionada = value;
-                        }),
-                    items:
-                        _opcionesMoneda
-                            .map(
-                              (m) => DropdownMenuItem(value: m, child: Text(m)),
-                            )
-                            .toList(),
-                    validator:
-                        (value) =>
-                            value == null ? "Seleccioná una moneda" : null,
+                    onChanged: (v) => setState(() => _monedaSeleccionada = v),
+                    items: _opcionesMoneda
+                        .map((m) => DropdownMenuItem(value: m, child: Text(m)))
+                        .toList(),
+                    validator: (v) => v == null ? "Seleccioná una moneda" : null,
                   ),
                   const SizedBox(height: 12),
                   TextFormField(
                     controller: _descripcionController,
                     maxLines: 2,
-                    decoration: const InputDecoration(
-                      labelText: "Descripción del convenio",
-                    ),
-                    validator:
-                        (value) =>
-                            value == null || value.isEmpty
-                                ? "Este campo es obligatorio"
-                                : null,
+                    decoration: const InputDecoration(labelText: "Descripción del convenio"),
+                    validator: (v) => (v == null || v.isEmpty)
+                        ? "Este campo es obligatorio"
+                        : null,
                   ),
                   const SizedBox(height: 12),
                   TextFormField(
                     controller: _condicionesController,
                     maxLines: 4,
-                    decoration: const InputDecoration(
-                      labelText: "Condiciones adicionales",
-                    ),
-                    validator:
-                        (value) =>
-                            value == null || value.isEmpty
-                                ? "Este campo es obligatorio"
-                                : null,
+                    decoration: const InputDecoration(labelText: "Condiciones adicionales"),
+                    validator: (v) => (v == null || v.isEmpty)
+                        ? "Este campo es obligatorio"
+                        : null,
                   ),
                   const SizedBox(height: 12),
                   Column(
@@ -196,12 +194,10 @@ class _CreateAgreementPageState extends State<CreateAgreementPage> {
                             ? "Fecha seleccionada: ${_fechaVencimiento!.toLocal().toString().split(' ')[0]}"
                             : "Seleccioná la fecha de vencimiento",
                         style: TextStyle(
-                          color:
-                              _fechaInvalida
-                                  ? Colors.redAccent
-                                  : colors.textSecondary,
+                          color: _fechaInvalida ? Colors.redAccent : colors.textSecondary,
                         ),
                       ),
+                      const SizedBox(height: 6),
                       ElevatedButton(
                         onPressed: _pickDate,
                         style: ElevatedButton.styleFrom(
@@ -212,13 +208,10 @@ class _CreateAgreementPageState extends State<CreateAgreementPage> {
                       ),
                       if (_fechaInvalida)
                         const Padding(
-                          padding: EdgeInsets.only(top: 6.0),
+                          padding: EdgeInsets.only(top: 6),
                           child: Text(
                             "Debés seleccionar una fecha",
-                            style: TextStyle(
-                              color: Colors.redAccent,
-                              fontSize: 13,
-                            ),
+                            style: TextStyle(color: Colors.redAccent, fontSize: 13),
                           ),
                         ),
                     ],
@@ -229,6 +222,7 @@ class _CreateAgreementPageState extends State<CreateAgreementPage> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: colors.panelBackground,
                       foregroundColor: colors.accentBlue,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
                     ),
                     child: const Text("Siguiente"),
                   ),

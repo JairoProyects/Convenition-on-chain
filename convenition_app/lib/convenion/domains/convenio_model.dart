@@ -114,3 +114,22 @@ class UpdateConvenioDto {
   }
 }
 
+class AgreementDraft {
+  final double monto;
+  final String moneda;
+  final String descripcion;
+  final String condiciones;
+  final DateTime vencimiento;
+  final String party1; // la wallet del creador
+  final String party2; // la wallet del segundo firmante o usuario seleccionado
+
+  AgreementDraft({
+    required this.monto,
+    required this.moneda,
+    required this.descripcion,
+    required this.condiciones,
+    required this.vencimiento,
+    required this.party1,
+    required this.party2,
+  });
+}
