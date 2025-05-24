@@ -140,7 +140,6 @@ class _AgreementResultPageState
         descripcion: widget.draft.descripcion,
         condiciones: widget.draft.condiciones,
         vencimiento: widget.draft.vencimiento,
-        firmas: [widget.draft.party1, widget.draft.party2],
         onChainHash: widget.onChainHash,
       );
 

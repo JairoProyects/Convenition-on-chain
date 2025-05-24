@@ -15,8 +15,7 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage>
-    with TickerProviderStateMixin {
+class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   final TextEditingController _searchController = TextEditingController();
   List<ConvenioModel> allConvenios = [];
   List<ConvenioModel> filteredConvenios = [];
@@ -78,7 +77,9 @@ class _HomePageState extends State<HomePage>
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 0.3),
       end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _slideController, curve: Curves.easeOutCubic));
+    ).animate(
+      CurvedAnimation(parent: _slideController, curve: Curves.easeOutCubic),
+    );
     _pulseAnimation = Tween<double>(begin: 1.0, end: 1.05).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
@@ -111,9 +112,8 @@ class _HomePageState extends State<HomePage>
 
   Future<void> loadConveniosFromBackend() async {
     try {
-      // Simular carga de datos del backend
       await Future.delayed(const Duration(milliseconds: 2000));
-      
+
       final convenios = await ConvenioService().fetchConvenios();
       setState(() {
         allConvenios = convenios;
@@ -134,12 +134,15 @@ class _HomePageState extends State<HomePage>
     setState(() {
       _currentPage = 0;
       _isSearching = query.isNotEmpty;
-      filteredConvenios = allConvenios
-          .where((c) =>
-              c.descripcion.toLowerCase().contains(query.toLowerCase()) ||
-              c.condiciones.toLowerCase().contains(query.toLowerCase()) ||
-              c.onChainHash.toLowerCase().contains(query.toLowerCase()))
-          .toList();
+      filteredConvenios =
+          allConvenios
+              .where(
+                (c) =>
+                    c.descripcion.toLowerCase().contains(query.toLowerCase()) ||
+                    c.condiciones.toLowerCase().contains(query.toLowerCase()) ||
+                    c.onChainHash.toLowerCase().contains(query.toLowerCase()),
+              )
+              .toList();
     });
   }
 
@@ -173,10 +176,11 @@ class _HomePageState extends State<HomePage>
   }
 
   void _showSnackBar(String message, {bool isError = false}) {
-    final colors = Theme.of(context).brightness == Brightness.dark
-        ? AppColors.dark
-        : AppColors.light;
-        
+    final colors =
+        Theme.of(context).brightness == Brightness.dark
+            ? AppColors.dark
+            : AppColors.light;
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
@@ -188,17 +192,11 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  Widget _buildAnimatedWidget({
-    required Widget child,
-    required int index,
-  }) {
+  Widget _buildAnimatedWidget({required Widget child, required int index}) {
     return AnimatedBuilder(
       animation: _staggerController,
       builder: (context, _) {
-        final itemAnimation = Tween<double>(
-          begin: 0.0,
-          end: 1.0,
-        ).animate(
+        final itemAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
           CurvedAnimation(
             parent: _staggerController,
             curve: Interval(
@@ -221,9 +219,10 @@ class _HomePageState extends State<HomePage>
   }
 
   Widget _buildShimmerEffect({required Widget child}) {
-    final colors = Theme.of(context).brightness == Brightness.dark
-        ? AppColors.dark
-        : AppColors.light;
+    final colors =
+        Theme.of(context).brightness == Brightness.dark
+            ? AppColors.dark
+            : AppColors.light;
 
     return AnimatedBuilder(
       animation: _shimmerAnimation,
@@ -252,9 +251,10 @@ class _HomePageState extends State<HomePage>
   }
 
   Widget _buildLoadingState() {
-    final colors = Theme.of(context).brightness == Brightness.dark
-        ? AppColors.dark
-        : AppColors.light;
+    final colors =
+        Theme.of(context).brightness == Brightness.dark
+            ? AppColors.dark
+            : AppColors.light;
 
     return Scaffold(
       body: Container(
@@ -273,7 +273,7 @@ class _HomePageState extends State<HomePage>
                   ),
                 ),
                 const SizedBox(height: 24),
-                
+
                 // Header Skeleton
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -317,26 +317,29 @@ class _HomePageState extends State<HomePage>
                   ],
                 ),
                 const SizedBox(height: 24),
-                
+
                 // Stats Cards Skeleton
                 Row(
-                  children: List.generate(3, (index) => Expanded(
-                    child: Container(
-                      margin: EdgeInsets.only(right: index < 2 ? 12 : 0),
-                      child: _buildShimmerEffect(
-                        child: Container(
-                          height: 120,
-                          decoration: BoxDecoration(
-                            color: colors.panelBackground,
-                            borderRadius: BorderRadius.circular(20),
+                  children: List.generate(
+                    3,
+                    (index) => Expanded(
+                      child: Container(
+                        margin: EdgeInsets.only(right: index < 2 ? 12 : 0),
+                        child: _buildShimmerEffect(
+                          child: Container(
+                            height: 120,
+                            decoration: BoxDecoration(
+                              color: colors.panelBackground,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  )),
+                  ),
                 ),
                 const SizedBox(height: 24),
-                
+
                 // Action Bar Skeleton
                 _buildShimmerEffect(
                   child: Container(
@@ -348,8 +351,8 @@ class _HomePageState extends State<HomePage>
                   ),
                 ),
                 const SizedBox(height: 24),
-                
-                // List Items Skeleton
+
+                // List Items Skeleton - FIXED: Added Expanded
                 Expanded(
                   child: ListView.builder(
                     itemCount: 5,
@@ -369,9 +372,10 @@ class _HomePageState extends State<HomePage>
                     },
                   ),
                 ),
-                
+
                 // Loading Indicator
-                Center(
+                Padding(
+                  padding: const EdgeInsets.only(top: 16),
                   child: Column(
                     children: [
                       AnimatedBuilder(
@@ -416,13 +420,16 @@ class _HomePageState extends State<HomePage>
   }
 
   Widget _buildStatsCards() {
-    final colors = Theme.of(context).brightness == Brightness.dark
-        ? AppColors.dark
-        : AppColors.light;
+    final colors =
+        Theme.of(context).brightness == Brightness.dark
+            ? AppColors.dark
+            : AppColors.light;
 
     final activeCount = allConvenios.where((c) => c.status == "Activo").length;
-    final pendingCount = allConvenios.where((c) => c.status == "Pendiente").length;
-    final expiredCount = allConvenios.where((c) => c.status == "Vencido").length;
+    final pendingCount =
+        allConvenios.where((c) => c.status == "Pendiente").length;
+    final expiredCount =
+        allConvenios.where((c) => c.status == "Vencido").length;
 
     return Row(
       children: [
@@ -500,7 +507,8 @@ class _HomePageState extends State<HomePage>
             AnimatedBuilder(
               animation: _statsController,
               builder: (context, child) {
-                final animatedValue = (_statsController.value * int.parse(value)).round();
+                final animatedValue =
+                    (_statsController.value * int.parse(value)).round();
                 return Text(
                   animatedValue.toString(),
                   style: TextStyle(
@@ -527,9 +535,10 @@ class _HomePageState extends State<HomePage>
   }
 
   Widget _buildHeader() {
-    final colors = Theme.of(context).brightness == Brightness.dark
-        ? AppColors.dark
-        : AppColors.light;
+    final colors =
+        Theme.of(context).brightness == Brightness.dark
+            ? AppColors.dark
+            : AppColors.light;
 
     return _buildAnimatedWidget(
       index: 0,
@@ -549,10 +558,7 @@ class _HomePageState extends State<HomePage>
               ),
               Text(
                 '${filteredConvenios.length} convenios encontrados',
-                style: TextStyle(
-                  color: colors.textSecondary,
-                  fontSize: 14,
-                ),
+                style: TextStyle(color: colors.textSecondary, fontSize: 14),
               ),
             ],
           ),
@@ -572,9 +578,10 @@ class _HomePageState extends State<HomePage>
   }
 
   Widget _buildActionBar() {
-    final colors = Theme.of(context).brightness == Brightness.dark
-        ? AppColors.dark
-        : AppColors.light;
+    final colors =
+        Theme.of(context).brightness == Brightness.dark
+            ? AppColors.dark
+            : AppColors.light;
 
     return _buildAnimatedWidget(
       index: 4,
@@ -614,7 +621,10 @@ class _HomePageState extends State<HomePage>
             const Spacer(),
             if (selectedConvenios.isNotEmpty) ...[
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: colors.accentBlue.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(16),
@@ -633,7 +643,10 @@ class _HomePageState extends State<HomePage>
             Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [colors.accentBlue, colors.accentBlue.withOpacity(0.8)],
+                  colors: [
+                    colors.accentBlue,
+                    colors.accentBlue.withOpacity(0.8),
+                  ],
                 ),
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -643,17 +656,25 @@ class _HomePageState extends State<HomePage>
                   Navigator.push(
                     context,
                     PageRouteBuilder(
-                      pageBuilder: (context, animation, secondaryAnimation) =>
-                          const ViewAgreementPage(),
-                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                      pageBuilder:
+                          (context, animation, secondaryAnimation) =>
+                              const ViewAgreementPage(),
+                      transitionsBuilder: (
+                        context,
+                        animation,
+                        secondaryAnimation,
+                        child,
+                      ) {
                         return SlideTransition(
                           position: Tween<Offset>(
                             begin: const Offset(1.0, 0.0),
                             end: Offset.zero,
-                          ).animate(CurvedAnimation(
-                            parent: animation,
-                            curve: Curves.easeInOutCubic,
-                          )),
+                          ).animate(
+                            CurvedAnimation(
+                              parent: animation,
+                              curve: Curves.easeInOutCubic,
+                            ),
+                          ),
                           child: child,
                         );
                       },
@@ -663,9 +684,16 @@ class _HomePageState extends State<HomePage>
                 },
                 style: TextButton.styleFrom(
                   backgroundColor: Colors.transparent,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
                 ),
-                icon: const Icon(Icons.arrow_forward, color: Colors.white, size: 16),
+                icon: const Icon(
+                  Icons.arrow_forward,
+                  color: Colors.white,
+                  size: 16,
+                ),
                 label: const Text(
                   'Ver más',
                   style: TextStyle(
@@ -682,14 +710,16 @@ class _HomePageState extends State<HomePage>
   }
 
   Widget _buildConvenioCard(ConvenioModel convenio, int index) {
-    final colors = Theme.of(context).brightness == Brightness.dark
-        ? AppColors.dark
-        : AppColors.light;
+    final colors =
+        Theme.of(context).brightness == Brightness.dark
+            ? AppColors.dark
+            : AppColors.light;
 
     final isSelected = selectedConvenios.contains(convenio.id);
-    final statusColor = convenio.status == "Activo"
-        ? colors.accentGreen
-        : convenio.status == "Pendiente"
+    final statusColor =
+        convenio.status == "Activo"
+            ? colors.accentGreen
+            : convenio.status == "Pendiente"
             ? Colors.orange
             : Colors.red;
 
@@ -706,9 +736,10 @@ class _HomePageState extends State<HomePage>
           ),
           boxShadow: [
             BoxShadow(
-              color: isSelected
-                  ? colors.accentBlue.withOpacity(0.2)
-                  : Colors.black.withOpacity(0.05),
+              color:
+                  isSelected
+                      ? colors.accentBlue.withOpacity(0.2)
+                      : Colors.black.withOpacity(0.05),
               blurRadius: isSelected ? 15 : 8,
               offset: const Offset(0, 4),
             ),
@@ -730,16 +761,25 @@ class _HomePageState extends State<HomePage>
                       width: 24,
                       height: 24,
                       decoration: BoxDecoration(
-                        color: isSelected ? colors.accentBlue : Colors.transparent,
+                        color:
+                            isSelected ? colors.accentBlue : Colors.transparent,
                         border: Border.all(
-                          color: isSelected ? colors.accentBlue : colors.borderGlow,
+                          color:
+                              isSelected
+                                  ? colors.accentBlue
+                                  : colors.borderGlow,
                           width: 2,
                         ),
                         borderRadius: BorderRadius.circular(6),
                       ),
-                      child: isSelected
-                          ? const Icon(Icons.check, color: Colors.white, size: 14)
-                          : null,
+                      child:
+                          isSelected
+                              ? const Icon(
+                                Icons.check,
+                                color: Colors.white,
+                                size: 14,
+                              )
+                              : null,
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -760,7 +800,10 @@ class _HomePageState extends State<HomePage>
                               ),
                             ),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
                               decoration: BoxDecoration(
                                 color: statusColor.withOpacity(0.2),
                                 borderRadius: BorderRadius.circular(8),
@@ -779,7 +822,11 @@ class _HomePageState extends State<HomePage>
                         const SizedBox(height: 8),
                         Row(
                           children: [
-                            Icon(Icons.attach_money, color: colors.accentBlue, size: 16),
+                            Icon(
+                              Icons.attach_money,
+                              color: colors.accentBlue,
+                              size: 16,
+                            ),
                             const SizedBox(width: 4),
                             Text(
                               '${convenio.moneda}${convenio.monto.toStringAsFixed(2)}',
@@ -790,11 +837,17 @@ class _HomePageState extends State<HomePage>
                               ),
                             ),
                             const SizedBox(width: 16),
-                            Icon(Icons.calendar_today, color: colors.textSecondary, size: 16),
+                            Icon(
+                              Icons.calendar_today,
+                              color: colors.textSecondary,
+                              size: 16,
+                            ),
                             const SizedBox(width: 4),
                             Expanded(
                               child: Text(
-                                convenio.vencimiento.toLocal().toString().split(' ')[0],
+                                convenio.vencimiento.toLocal().toString().split(
+                                  ' ',
+                                )[0],
                                 style: TextStyle(
                                   color: colors.textSecondary,
                                   fontSize: 14,
@@ -829,13 +882,17 @@ class _HomePageState extends State<HomePage>
   }
 
   Widget _buildPaginationControls() {
-    final colors = Theme.of(context).brightness == Brightness.dark
-        ? AppColors.dark
-        : AppColors.light;
+    final colors =
+        Theme.of(context).brightness == Brightness.dark
+            ? AppColors.dark
+            : AppColors.light;
 
     final totalPages = (filteredConvenios.length / _itemsPerPage).ceil();
     final start = _currentPage * _itemsPerPage + 1;
-    final end = ((_currentPage + 1) * _itemsPerPage).clamp(0, filteredConvenios.length);
+    final end = ((_currentPage + 1) * _itemsPerPage).clamp(
+      0,
+      filteredConvenios.length,
+    );
 
     return _buildAnimatedWidget(
       index: 10,
@@ -868,22 +925,29 @@ class _HomePageState extends State<HomePage>
               children: [
                 Container(
                   decoration: BoxDecoration(
-                    color: _currentPage > 0 
-                        ? colors.accentBlue.withOpacity(0.1) 
-                        : colors.borderGlow.withOpacity(0.1),
+                    color:
+                        _currentPage > 0
+                            ? colors.accentBlue.withOpacity(0.1)
+                            : colors.borderGlow.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: IconButton(
                     onPressed: _currentPage > 0 ? _previousPage : null,
                     icon: Icon(
                       Icons.chevron_left,
-                      color: _currentPage > 0 ? colors.accentBlue : colors.textSecondary,
+                      color:
+                          _currentPage > 0
+                              ? colors.accentBlue
+                              : colors.textSecondary,
                     ),
                   ),
                 ),
                 const SizedBox(width: 12),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     color: colors.accentBlue.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
@@ -899,16 +963,21 @@ class _HomePageState extends State<HomePage>
                 const SizedBox(width: 12),
                 Container(
                   decoration: BoxDecoration(
-                    color: (_currentPage + 1) < totalPages 
-                        ? colors.accentBlue.withOpacity(0.1) 
-                        : colors.borderGlow.withOpacity(0.1),
+                    color:
+                        (_currentPage + 1) < totalPages
+                            ? colors.accentBlue.withOpacity(0.1)
+                            : colors.borderGlow.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: IconButton(
-                    onPressed: (_currentPage + 1) < totalPages ? _nextPage : null,
+                    onPressed:
+                        (_currentPage + 1) < totalPages ? _nextPage : null,
                     icon: Icon(
                       Icons.chevron_right,
-                      color: (_currentPage + 1) < totalPages ? colors.accentBlue : colors.textSecondary,
+                      color:
+                          (_currentPage + 1) < totalPages
+                              ? colors.accentBlue
+                              : colors.textSecondary,
                     ),
                   ),
                 ),
@@ -922,64 +991,106 @@ class _HomePageState extends State<HomePage>
 
   void _showConvenioDetails(ConvenioModel convenio) async {
     HapticFeedback.lightImpact();
-    final colors = Theme.of(context).brightness == Brightness.dark
-        ? AppColors.dark
-        : AppColors.light;
+    final colors =
+        Theme.of(context).brightness == Brightness.dark
+            ? AppColors.dark
+            : AppColors.light;
 
     try {
-      final convenioCompleto = await ConvenioService().fetchConvenioById(convenio.id);
+      final convenioCompleto = await ConvenioService().fetchConvenioById(
+        convenio.id,
+      );
 
       if (context.mounted) {
         showDialog(
           context: context,
-          builder: (context) => AlertDialog(
-            backgroundColor: colors.modalBackground,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            title: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: colors.accentBlue.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(8),
+          builder:
+              (context) => AlertDialog(
+                backgroundColor: colors.modalBackground,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                title: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: colors.accentBlue.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Icon(
+                        Icons.description,
+                        color: colors.accentBlue,
+                        size: 20,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      'Detalles del Convenio',
+                      style: TextStyle(
+                        color: colors.textPrimary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildDetailRow(
+                      'Descripción',
+                      convenioCompleto.descripcion,
+                      Icons.text_snippet,
+                      colors,
+                    ),
+                    _buildDetailRow(
+                      'Condiciones',
+                      convenioCompleto.condiciones,
+                      Icons.rule,
+                      colors,
+                    ),
+                    _buildDetailRow(
+                      'Monto',
+                      '${convenioCompleto.moneda} ${convenioCompleto.monto}',
+                      Icons.attach_money,
+                      colors,
+                    ),
+                    _buildDetailRow(
+                      'Vencimiento',
+                      convenioCompleto.vencimiento.toLocal().toString().split(
+                        ' ',
+                      )[0],
+                      Icons.calendar_today,
+                      colors,
+                    ),
+                    _buildDetailRow(
+                      'Estado',
+                      convenioCompleto.status,
+                      Icons.info,
+                      colors,
+                    ),
+                    _buildDetailRow(
+                      'Hash',
+                      convenioCompleto.onChainHash,
+                      Icons.link,
+                      colors,
+                    ),
+                  ],
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      HapticFeedback.lightImpact();
+                      Navigator.pop(context);
+                    },
+                    style: TextButton.styleFrom(
+                      foregroundColor: colors.accentBlue,
+                    ),
+                    child: const Text('Cerrar'),
                   ),
-                  child: Icon(Icons.description, color: colors.accentBlue, size: 20),
-                ),
-                const SizedBox(width: 12),
-                Text(
-                  'Detalles del Convenio',
-                  style: TextStyle(
-                    color: colors.textPrimary,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildDetailRow('Descripción', convenioCompleto.descripcion, Icons.text_snippet, colors),
-                _buildDetailRow('Condiciones', convenioCompleto.condiciones, Icons.rule, colors),
-                _buildDetailRow('Monto', '${convenioCompleto.moneda} ${convenioCompleto.monto}', Icons.attach_money, colors),
-                _buildDetailRow('Vencimiento', convenioCompleto.vencimiento.toLocal().toString().split(' ')[0], Icons.calendar_today, colors),
-                _buildDetailRow('Estado', convenioCompleto.status, Icons.info, colors),
-                _buildDetailRow('Hash', convenioCompleto.onChainHash, Icons.link, colors),
-              ],
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  HapticFeedback.lightImpact();
-                  Navigator.pop(context);
-                },
-                style: TextButton.styleFrom(
-                  foregroundColor: colors.accentBlue,
-                ),
-                child: const Text('Cerrar'),
+                ],
               ),
-            ],
-          ),
         );
       }
     } catch (e) {
@@ -987,7 +1098,12 @@ class _HomePageState extends State<HomePage>
     }
   }
 
-  Widget _buildDetailRow(String label, String value, IconData icon, AppColorScheme colors) {
+  Widget _buildDetailRow(
+    String label,
+    String value,
+    IconData icon,
+    AppColorScheme colors,
+  ) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
@@ -1026,9 +1142,10 @@ class _HomePageState extends State<HomePage>
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).brightness == Brightness.dark
-        ? AppColors.dark
-        : AppColors.light;
+    final colors =
+        Theme.of(context).brightness == Brightness.dark
+            ? AppColors.dark
+            : AppColors.light;
 
     if (_isLoading) return _buildLoadingState();
 
@@ -1044,31 +1161,29 @@ class _HomePageState extends State<HomePage>
         decoration: BoxDecoration(gradient: colors.backgroundMain),
         child: SafeArea(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                CustomAppBar(
-                  controller: _searchController,
-                  onSearchChanged: _searchConvenios,
-                ),
-                const SizedBox(height: 24),
-                
-                _buildHeader(),
-                const SizedBox(height: 24),
-                
-                _buildStatsCards(),
-                const SizedBox(height: 24),
-                
-                _buildActionBar(),
-                const SizedBox(height: 24),
-                
-                ...paginatedList.asMap().entries.map((entry) {
-                  return _buildConvenioCard(entry.value, entry.key);
-                }).toList(),
-                
-                const SizedBox(height: 24),
-                _buildPaginationControls(),
-              ],
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  CustomAppBar(
+                    controller: _searchController,
+                    onSearchChanged: _searchConvenios,
+                  ),
+                  const SizedBox(height: 24),
+                  _buildHeader(),
+                  const SizedBox(height: 24),
+                  _buildStatsCards(),
+                  const SizedBox(height: 24),
+                  _buildActionBar(),
+                  const SizedBox(height: 24),
+                  ...paginatedList.asMap().entries.map((entry) {
+                    return _buildConvenioCard(entry.value, entry.key);
+                  }).toList(),
+                  const SizedBox(height: 24),
+                  _buildPaginationControls(),
+                  const SizedBox(height: 24), // Extra bottom space
+                ],
+              ),
             ),
           ),
         ),

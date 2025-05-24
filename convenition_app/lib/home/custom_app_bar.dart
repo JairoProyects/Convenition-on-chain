@@ -34,9 +34,14 @@ class _CustomAppBarState extends State<CustomAppBar> {
     final userId = await AuthConfig.getUserSession();
     if (userId != null) {
       final user = await UserService().getUserById(userId.toString());
+      final url = user.profileImageUrl;
       if (mounted) {
         setState(() {
-          _imageUrl = user.profileImageUrl;
+          if (url != null && url.trim().isNotEmpty && url.startsWith('http')) {
+            _imageUrl = url;
+          } else {
+            _imageUrl = null;
+          }
         });
       }
     }
