@@ -18,10 +18,6 @@ public class GetSignatureService {
         this.signatureRepository = signatureRepository;
     }
 
-    @Transactional(readOnly = true)
-    public List<Signature> getSignaturesForContract(Long contractId) {
-        return signatureRepository.findByContractContractId(contractId);
-    }
 
     @Transactional(readOnly = true)
     public List<Signature> getSignaturesByWalletId(Long walletId) {

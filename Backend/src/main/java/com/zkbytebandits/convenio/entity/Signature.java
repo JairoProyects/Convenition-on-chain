@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 // Assuming Contract entity is com.zkbytebandits.convenio.entity.Contract.Contract
-import com.zkbytebandits.convenio.entity.Contract.Contract;
+
 // Assuming Wallet entity is com.zkbytebandits.convenio.entity.Wallet
 import com.zkbytebandits.convenio.entity.Wallet;
 // Assuming User entity is com.zkbytebandits.convenio.entity.User
@@ -28,9 +28,6 @@ public class Signature {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "contract_id", nullable = false)
-    private Contract contract;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "wallet_id", nullable = false) // FK to Wallet

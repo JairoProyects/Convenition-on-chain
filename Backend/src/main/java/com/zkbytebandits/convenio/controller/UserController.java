@@ -10,6 +10,7 @@ import com.zkbytebandits.convenio.service.user.login.LoginUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -26,8 +27,9 @@ public class UserController {
     private final LoginUser loginUser;
 
 
-    @PostMapping("/register")
-    public ResponseEntity<UserDto> create(@RequestBody CreateUserRequest request) {
+    @PostMapping(value = "/register", consumes = {"multipart/form-data"})
+    public ResponseEntity<UserDto> create(
+            @ModelAttribute CreateUserRequest request) {
         return ResponseEntity.ok(createUser.execute(request));
     }
 
