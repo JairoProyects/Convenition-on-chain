@@ -22,6 +22,7 @@ enum UserStatus {
 
 class UserModel {
   final int? userId;
+  final String? identification; // <-- NUEVO
   final String? username;
   final String? email;
   final String? firstName;
@@ -36,6 +37,7 @@ class UserModel {
 
   UserModel({
     this.userId,
+    this.identification, // <-- NUEVO
     this.username,
     this.email,
     this.firstName,
@@ -50,6 +52,7 @@ class UserModel {
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
       userId: json['userId'] as int?,
+      identification: json['identification'] as String?, // <-- NUEVO
       username: json['username'] as String?,
       email: json['email'] as String?,
       firstName: json['firstName'] as String?,
@@ -71,6 +74,7 @@ class UserModel {
   Map<String, dynamic> toJson() {
     return {
       'userId': userId,
+      'identification': identification, // <-- NUEVO
       'username': username,
       'email': email,
       'firstName': firstName,
@@ -86,6 +90,7 @@ class UserModel {
 
 // DTO para creación de usuario
 class CreateUserDto {
+  final String identification; // <-- NUEVO
   final String username;
   final String email;
   final String password;
@@ -93,6 +98,7 @@ class CreateUserDto {
   final String lastName;
 
   CreateUserDto({
+    required this.identification,
     required this.username,
     required this.email,
     required this.password,
@@ -101,6 +107,7 @@ class CreateUserDto {
   });
 
   Map<String, dynamic> toJson() => {
+        'identification': identification, // <-- NUEVO
         'username': username,
         'email': email,
         'password': password,

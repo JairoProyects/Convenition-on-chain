@@ -1,53 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../shared/theme/app_colors.dart';
+import '../../services/data_identification_service.dart';
+import '../../services/user_service.dart';
+import '../../domains/user_model.dart';
 
 class RegisterPage extends StatefulWidget {
   final bool isDarkMode;
-  
-  const RegisterPage({
-    super.key, 
-    this.isDarkMode = true,
-  });
+
+  const RegisterPage({super.key, this.isDarkMode = true});
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderStateMixin {
+class _RegisterPageState extends State<RegisterPage>
+    with SingleTickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   bool _obscurePassword = true;
-  bool _rememberMe = false;
   late AnimationController _animationController;
   late Animation<double> _fadeInAnimation;
-  
-  // Controladores para los campos del formulario
-  final TextEditingController _identificationController = TextEditingController();
+
+  final TextEditingController _identificationController =
+      TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    
-    // Configurar animaciones
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 800),
     );
-    
     _fadeInAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeOut,
-      ),
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
     );
-    
-    // Iniciar animación
     _animationController.forward();
   }
 
@@ -60,52 +51,68 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
     _passwordController.dispose();
     _firstNameController.dispose();
     _lastNameController.dispose();
-    _phoneController.dispose();
     super.dispose();
   }
 
-  // Obtener el esquema de colores según el modo
-  AppColorScheme get colorScheme => 
+  AppColorScheme get colorScheme =>
       widget.isDarkMode ? AppColors.dark : AppColors.light;
 
-  // Simula la búsqueda de datos por identificación
-  void _searchByIdentification() {
-    // Aquí iría la lógica para buscar por cédula/identificación
-    // Por ahora, solo simulamos con datos de ejemplo
-    setState(() {
-      _firstNameController.text = "Juan Carlos";
-      _lastNameController.text = "Pérez González";
-    });
-    
-    // Mostrar un snackbar de confirmación
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text('User information retrieved successfully'),
-        backgroundColor: colorScheme.accentBlue,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
+  void _searchByIdentification() async {
+    final identification = _identificationController.text.trim();
+    if (identification.isEmpty) return;
+
+    final haciendaService = DataIdentificationService();
+    final data = await haciendaService.getNameByIdentification(identification);
+
+    if (data != null) {
+      final completeName = data['nombre'];
+      final partes = completeName.split(" ");
+      setState(() {
+        _firstNameController.text = partes.take(2).join(" ");
+        _lastNameController.text = partes.skip(2).join(" ");
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Información cargada desde Hacienda'),
+          backgroundColor: colorScheme.accentBlue,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
         ),
-      ),
-    );
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text(
+            'No se encontró información para la cédula ingresada',
+          ),
+          backgroundColor: Colors.redAccent,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: widget.isDarkMode ? colorScheme.fallbackBackground : Colors.white,
+      backgroundColor:
+          widget.isDarkMode ? colorScheme.fallbackBackground : Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: Colors.transparent,
-          statusBarIconBrightness: widget.isDarkMode ? Brightness.light : Brightness.dark,
+          statusBarIconBrightness:
+              widget.isDarkMode ? Brightness.light : Brightness.dark,
         ),
         leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back, 
-            color: colorScheme.textPrimary,
-          ),
+          icon: Icon(Icons.arrow_back, color: colorScheme.textPrimary),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
@@ -121,7 +128,7 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Create an account',
+                      'Crear una cuenta',
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -130,40 +137,39 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Complete your details to get started today',
+                      'Completá tus datos para comenzar',
                       style: TextStyle(
                         fontSize: 14,
                         color: colorScheme.textSecondary,
                       ),
                     ),
                     const SizedBox(height: 32),
-                    
-                    // Campo de Identificación
                     _buildTextField(
-                      label: 'Identification',
-                      hint: 'Enter your ID number',
+                      label: 'Cédula',
+                      hint: 'Ingrese su número de cédula',
                       controller: _identificationController,
                       keyboardType: TextInputType.number,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter your ID number';
+                          return 'Por favor ingrese su número de cédula';
                         }
                         return null;
                       },
                       suffixIcon: IconButton(
-                        icon: Icon(Icons.search, color: colorScheme.textSecondary),
+                        icon: Icon(
+                          Icons.search,
+                          color: colorScheme.textSecondary,
+                        ),
                         onPressed: _searchByIdentification,
                       ),
                     ),
                     const SizedBox(height: 16),
-                    
-                    // Campos de Nombre y Apellido (deshabilitados)
                     Row(
                       children: [
                         Expanded(
                           child: _buildTextField(
-                            label: 'First Name',
-                            hint: 'First name',
+                            label: 'Nombre',
+                            hint: 'Nombre',
                             controller: _firstNameController,
                             enabled: false,
                           ),
@@ -171,8 +177,8 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
                         const SizedBox(width: 16),
                         Expanded(
                           child: _buildTextField(
-                            label: 'Last Name',
-                            hint: 'Last name',
+                            label: 'Apellido',
+                            hint: 'Apellido',
                             controller: _lastNameController,
                             enabled: false,
                           ),
@@ -180,87 +186,55 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
                       ],
                     ),
                     const SizedBox(height: 16),
-                    
-                    // Campo de Nombre de Usuario
                     _buildTextField(
-                      label: 'Username',
-                      hint: 'Enter your username',
+                      label: 'Usuario',
+                      hint: 'Ingrese su nombre de usuario',
                       controller: _usernameController,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter a username';
+                          return 'Por favor ingrese un nombre de usuario';
                         }
                         return null;
                       },
                     ),
                     const SizedBox(height: 16),
-                    
-                    // Campo de Email
                     _buildTextField(
-                      label: 'Email Address',
-                      hint: 'Enter your email',
+                      label: 'Correo electrónico',
+                      hint: 'Ingrese su correo',
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter your email';
+                          return 'Por favor ingrese su correo';
                         }
-                        if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-                          return 'Please enter a valid email';
+                        if (!RegExp(
+                          r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                        ).hasMatch(value)) {
+                          return 'Por favor ingrese un correo válido';
                         }
                         return null;
                       },
                     ),
                     const SizedBox(height: 16),
-                    
-                    // Campo de Teléfono
                     _buildTextField(
-                      label: 'Phone Number',
-                      hint: 'Enter your phone number',
-                      controller: _phoneController,
-                      keyboardType: TextInputType.phone,
-                      prefixIcon: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        margin: const EdgeInsets.only(right: 8),
-                        decoration: BoxDecoration(
-                          border: Border(
-                            right: BorderSide(
-                              color: widget.isDarkMode 
-                                  ? Colors.grey.shade700 
-                                  : Colors.grey.shade300,
-                              width: 0.5,
-                            ),
-                          ),
-                        ),
-                        child: Text(
-                          '+57',
-                          style: TextStyle(
-                            color: colorScheme.textPrimary,
-                            fontSize: 16,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    
-                    // Campo de Contraseña
-                    _buildTextField(
-                      label: 'Password',
-                      hint: 'Please Enter Your Password',
+                      label: 'Contraseña',
+                      hint: 'Ingrese su contraseña',
                       controller: _passwordController,
                       obscureText: _obscurePassword,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter a password';
+                          return 'Por favor ingrese una contraseña';
                         }
                         if (value.length < 6) {
-                          return 'Password must be at least 6 characters';
+                          return 'La contraseña debe tener al menos 6 caracteres';
                         }
                         return null;
                       },
                       suffixIcon: IconButton(
                         icon: Icon(
-                          _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                          _obscurePassword
+                              ? Icons.visibility_off
+                              : Icons.visibility,
                           color: colorScheme.textSecondary,
                         ),
                         onPressed: () {
@@ -270,73 +244,46 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
                         },
                       ),
                     ),
-                    const SizedBox(height: 24),
-                    
-                    // Checkbox "Remember Me" y "Forgot Password"
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: Checkbox(
-                                value: _rememberMe,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _rememberMe = value ?? false;
-                                  });
-                                },
-                                activeColor: colorScheme.accentBlue,
-                                checkColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              'Remember Me',
-                              style: TextStyle(
-                                color: colorScheme.textPrimary,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            // Navegar a la pantalla de recuperación de contraseña
-                          },
-                          child: Text(
-                            'Forgot Password?',
-                            style: TextStyle(
-                              color: colorScheme.accentBlue,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
                     const SizedBox(height: 32),
-                    
-                    // Botón de Sign Up
                     SizedBox(
                       width: double.infinity,
                       height: 56,
                       child: ElevatedButton(
-                        onPressed: () {
+                        onPressed: () async {
                           if (_formKey.currentState!.validate()) {
-                            // Procesar el registro
-                            print('Registro válido');
-                            print('Identificación: ${_identificationController.text}');
-                            print('Username: ${_usernameController.text}');
-                            print('Email: ${_emailController.text}');
-                            print('Nombre: ${_firstNameController.text}');
-                            print('Apellido: ${_lastNameController.text}');
-                            print('Teléfono: ${_phoneController.text}');
+                            try {
+                              final dto = CreateUserDto(
+                                identification:
+                                    _identificationController.text.trim(),
+                                username: _usernameController.text.trim(),
+                                email: _emailController.text.trim(),
+                                password: _passwordController.text,
+                                firstName: _firstNameController.text.trim(),
+                                lastName: _lastNameController.text.trim(),
+                              );
+
+                              final user = await UserService().createUser(dto);
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    'Usuario ${user.username} creado exitosamente',
+                                  ),
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
+
+                              Navigator.of(context).pop();
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    'Error al registrar el usuario: $e',
+                                  ),
+                                  backgroundColor: Colors.redAccent,
+                                ),
+                              );
+                            }
                           }
                         },
                         style: ElevatedButton.styleFrom(
@@ -347,7 +294,7 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
                           elevation: 2,
                         ),
                         child: Text(
-                          'Sign Up',
+                          'Registrarse',
                           style: TextStyle(
                             color: colorScheme.textHighlight,
                             fontSize: 16,
@@ -356,23 +303,23 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
                         ),
                       ),
                     ),
+
                     const SizedBox(height: 24),
-                    
-                    // Divisor "Or With"
                     Row(
                       children: [
                         Expanded(
                           child: Divider(
-                            color: widget.isDarkMode 
-                                ? Colors.grey.shade700 
-                                : Colors.grey.shade300,
+                            color:
+                                widget.isDarkMode
+                                    ? Colors.grey.shade700
+                                    : Colors.grey.shade300,
                             thickness: 0.5,
                           ),
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: Text(
-                            'Or With',
+                            'O con',
                             style: TextStyle(
                               color: colorScheme.textSecondary,
                               fontSize: 14,
@@ -381,62 +328,40 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
                         ),
                         Expanded(
                           child: Divider(
-                            color: widget.isDarkMode 
-                                ? Colors.grey.shade700 
-                                : Colors.grey.shade300,
+                            color:
+                                widget.isDarkMode
+                                    ? Colors.grey.shade700
+                                    : Colors.grey.shade300,
                             thickness: 0.5,
                           ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 24),
-                    
-                    // Botones de redes sociales
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _buildSocialButton(
-                            icon: Icons.code,
-                            label: 'GitHub',
-                            onPressed: () {
-                              // Implementar inicio de sesión con GitHub
-                            },
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: _buildSocialButton(
-                            icon: Icons.code_off,
-                            label: 'GitLab',
-                            onPressed: () {
-                              // Implementar inicio de sesión con GitLab
-                            },
-                            iconColor: Colors.orange,
-                          ),
-                        ),
-                      ],
+                    _buildSocialButton(
+                      icon: Icons.g_mobiledata,
+                      label: 'Continuar con Google',
+                      onPressed: () {
+                        // Lógica de inicio con Google
+                      },
+                      iconColor: Colors.redAccent,
                     ),
                     const SizedBox(height: 32),
-                    
-                    // Enlace para iniciar sesión
                     Center(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'Already have an account? ',
+                            '¿Ya tenés una cuenta? ',
                             style: TextStyle(
                               color: colorScheme.textSecondary,
                               fontSize: 14,
                             ),
                           ),
                           GestureDetector(
-                            onTap: () {
-                              // Navegar a la pantalla de inicio de sesión
-                              Navigator.of(context).pop();
-                            },
+                            onTap: () => Navigator.of(context).pop(),
                             child: Text(
-                              'Login',
+                              'Iniciar sesión',
                               style: TextStyle(
                                 color: colorScheme.accentBlue,
                                 fontSize: 14,
@@ -469,13 +394,13 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
     bool enabled = true,
   }) {
     final borderRadius = BorderRadius.circular(8);
-    final borderColor = widget.isDarkMode 
-        ? Colors.grey.shade700 
-        : Colors.grey.shade300;
-    final fillColor = widget.isDarkMode 
-        ? (enabled ? colorScheme.panelBackground : Colors.grey.shade800)
-        : (enabled ? Colors.grey.shade50 : Colors.grey.shade100);
-    
+    final borderColor =
+        widget.isDarkMode ? Colors.grey.shade700 : Colors.grey.shade300;
+    final fillColor =
+        widget.isDarkMode
+            ? (enabled ? colorScheme.panelBackground : Colors.grey.shade800)
+            : (enabled ? Colors.grey.shade50 : Colors.grey.shade100);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -495,7 +420,8 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
           enabled: enabled,
           validator: validator,
           style: TextStyle(
-            color: enabled ? colorScheme.textPrimary : colorScheme.textSecondary,
+            color:
+                enabled ? colorScheme.textPrimary : colorScheme.textSecondary,
           ),
           decoration: InputDecoration(
             hintText: hint,
@@ -505,7 +431,10 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
             ),
             filled: true,
             fillColor: fillColor,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 16,
+            ),
             border: OutlineInputBorder(
               borderRadius: borderRadius,
               borderSide: BorderSide(color: borderColor),
@@ -528,7 +457,10 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
             ),
             suffixIcon: suffixIcon,
             prefixIcon: prefixIcon,
-            prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+            prefixIconConstraints: const BoxConstraints(
+              minWidth: 0,
+              minHeight: 0,
+            ),
           ),
         ),
       ],
@@ -541,31 +473,23 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
     required VoidCallback onPressed,
     Color? iconColor,
   }) {
-    final borderColor = widget.isDarkMode 
-        ? Colors.grey.shade700 
-        : Colors.grey.shade300;
-    
+    final borderColor =
+        widget.isDarkMode ? Colors.grey.shade700 : Colors.grey.shade300;
+
     return SizedBox(
       height: 56,
       child: OutlinedButton(
         onPressed: onPressed,
         style: OutlinedButton.styleFrom(
           side: BorderSide(color: borderColor),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-          backgroundColor: widget.isDarkMode 
-              ? colorScheme.panelBackground 
-              : Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          backgroundColor:
+              widget.isDarkMode ? colorScheme.panelBackground : Colors.white,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              color: iconColor ?? colorScheme.textPrimary,
-              size: 20,
-            ),
+            Icon(icon, color: iconColor ?? colorScheme.textPrimary, size: 20),
             const SizedBox(width: 8),
             Text(
               label,
