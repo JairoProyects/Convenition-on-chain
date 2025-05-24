@@ -8,7 +8,7 @@ class ApiConfig {
   static String profileImage(int userId) => "$users/$userId/profile-image";
 
   // Endpoints de convenios
-  static const String convenios     = "$baseDomain/convenios";
+  static const String convenios     = "$baseDomain/api/convenios";
   static const String convenioById  = convenios;                // + '/{id}'
   static const String convenioByExternal  = "$convenios/external"; // + '/{externalId}'
   static const String convenioByHash      = "$convenios/hash";     // + '/{onChainHash}'

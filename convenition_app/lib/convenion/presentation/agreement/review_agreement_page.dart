@@ -128,8 +128,8 @@ class ReviewAgreementPage extends StatelessWidget {
                       });
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: colors.panelBackground,
-                      foregroundColor: colors.accentBlue,
+                      backgroundColor: colors.accentBlue,
+                      foregroundColor: Colors.black,
                       padding: const EdgeInsets.symmetric(vertical: 14),
                     ),
                     child: const Text("Confirmar Contrato"),

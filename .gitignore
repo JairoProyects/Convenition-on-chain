@@ -1,86 +1,64 @@
-# === Flutter & Dart ===
+# Flutter/Dart build files
 build/
 .dart_tool/
 .packages
 .pub-cache/
 .pub/
 .melos_tool/
-.flutter-plugins
-.flutter-plugins-dependencies
-.metadata
 
-# === Flutter Generated Configuration ===
-android/local.properties
+# Flutter specific build artifacts
+*.flutter-plugins
+*.flutter-plugins-dependencies
+.metadata
 ios/Flutter/Generated.xcconfig
 macos/Flutter/Generated.xcconfig
+android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java
+
+# Test Coverage
+coverage/
+lcov.info
+
+# IDEs
+# IntelliJ / Android Studio
+*.iml
+.idea/
+.android/
+.gradle/
+
+# VS Code
+.vscode/
+history/
+
+# Xcode (para proyectos iOS/macOS)
 ios/Flutter/App.framework
 ios/Flutter/Flutter.framework
 ios/Flutter/Flutter.podspec
 ios/ServiceDefinitions.json
 ios/Pods/
 ios/.symlinks/
+ios/Runner.xcworkspace/
 ios/Flutter/ephemeral/
 macos/Flutter/ephemeral/
 macos/Pods/
 macos/Runner.xcworkspace/
 
-# === Android Generated Files ===
-android/.gradle/
-android/.idea/
-android/.settings/
-android/app/build/
-android/build/
-android/gradle/
-android/captures/
-android/app/*.iml
-
-# === iOS & macOS Generated Files ===
-ios/Runner.xcworkspace/
-ios/build/
-macos/build/
-macos/.generated/
-*.xcuserstate
-*.xcworkspace
-*.xcuserdata
-*.xcodeproj/project.xcworkspace/
-*.xcodeproj/xcuserdata/
-
-# === IDEs ===
-.idea/
-*.iml
-.vscode/
-history/
-
-# === Logs, Dumps, Temp ===
+# Objets y logs
 *.log
 *.tmp
 *.swp
-*.lock
-*.bak
-*.orig
 
-# === Test Coverage ===
-coverage/
-lcov.info
-
-# === Artifacts ===
-*.apk
-*.ipa
-*.aab
-
-# === Credentials / Env Vars ===
+# Environment / Credentials
 .env
 *.env
 *.keystore
 *.jks
 key.properties
-google-services.json
-ios/Runner/GoogleService-Info.plist
 
-# === System Files ===
+# Misc
 .DS_Store
 Thumbs.db
 
-# === Firebase / Analytics / Crashlytics ===
-firebase-debug.log
-crashlytics-build.properties
+# Firebase / Google Services
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+.fake
