@@ -170,17 +170,50 @@ class _ProfilePageState extends State<ProfilePage> {
                                     height: 100,
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      image: DecorationImage(
-                                        image:
-                                            _profileImage != null
-                                                ? FileImage(_profileImage!)
-                                                : const NetworkImage(
-                                                      'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-zaYQe9sngzvu2DSNu5P9ijXuVuQnk0.png',
-                                                    )
-                                                    as ImageProvider,
-                                        fit: BoxFit.cover,
-                                      ),
+                                      color:
+                                          (_profileImage == null &&
+                                                  (_user?.profileImageUrl ==
+                                                          null ||
+                                                      _user!
+                                                          .profileImageUrl!
+                                                          .isEmpty))
+                                              ? Colors
+                                                  .grey[300] // Fondo por defecto si no hay imagen
+                                              : null,
+                                      image:
+                                          (_profileImage != null ||
+                                                  (_user
+                                                          ?.profileImageUrl
+                                                          ?.isNotEmpty ??
+                                                      false))
+                                              ? DecorationImage(
+                                                image:
+                                                    _profileImage != null
+                                                        ? FileImage(
+                                                          _profileImage!,
+                                                        )
+                                                        : NetworkImage(
+                                                              _user!
+                                                                  .profileImageUrl!,
+                                                            )
+                                                            as ImageProvider,
+                                                fit: BoxFit.cover,
+                                              )
+                                              : null,
                                     ),
+                                    child:
+                                        (_profileImage == null &&
+                                                (_user?.profileImageUrl ==
+                                                        null ||
+                                                    _user!
+                                                        .profileImageUrl!
+                                                        .isEmpty))
+                                            ? const Icon(
+                                              Icons.person,
+                                              size: 48,
+                                              color: Colors.white70,
+                                            )
+                                            : null,
                                   ),
                                   Container(
                                     width: 100,

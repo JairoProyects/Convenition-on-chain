@@ -192,6 +192,7 @@ class LoginResponse {
   final String token;
   final String firstName;
   final String lastName;
+  final String? profileImageUrl;
 
   LoginResponse({
     required this.userId,
@@ -200,6 +201,7 @@ class LoginResponse {
     required this.token,
     required this.firstName,
     required this.lastName,
+    required this.profileImageUrl,
   });
 
   factory LoginResponse.fromJson(Map<String, dynamic> json) {
@@ -210,6 +212,7 @@ class LoginResponse {
       token: json['token'],
       firstName: json['firstName'],
       lastName: json['lastName'],
+      profileImageUrl: json['profileImageUrl'] as String?,
     );
   }
 }

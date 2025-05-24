@@ -16,4 +16,5 @@ public class LoginResponse {
     private String token;  // This can be used for JWT token if authentication is implemented
     private String firstName;
     private String lastName;
+    private String profileImageUrl;
 }

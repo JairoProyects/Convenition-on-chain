@@ -38,6 +38,7 @@ public class LoginUser {
                 .email(user.getEmail())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
+                .profilePicture(user.getProfileImageUrl())
                 .token("generated-token") // In a real application, generate a JWT token here
                 .build();
     }
