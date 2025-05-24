@@ -1,6 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
-        android:label="convenition_app"
+        android:label="Convenio-On-Chain"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
