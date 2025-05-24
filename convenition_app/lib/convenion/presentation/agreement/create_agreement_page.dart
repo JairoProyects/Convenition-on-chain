@@ -205,8 +205,8 @@ class _CreateAgreementPageState extends State<CreateAgreementPage> {
                       ElevatedButton(
                         onPressed: _pickDate,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: colors.accentBlue,
-                          foregroundColor: Colors.black,
+                          backgroundColor: colors.panelBackground,
+                          foregroundColor: colors.accentBlue,
                         ),
                         child: const Text("Seleccionar fecha"),
                       ),
@@ -227,8 +227,8 @@ class _CreateAgreementPageState extends State<CreateAgreementPage> {
                   ElevatedButton(
                     onPressed: _goToNextStep,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: colors.accentBlue,
-                      foregroundColor: Colors.black,
+                      backgroundColor: colors.panelBackground,
+                      foregroundColor: colors.accentBlue,
                     ),
                     child: const Text("Siguiente"),
                   ),

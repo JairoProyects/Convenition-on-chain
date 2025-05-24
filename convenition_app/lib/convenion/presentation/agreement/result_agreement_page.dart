@@ -109,7 +109,7 @@ class AgreementResultPage extends StatelessWidget {
                   onPressed: () => Navigator.popUntil(context, (route) => route.isFirst),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: colors.accentBlue,
-                    foregroundColor: Colors.black,
+                    foregroundColor: colors.panelBackground,
                     padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
                   ),
                   child: const Text("Finalizar"),

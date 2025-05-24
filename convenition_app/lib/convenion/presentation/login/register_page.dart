@@ -6,6 +6,8 @@ import '../../services/data_identification_service.dart';
 import '../../services/user_service.dart';
 import '../../domains/user_model.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:debounce_throttle/debounce_throttle.dart';
+import 'dart:async';
 
 class RegisterPage extends StatefulWidget {
   final bool isDarkMode;
@@ -32,6 +34,9 @@ class _RegisterPageState extends State<RegisterPage>
   final TextEditingController _lastNameController = TextEditingController();
   File? _profileImage;
 
+  late Debouncer<String> _debouncer;
+  late StreamSubscription _debouncerSubscription;
+
   @override
   void initState() {
     super.initState();
@@ -43,6 +48,24 @@ class _RegisterPageState extends State<RegisterPage>
       CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
     );
     _animationController.forward();
+
+    _debouncer = Debouncer<String>(
+      Duration(milliseconds: 500),
+      initialValue: '',
+    );
+
+    _debouncerSubscription = _debouncer.values.listen((_) {
+      print('Debouncer disparado'); // <-- Agrega esto
+      _searchByIdentification();
+    });
+
+    _identificationController.addListener(() {
+      final text = _identificationController.text.trim();
+      print('Texto actual: $text');
+      if (text.length >= 9) {
+        _debouncer.value = text; // Usa el texto, no null
+      }
+    });
   }
 
   Future<void> _pickProfileImage() async {
@@ -59,6 +82,7 @@ class _RegisterPageState extends State<RegisterPage>
   @override
   void dispose() {
     _animationController.dispose();
+    _debouncerSubscription.cancel();
     _identificationController.dispose();
     _usernameController.dispose();
     _emailController.dispose();
@@ -185,13 +209,6 @@ class _RegisterPageState extends State<RegisterPage>
                         }
                         return null;
                       },
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          Icons.search,
-                          color: colorScheme.textSecondary,
-                        ),
-                        onPressed: _searchByIdentification,
-                      ),
                     ),
                     const SizedBox(height: 16),
                     Row(
@@ -317,7 +334,7 @@ class _RegisterPageState extends State<RegisterPage>
                           }
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: colorScheme.accentBlue,
+                          backgroundColor: colorScheme.panelBackground,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(28),
                           ),
@@ -326,7 +343,7 @@ class _RegisterPageState extends State<RegisterPage>
                         child: Text(
                           'Registrarse',
                           style: TextStyle(
-                            color: colorScheme.textHighlight,
+                            color: colorScheme.accentBlue,
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                           ),

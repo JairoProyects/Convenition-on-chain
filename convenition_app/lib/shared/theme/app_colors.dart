@@ -40,11 +40,11 @@ class AppColorScheme {
 }
 
 class AppColors {
-  // 🌙 Modo Oscuro
+  // 🌙 Modo Oscuro (basado en la imagen del botón oscuro)
   static const AppColorScheme dark = AppColorScheme(
     textPrimary: Color(0xFFFFFFFF),
     textSecondary: Color(0xFF8A8A8A),
-    textHighlight: Color(0xFFFFFFFF),
+    textHighlight: Color(0xFF13091E),
     accentBlue: Color(0xFF7BBFD9),
     accentGreen: Color(0xFF26A17B),
     borderGlow: Color(0xFF4A3A6A),
@@ -55,11 +55,11 @@ class AppColors {
     ),
     panelBackground: Color(0xFF13091E),
     modalBackground: Color(0xFF0F0518),
-    buttonPrimary: Color(0xFF7BBFD9),
+    buttonPrimary: Color(0xFF00D4FF), // Cyan brillante del botón oscuro
     buttonSlideToSwap: LinearGradient(
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
-      colors: [Color(0xFF1E1139), Color(0xFF2A1A4A)],
+      colors: [Color(0xFF1A0B2E), Color(0xFF16213E)], // Gradiente oscuro azulado
     ),
     successText: Color(0xFFFFFFFF),
     processingIndicator: LinearGradient(
@@ -70,33 +70,33 @@ class AppColors {
     fallbackBackground: Color(0xFF1A1033),
   );
 
-  // ☀️ Modo Claro
-  static final AppColorScheme light = AppColorScheme(
-    textPrimary: Colors.black,
-    textSecondary: Colors.grey.shade600,
-    textHighlight: Colors.black,
-    accentBlue: Colors.blue,
-    accentGreen: Colors.green.shade600,
-    borderGlow: Colors.grey.shade400,
-    backgroundMain: const LinearGradient(
+  // ☀️ Modo Claro (basado en la imagen del botón claro)
+  static const AppColorScheme light = AppColorScheme(
+    textPrimary: Color(0xFF000000),
+    textSecondary: Color(0xFF666666),
+    textHighlight: Color(0xFF000000),
+    accentBlue: Color(0xFF2196F3),
+    accentGreen: Color(0xFF4CAF50),
+    borderGlow: Color(0xFFBDBDBD),
+    backgroundMain: LinearGradient(
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
-      colors: [Colors.white, Colors.white],
+      colors: [Color(0xFFFFFFFF), Color(0xFFFFFFFF)],
     ),
-    panelBackground: Colors.grey.shade100,
-    modalBackground: Colors.white,
-    buttonPrimary: Colors.blue,
-    buttonSlideToSwap: const LinearGradient(
+    panelBackground: Color(0xFFF5F5F5),
+    modalBackground: Color(0xFFFFFFFF),
+    buttonPrimary: Color(0xFF0BC5EA), // Azul vibrante del botón claro
+    buttonSlideToSwap: LinearGradient(
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
-      colors: [Color(0xFFE3E3E3), Color(0xFFD5D5D5)],
+      colors: [Color(0xFF0F172A), Color(0xFF1E293B)], // Gradiente slate oscuro
     ),
-    successText: Colors.black,
-    processingIndicator: const LinearGradient(
+    successText: Color(0xFF000000),
+    processingIndicator: LinearGradient(
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
       colors: [Color(0xFFCCCCCC), Color(0xFFAAAAAA)],
     ),
-    fallbackBackground: Colors.white,
+    fallbackBackground: Color(0xFFFFFFFF),
   );
 }

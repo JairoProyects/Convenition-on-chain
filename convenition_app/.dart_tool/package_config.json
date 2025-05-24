@@ -80,6 +80,12 @@
       "languageVersion": "3.1"
     },
     {
+      "name": "debounce_throttle",
+      "rootUri": "file:///C:/Users/Lenovo/AppData/Local/Pub/Cache/hosted/pub.dev/debounce_throttle-2.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "equatable",
       "rootUri": "file:///C:/Users/Lenovo/AppData/Local/Pub/Cache/hosted/pub.dev/equatable-2.0.7",
       "packageUri": "lib/",
@@ -464,6 +470,12 @@
       "languageVersion": "3.3"
     },
     {
+      "name": "simple_observable",
+      "rootUri": "file:///C:/Users/Lenovo/AppData/Local/Pub/Cache/hosted/pub.dev/simple_observable-2.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "sky_engine",
       "rootUri": "file:///C:/dev/Flutter/flutter/bin/cache/pkg/sky_engine",
       "packageUri": "lib/",
@@ -620,7 +632,7 @@
       "languageVersion": "3.7"
     }
   ],
-  "generated": "2025-05-24T06:50:33.106020Z",
+  "generated": "2025-05-24T17:01:22.470826Z",
   "generator": "pub",
   "generatorVersion": "3.7.2",
   "flutterRoot": "file:///C:/dev/Flutter/flutter",
