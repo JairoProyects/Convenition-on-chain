@@ -5,8 +5,9 @@ import '../shared/theme/app_text_styles.dart';
 import '../shared/theme/theme_provider.dart';
 import '../convenion/presentation/profile/profile_page.dart';
 import '../shared/config/auth_config.dart';
+import '../convenion/services/user_service.dart';
 
-class CustomAppBar extends StatelessWidget {
+class CustomAppBar extends StatefulWidget {
   final Function(String)? onSearchChanged;
   final TextEditingController controller;
 
@@ -17,12 +18,36 @@ class CustomAppBar extends StatelessWidget {
   });
 
   @override
+  State<CustomAppBar> createState() => _CustomAppBarState();
+}
+
+class _CustomAppBarState extends State<CustomAppBar> {
+  String? _imageUrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserProfileImage();
+  }
+
+  Future<void> _loadUserProfileImage() async {
+    final userId = await AuthConfig.getUserSession();
+    if (userId != null) {
+      final user = await UserService().getUserById(userId.toString());
+      if (mounted) {
+        setState(() {
+          _imageUrl = user.profileImageUrl;
+        });
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
-    final colors =
-        Theme.of(context).brightness == Brightness.dark
-            ? AppColors.dark
-            : AppColors.light;
+    final colors = Theme.of(context).brightness == Brightness.dark
+        ? AppColors.dark
+        : AppColors.light;
 
     return Row(
       children: [
@@ -54,8 +79,8 @@ class CustomAppBar extends StatelessWidget {
                 const SizedBox(width: 8),
                 Expanded(
                   child: TextField(
-                    controller: controller,
-                    onChanged: onSearchChanged,
+                    controller: widget.controller,
+                    onChanged: widget.onSearchChanged,
                     style: AppTextStyles.body(colors),
                     decoration: InputDecoration(
                       hintText: 'Buscar...',
@@ -82,12 +107,13 @@ class CustomAppBar extends StatelessWidget {
         const SizedBox(width: 12),
         GestureDetector(
           onTap: () async {
-            final userId =
-                await AuthConfig.getUserSession();
+            final userId = await AuthConfig.getUserSession();
             if (context.mounted) {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => ProfilePage(userId: userId ?? 0)),
+                MaterialPageRoute(
+                  builder: (_) => ProfilePage(userId: userId ?? 0),
+                ),
               );
             }
           },
@@ -96,10 +122,12 @@ class CustomAppBar extends StatelessWidget {
             height: 36,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              image: const DecorationImage(
-                image: NetworkImage(
-                  'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/placeholder-ob7miW3mUreePYfXdVwkpFWHthzoR5.svg?height=100&width=100&text=User',
-                ),
+              image: DecorationImage(
+                image: _imageUrl != null
+                    ? NetworkImage(_imageUrl!)
+                    : const NetworkImage(
+                        'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/placeholder-ob7miW3mUreePYfXdVwkpFWHthzoR5.svg',
+                      ),
                 fit: BoxFit.cover,
               ),
               border: Border.all(color: Colors.white, width: 2),
