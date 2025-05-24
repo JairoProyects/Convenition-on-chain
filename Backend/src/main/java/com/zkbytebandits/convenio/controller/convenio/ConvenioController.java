@@ -1,90 +1,70 @@
 package com.zkbytebandits.convenio.controller.convenio;
 
+import com.zkbytebandits.convenio.dto.convenio.ConvenioDTO;
 import com.zkbytebandits.convenio.dto.convenio.CreateConvenioRequest;
-import com.zkbytebandits.convenio.dto.convenio.ConvenioResponse;
 import com.zkbytebandits.convenio.dto.convenio.UpdateConvenioRequest;
 import com.zkbytebandits.convenio.entity.Convenio;
 import com.zkbytebandits.convenio.entity.Convenio.Status;
-import com.zkbytebandits.convenio.mapper.convenio.ConvenioMapper;
+import com.zkbytebandits.convenio.repository.convenio.ConvenioRepository;
+import com.zkbytebandits.convenio.repository.user.UserRepository;
 import com.zkbytebandits.convenio.service.convenio.create.CreateConvenioService;
 import com.zkbytebandits.convenio.service.convenio.delete.DeleteConvenioService;
 import com.zkbytebandits.convenio.service.convenio.get.GetConvenioService;
 import com.zkbytebandits.convenio.service.convenio.update.UpdateConvenioService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/convenios")
+@RequiredArgsConstructor
 public class ConvenioController {
 
     private final CreateConvenioService createConvenioService;
     private final GetConvenioService getConvenioService;
     private final UpdateConvenioService updateConvenioService;
     private final DeleteConvenioService deleteConvenioService;
-    private final ConvenioMapper convenioMapper;
 
-    @Autowired
-    public ConvenioController(CreateConvenioService createConvenioService,
-                              GetConvenioService getConvenioService,
-                              UpdateConvenioService updateConvenioService,
-                              DeleteConvenioService deleteConvenioService,
-                              ConvenioMapper convenioMapper) {
-        this.createConvenioService = createConvenioService;
-        this.getConvenioService = getConvenioService;
-        this.updateConvenioService = updateConvenioService;
-        this.deleteConvenioService = deleteConvenioService;
-        this.convenioMapper = convenioMapper;
-    }
+
+    private final ConvenioRepository convenioRepository;
 
     @PostMapping
-    public ResponseEntity<ConvenioResponse> createConvenio(@Valid @RequestBody CreateConvenioRequest request) {
-        Convenio convenio = createConvenioService.createConvenio(request);
-        return new ResponseEntity<>(convenioMapper.toConvenioResponse(convenio), HttpStatus.CREATED);
+    public ResponseEntity<ConvenioDTO> createConvenio(@Valid @RequestBody CreateConvenioRequest request) {
+        return ResponseEntity.ok(createConvenioService.createConvenio(request));
     }
 
     @GetMapping
-    public ResponseEntity<Page<ConvenioResponse>> getAllConvenios(Pageable pageable) {
-        Page<Convenio> conveniosPage = getConvenioService.getAllConvenios(pageable);
-        Page<ConvenioResponse> convenioResponsePage = conveniosPage.map(convenioMapper::toConvenioResponse);
-        return ResponseEntity.ok(convenioResponsePage);
+    public ResponseEntity<List<ConvenioDTO>> getAllConvenios() {
+        return ResponseEntity.ok(getConvenioService.getAllConvenios());
+    }
+    @GetMapping("/test")
+    public ResponseEntity<List<Convenio>> testConvenios() {
+        return ResponseEntity.ok(convenioRepository.findAll());
     }
 
+
     @GetMapping("/{id}")
-    public ResponseEntity<ConvenioResponse> getConvenioById(@PathVariable Long id) {
-        return getConvenioService.getConvenioById(id)
-                .map(convenioMapper::toConvenioResponse)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<ConvenioDTO> getConvenioById(@PathVariable Long id) {
+        return ResponseEntity.ok(getConvenioService.getConvenioById(id));
     }
 
     @GetMapping("/status/{status}")
-    public ResponseEntity<List<ConvenioResponse>> getConveniosByStatus(@PathVariable Status status) {
-        List<Convenio> convenios = getConvenioService.getConveniosByStatus(status);
-        List<ConvenioResponse> responses = convenios.stream()
-                .map(convenioMapper::toConvenioResponse)
-                .collect(java.util.stream.Collectors.toList());
-        return ResponseEntity.ok(responses);
+    public ResponseEntity<List<ConvenioDTO>> getConveniosByStatus(@PathVariable Status status) {
+        return ResponseEntity.ok(getConvenioService.getConveniosByStatus(status));
     }
 
     @GetMapping("/hash/{onChainHash}")
-    public ResponseEntity<ConvenioResponse> getConvenioByOnChainHash(@PathVariable String onChainHash) {
-        return getConvenioService.getConvenioByOnChainHash(onChainHash)
-                .map(convenioMapper::toConvenioResponse)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<ConvenioDTO> getConvenioByOnChainHash(@PathVariable String onChainHash) {
+        return ResponseEntity.ok(getConvenioService.getConvenioByOnChainHash(onChainHash));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ConvenioResponse> updateConvenio(@PathVariable Long id, @Valid @RequestBody UpdateConvenioRequest request) {
-        Convenio updatedConvenio = updateConvenioService.updateConvenio(id, request);
-        return ResponseEntity.ok(convenioMapper.toConvenioResponse(updatedConvenio));
+    public ResponseEntity<ConvenioDTO> updateConvenio(@PathVariable Long id, @Valid @RequestBody UpdateConvenioRequest request) {
+        return ResponseEntity.ok(updateConvenioService.updateConvenio(id, request));
     }
 
     @DeleteMapping("/{id}")
@@ -92,4 +72,4 @@ public class ConvenioController {
         deleteConvenioService.deleteConvenio(id);
         return ResponseEntity.noContent().build();
     }
-} 
+}

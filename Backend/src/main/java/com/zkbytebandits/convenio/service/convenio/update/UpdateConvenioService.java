@@ -1,55 +1,35 @@
 package com.zkbytebandits.convenio.service.convenio.update;
 
+import com.zkbytebandits.convenio.dto.convenio.ConvenioDTO;
 import com.zkbytebandits.convenio.dto.convenio.UpdateConvenioRequest;
 import com.zkbytebandits.convenio.entity.Convenio;
-
+import com.zkbytebandits.convenio.mapper.convenio.ConvenioMapper;
 import com.zkbytebandits.convenio.repository.convenio.ConvenioRepository;
-import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Service
+@RequiredArgsConstructor
 public class UpdateConvenioService {
 
     private final ConvenioRepository convenioRepository;
-
-    @Autowired
-    public UpdateConvenioService(ConvenioRepository convenioRepository) {
-        this.convenioRepository = convenioRepository;
-    }
-
+    private final ConvenioMapper convenioMapper;
+    
     @Transactional
-    public Convenio updateConvenio(Long id, UpdateConvenioRequest request) {
+    public ConvenioDTO updateConvenio(Long id, UpdateConvenioRequest request) {
         Convenio convenio = convenioRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Convenio not found with id: " + id));
-
-        // Update fields if they are present in the request
-        if (request.getStatus() != null) {
-            convenio.setStatus(request.getStatus());
-        }
-        if (request.getMonto() != null) {
-            convenio.setMonto(request.getMonto());
-        }
-        if (request.getMoneda() != null) {
-            convenio.setMoneda(request.getMoneda());
-        }
-        if (request.getDescripcion() != null) {
-            convenio.setDescripcion(request.getDescripcion());
-        }
-        if (request.getCondiciones() != null) {
-            convenio.setCondiciones(request.getCondiciones());
-        }
-        if (request.getVencimiento() != null) {
-            convenio.setVencimiento(request.getVencimiento());
-        }
-        if (request.getFirmas() != null && !request.getFirmas().isEmpty()) {
-            convenio.setFirmas(request.getFirmas());
-        }
-        if (request.getOnChainHash() != null) {
-            convenio.setOnChainHash(request.getOnChainHash());
-        }
-
-        return convenioRepository.save(convenio);
+                .orElseThrow(() -> new RuntimeException("Convenio not found with id: " + id));
+        
+        // Update entity from request
+        convenioMapper.updateEntityFromRequest(convenio, request);
+        
+        // Set updated timestamp
+        convenio.setTimestamp(LocalDateTime.now());
+        
+        Convenio updatedConvenio = convenioRepository.save(convenio);
+        return convenioMapper.toDto(updatedConvenio);
     }
-} 
+}

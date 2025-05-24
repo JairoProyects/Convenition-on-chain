@@ -1,5 +1,6 @@
 package com.zkbytebandits.convenio.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,9 +10,6 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 @Entity
 @Table(name = "convenios")
@@ -19,6 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "userConvenios"}) 
 public class Convenio {
 
     @Id
@@ -32,7 +31,7 @@ public class Convenio {
     @Column(nullable = false, updatable = false)
     private LocalDateTime timestamp;
 
-    @Column(nullable = false, precision = 19, scale = 4) // Adjust precision and scale as needed
+    @Column(nullable = false, precision = 19, scale = 4)
     private BigDecimal monto;
 
     @Column(nullable = false, length = 10)
@@ -41,26 +40,16 @@ public class Convenio {
     @Column(nullable = false)
     private String descripcion;
 
-    @Lob
-    @Column(nullable = false, columnDefinition = "TEXT")
+
+    @Column(nullable = false)
     private String condiciones;
 
     @Column(nullable = false)
     private LocalDateTime vencimiento;
 
-    @ElementCollection(fetch = FetchType.EAGER) // EAGER or LAZY depending on usage
-    @CollectionTable(name = "convenio_firmas", joinColumns = @JoinColumn(name = "convenio_id"))
-    @Column(name = "firma")
-    private List<String> firmas;
-
     @Column(name = "on_chain_hash", unique = true)
     private String onChainHash;
 
-    // Relationship with Users through UserConvenio
-    @OneToMany(mappedBy = "convenio", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private Collection<UserConvenio> userConvenios = new ArrayList<>();
-    
     public enum Status {
         CREATED,
         IN_PROGRESS,
