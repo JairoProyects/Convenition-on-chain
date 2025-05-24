@@ -1,23 +1,84 @@
 import 'package:flutter/material.dart';
+import 'package:starknet/starknet.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../../../shared/theme/app_text_styles.dart';
 import '../../../shared/widgets/breadcrumb_widget.dart';
-import '../../../shared/util/notifications.dart';
-import '../../domains/convenio_model.dart';
+import '../../../shared/util/notifications.dart'; // showErrorNotification
+import '../../domains/convenio_model.dart'; // AgreementDraft
 import '../../domains/user_model.dart';
+import '../../services/starknet_service.dart';
 import './result_agreement_page.dart';
 
-class ReviewAgreementPage extends StatelessWidget {
-  final ConvenioModel convenio;
+class ReviewAgreementPage extends StatefulWidget {
+  final AgreementDraft draft;
   final UserModel usuario;
-  final VoidCallback? onConfirmed;
 
   const ReviewAgreementPage({
-    super.key,
-    required this.convenio,
+    Key? key,
+    required this.draft,
     required this.usuario,
-    this.onConfirmed,
-  });
+  }) : super(key: key);
+
+  @override
+  State<ReviewAgreementPage> createState() => _ReviewAgreementPageState();
+}
+
+class _ReviewAgreementPageState extends State<ReviewAgreementPage> {
+  bool _isProcessing = false;
+  //late final StarknetService _starknetService;
+
+  @override
+  void initState() {
+    super.initState();
+    // Inicializamos el servicio con la cuenta provista
+    //_starknetService = StarknetService();
+  }
+
+  Future<void> _onConfirm() async {
+    setState(() => _isProcessing = true);
+
+    try {
+      // Guardamos la acción de navegación para ejecutarla después del modal
+      Future<void> navigateToResultPage() async {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder:
+                (_) => AgreementResultPage(
+                  draft: widget.draft,
+                  usuario: widget.usuario,
+                  onChainHash:
+                      "txHash", // Reemplazar por el hash real si aplica
+                ),
+          ),
+        );
+      }
+
+      // Mostrar el modal y ejecutar la lógica de confirmación (sin navegación aún)
+      await showSwapModal(context, () async {
+        // Aquí puedes ejecutar la transacción real en el futuro:
+        /*
+      final txHash = await _starknetService.createConvenio(
+        party1: widget.draft.party1,
+        party2: widget.draft.party2,
+        descripcion: widget.draft.descripcion,
+        monto: widget.draft.monto,
+        moneda: widget.draft.moneda,
+        condiciones: widget.draft.condiciones,
+        vencimiento: widget.draft.vencimiento,
+      );
+      */
+      });
+
+      // Navegar después de que el modal se haya cerrado
+      await navigateToResultPage();
+    } catch (e) {
+      // Manejo de errores si aplica
+      print("Error al confirmar convenio: $e");
+    } finally {
+      setState(() => _isProcessing = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,79 +125,58 @@ class ReviewAgreementPage extends StatelessWidget {
             BreadcrumbWidget(
               items: ['Inicio', 'Convenios', 'Revisión Final'],
               colors: colors,
-              onTap: (index) {
-                if (index == 0) {
-                  Navigator.popUntil(context, (route) => route.isFirst);
-                } else {
+              onTap: (idx) {
+                if (idx == 0)
+                  Navigator.popUntil(context, (r) => r.isFirst);
+                else
                   Navigator.pop(context);
-                }
               },
             ),
             const SizedBox(height: 16),
-            _buildSection("Datos del Convenio", colors, [
-              _dataRow("Descripción", convenio.descripcion),
-              _dataRow("Condiciones", convenio.condiciones),
+
+            // Datos del convenio
+            _buildSection('Datos del Convenio', colors, [
+              _dataRow('Descripción', widget.draft.descripcion),
+              _dataRow('Condiciones', widget.draft.condiciones),
               _dataRow(
-                "Monto",
-                "${convenio.moneda} ${convenio.monto.toStringAsFixed(2)}",
+                'Monto',
+                '\${widget.draft.moneda} \${widget.draft.monto.toStringAsFixed(2)}',
               ),
               _dataRow(
-                "Vencimiento",
-                convenio.vencimiento.toLocal().toString().split(" ")[0],
+                'Vencimiento',
+                widget.draft.vencimiento.toLocal().toString().split(' ')[0],
               ),
             ]),
             const SizedBox(height: 24),
-            _buildSection("Usuario Destinatario", colors, [
+            // Datos del usuario destinatario
+            _buildSection('Usuario Destinatario', colors, [
               _dataRow(
-                "Nombre",
-                "${usuario.firstName ?? ''} ${usuario.lastName ?? ''}",
+                'Nombre',
+                '\${widget.usuario.firstName ?? '
+                    '} \${widget.usuario.lastName ?? '
+                    '}',
               ),
-              _dataRow("Username", usuario.username ?? ''),
-              _dataRow("Email", usuario.email ?? ''),
-              _dataRow("Estado", usuario.status?.name.toUpperCase() ?? ''),
+              _dataRow('Username', widget.usuario.username ?? ''),
+              _dataRow('Email', widget.usuario.email ?? ''),
+              _dataRow(
+                'Estado',
+                widget.usuario.status?.name.toUpperCase() ?? '',
+              ),
             ]),
             const Spacer(),
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () => Navigator.pop(context),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: colors.panelBackground,
-                      foregroundColor: colors.textPrimary,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                    ),
-                    child: const Text("Volver"),
+
+            // Botón confirmar
+            _isProcessing
+                ? CircularProgressIndicator(color: colors.accentBlue)
+                : ElevatedButton(
+                  onPressed: _onConfirm,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: colors.panelBackground,
+                    foregroundColor: colors.accentBlue,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
                   ),
+                  child: const Text('Confirmar Contrato'),
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      showSwapModal(context, () {
-                        // Después de deslizar exitosamente, navegar a recibo
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder:
-                                (_) => AgreementResultPage(
-                                  convenio: convenio,
-                                  usuario: usuario,
-                                ),
-                          ),
-                        );
-                      });
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: colors.panelBackground,
-                      foregroundColor: colors.accentBlue,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                    ),
-                    child: const Text("Confirmar Contrato"),
-                  ),
-                ),
-              ],
-            ),
           ],
         ),
       ),
@@ -149,7 +189,10 @@ class ReviewAgreementPage extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("$label: ", style: const TextStyle(fontWeight: FontWeight.bold)),
+          Text(
+            '\$label: ',
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
           Expanded(child: Text(value)),
         ],
       ),

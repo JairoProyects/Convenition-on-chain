@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '../../shared/theme/app_colors.dart';
 
 class AdvancedSlideToSwap extends StatefulWidget {
-  final VoidCallback onSwapCompleted;
+  final Future<void> Function() onSwapCompleted;
 
   const AdvancedSlideToSwap({super.key, required this.onSwapCompleted});
 
@@ -29,19 +29,16 @@ class _AdvancedSlideToSwapState extends State<AdvancedSlideToSwap>
     _animation = Tween<double>(begin: 0.0, end: 0.0).animate(_controller);
   }
 
-  void _startSwap() {
+  void _startSwap() async {
+    setState(() => _isSwapping = true);
+
+    await Future.delayed(const Duration(seconds: 2));
     setState(() {
-      _isSwapping = true;
+      _isSwapping = false;
+      _dragPosition = 0.0;
     });
 
-    Future.delayed(const Duration(seconds: 2), () {
-      setState(() {
-        _isSwapping = false;
-        _dragPosition = 0.0;
-      });
-      Navigator.of(context).pop(); // cerrar el modal primero
-      widget.onSwapCompleted(); // luego hacer pushReplacement
-    });
+    await widget.onSwapCompleted(); // ✅ Ejecutar lo que venga
   }
 
   void _handleDragUpdate(DragUpdateDetails details) {
@@ -116,13 +113,16 @@ class _AdvancedSlideToSwapState extends State<AdvancedSlideToSwap>
   }
 }
 
-void showSwapModal(BuildContext context, VoidCallback onConfirmed) {
+Future<void> showSwapModal(
+  BuildContext context,
+  Future<void> Function() onConfirmed,
+) {
   final colors =
       Theme.of(context).brightness == Brightness.dark
           ? AppColors.dark
           : AppColors.light;
 
-  showGeneralDialog(
+  return showGeneralDialog(
     context: context,
     barrierDismissible: true,
     barrierLabel: "SwapModal",
@@ -139,22 +139,33 @@ void showSwapModal(BuildContext context, VoidCallback onConfirmed) {
               color: colors.panelBackground,
               borderRadius: BorderRadius.circular(24),
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  "Desliza para confirmar el contrato",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: colors.textPrimary,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    decoration: TextDecoration.none,
+            child: Theme(
+              data: ThemeData(
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    "Desliza para confirmar el contrato",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: colors.textPrimary,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      decoration: TextDecoration.none,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 20),
-                AdvancedSlideToSwap(onSwapCompleted: onConfirmed),
-              ],
+                  const SizedBox(height: 20),
+                  AdvancedSlideToSwap(
+                    onSwapCompleted: () async {
+                      Navigator.of(context).pop(); // ✅ cerrar modal
+                      await onConfirmed(); // ✅ ejecutar lo que venga
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ),

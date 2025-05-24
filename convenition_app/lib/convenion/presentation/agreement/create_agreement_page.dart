@@ -3,10 +3,11 @@ import '../../../shared/util/validators.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../../../shared/widgets/breadcrumb_widget.dart';
 import 'create_select_user_page.dart';
-import '../../domains/convenio_model.dart';    // Aquí está AgreementDraft
+import '../../domains/convenio_model.dart'; // Aquí está AgreementDraft
 import '../../domains/user_model.dart';
 
 class CreateAgreementPage extends StatefulWidget {
+
   const CreateAgreementPage({super.key});
 
   @override
@@ -49,8 +50,7 @@ class _CreateAgreementPageState extends State<CreateAgreementPage> {
     }
   }
 
-  
- void _goToNextStep() {
+  void _goToNextStep() {
     final isFormValid = _formKey.currentState?.validate() ?? false;
     final hasDate = _fechaVencimiento != null;
     setState(() => _fechaInvalida = !hasDate);
@@ -71,24 +71,17 @@ class _CreateAgreementPageState extends State<CreateAgreementPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => CreateSelectUserPage(
-          draft: draft,
-          onUserConfirmed: (UserModel user, AgreementDraft updatedDraft) {
-            // Por ahora solo volvemos atrás. ReviewAgreementPage vendrá después.
-            Navigator.pop(context);
-          },
-        ),
+        builder: (_) => CreateSelectUserPage(draft: draft),
       ),
     );
   }
 
-
-
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).brightness == Brightness.dark
-        ? AppColors.dark
-        : AppColors.light;
+    final colors =
+        Theme.of(context).brightness == Brightness.dark
+            ? AppColors.dark
+            : AppColors.light;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -153,37 +146,54 @@ class _CreateAgreementPageState extends State<CreateAgreementPage> {
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _montoController,
-                    decoration: const InputDecoration(labelText: "Monto acordado"),
+                    decoration: const InputDecoration(
+                      labelText: "Monto acordado",
+                    ),
                     keyboardType: TextInputType.number,
-                    validator: (v) => validatePositiveNumber(v, fieldName: "Monto"),
+                    validator:
+                        (v) => validatePositiveNumber(v, fieldName: "Monto"),
                   ),
                   const SizedBox(height: 12),
                   DropdownButtonFormField<String>(
-                    decoration: const InputDecoration(labelText: "Tipo de moneda"),
+                    decoration: const InputDecoration(
+                      labelText: "Tipo de moneda",
+                    ),
                     value: _monedaSeleccionada,
                     onChanged: (v) => setState(() => _monedaSeleccionada = v),
-                    items: _opcionesMoneda
-                        .map((m) => DropdownMenuItem(value: m, child: Text(m)))
-                        .toList(),
-                    validator: (v) => v == null ? "Seleccioná una moneda" : null,
+                    items:
+                        _opcionesMoneda
+                            .map(
+                              (m) => DropdownMenuItem(value: m, child: Text(m)),
+                            )
+                            .toList(),
+                    validator:
+                        (v) => v == null ? "Seleccioná una moneda" : null,
                   ),
                   const SizedBox(height: 12),
                   TextFormField(
                     controller: _descripcionController,
                     maxLines: 2,
-                    decoration: const InputDecoration(labelText: "Descripción del convenio"),
-                    validator: (v) => (v == null || v.isEmpty)
-                        ? "Este campo es obligatorio"
-                        : null,
+                    decoration: const InputDecoration(
+                      labelText: "Descripción del convenio",
+                    ),
+                    validator:
+                        (v) =>
+                            (v == null || v.isEmpty)
+                                ? "Este campo es obligatorio"
+                                : null,
                   ),
                   const SizedBox(height: 12),
                   TextFormField(
                     controller: _condicionesController,
                     maxLines: 4,
-                    decoration: const InputDecoration(labelText: "Condiciones adicionales"),
-                    validator: (v) => (v == null || v.isEmpty)
-                        ? "Este campo es obligatorio"
-                        : null,
+                    decoration: const InputDecoration(
+                      labelText: "Condiciones adicionales",
+                    ),
+                    validator:
+                        (v) =>
+                            (v == null || v.isEmpty)
+                                ? "Este campo es obligatorio"
+                                : null,
                   ),
                   const SizedBox(height: 12),
                   Column(
@@ -194,7 +204,10 @@ class _CreateAgreementPageState extends State<CreateAgreementPage> {
                             ? "Fecha seleccionada: ${_fechaVencimiento!.toLocal().toString().split(' ')[0]}"
                             : "Seleccioná la fecha de vencimiento",
                         style: TextStyle(
-                          color: _fechaInvalida ? Colors.redAccent : colors.textSecondary,
+                          color:
+                              _fechaInvalida
+                                  ? Colors.redAccent
+                                  : colors.textSecondary,
                         ),
                       ),
                       const SizedBox(height: 6),
@@ -211,7 +224,10 @@ class _CreateAgreementPageState extends State<CreateAgreementPage> {
                           padding: EdgeInsets.only(top: 6),
                           child: Text(
                             "Debés seleccionar una fecha",
-                            style: TextStyle(color: Colors.redAccent, fontSize: 13),
+                            style: TextStyle(
+                              color: Colors.redAccent,
+                              fontSize: 13,
+                            ),
                           ),
                         ),
                     ],

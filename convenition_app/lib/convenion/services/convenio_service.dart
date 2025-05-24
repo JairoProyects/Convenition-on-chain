@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../domains/convenio_model.dart';
+import '../../shared/config/api_config.dart';
 
 class ConvenioService {
-  final String _baseUrl = "http://localhost:8080/api/convenios";
+  final String _baseUrl = ApiConfig.convenios;
 
   // Obtener lista de convenios
   Future<List<ConvenioModel>> fetchConvenios() async {
@@ -31,6 +32,7 @@ class ConvenioService {
   }
 
   // Crear un nuevo convenio
+
   Future<ConvenioModel> createConvenio(CreateConvenioDto dto) async {
     final response = await http.post(
       Uri.parse(_baseUrl),
