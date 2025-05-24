@@ -233,7 +233,7 @@ class _LoginEmailPageState extends State<LoginEmailPage>
                             const SizedBox(height: 40),
                             _buildTextField(
                               label: 'Correo electrónico',
-                              hint: 'ejemplo@correo.com',
+                              hint: 'Ingrese su correo electrónico',
                               controller: _emailController,
                               keyboardType: TextInputType.emailAddress,
                               prefixIcon: Icon(
