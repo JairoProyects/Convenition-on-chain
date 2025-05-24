@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import '../domains/user_model.dart';
 import '../../shared/config/api_config.dart';
@@ -29,16 +30,36 @@ class UserService {
   }
 
   // POST /register → crea uno nuevo
-  Future<UserModel> createUser(CreateUserDto userDto) async {
-    final response = await http.post(
+  Future<UserModel> createUser(
+    CreateUserDto userDto, {
+    File? profileImage,
+  }) async {
+    var request = http.MultipartRequest(
+      'POST',
       Uri.parse('$_baseUrlUser/register'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(userDto.toJson()),
     );
-    if (response.statusCode == 201 || response.statusCode == 200) {
-      return UserModel.fromJson(jsonDecode(response.body));
+
+    request.fields['username'] = userDto.username;
+    request.fields['email'] = userDto.email;
+    request.fields['password'] = userDto.password;
+    request.fields['firstName'] = userDto.firstName;
+    request.fields['lastName'] = userDto.lastName;
+    
+    if (profileImage != null) {
+      request.files.add(
+        await http.MultipartFile.fromPath('image', profileImage.path),
+      );
+    }
+
+    var response = await request.send();
+    var responseData = await http.Response.fromStream(response);
+
+    if (responseData.statusCode == 200 || responseData.statusCode == 201) {
+      return UserModel.fromJson(jsonDecode(responseData.body));
     } else {
-      throw Exception('Failed to create user. Status: ${response.statusCode}');
+      throw Exception(
+        'Failed to create user. Status: ${responseData.statusCode}',
+      );
     }
   }
 
