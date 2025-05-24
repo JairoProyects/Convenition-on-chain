@@ -47,7 +47,7 @@ public class FileStorageService {
         Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
         // Return the URL where the file can be accessed
-        return baseUrl + "/api/files/" + uniqueFilename;
+        return baseUrl + "/files/" + uniqueFilename;
     }
 
     /**

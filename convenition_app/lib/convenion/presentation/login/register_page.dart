@@ -327,7 +327,9 @@ class _RegisterPageState extends State<RegisterPage>
                                 profileImageUrl: _profileImage
                               );
 
-                              final user = await UserService().createUser(dto);
+                              final user = await UserService().createUser(dto, 
+                                profileImage: _profileImage,
+                              );
 
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
