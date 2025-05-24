@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDateTime;
 
 @RestController
-@RequestMapping("/api/auditlogs")
+@RequestMapping("/auditlogs")
 public class AuditLogController {
 
     private final CreateAuditLogService createAuditLogService;
