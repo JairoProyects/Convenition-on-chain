@@ -8,7 +8,7 @@ class ConvenioService {
 
   // Obtener lista de convenios
   Future<List<ConvenioModel>> fetchConvenios() async {
-    final response = await http.get(Uri.parse(_baseUrl));
+    final response = await http.get(Uri.parse(_baseUrl+"/test"));
 
     if (response.statusCode == 200) {
       final List<dynamic> body = jsonDecode(response.body);
