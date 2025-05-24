@@ -32,7 +32,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void _loadUser() {
-    _userFuture = UserService().getUserById(widget.userId);
+    _userFuture = UserService().getUserById(widget.userId.toString());
     _userFuture.then((user) {
       _firstNameCtrl.text = user.firstName ?? '';
       _lastNameCtrl.text = user.lastName ?? '';
