@@ -1,5 +1,6 @@
 package com.zkbytebandits.convenio.dto.convenio;
 
+import com.zkbytebandits.convenio.entity.Convenio.Status;
 import lombok.Builder;
 import lombok.Data;
 
@@ -11,7 +12,7 @@ import java.util.List;
 @Builder
 public class ConvenioResponse {
     private Long id; // Internal DB id
-    private String externalId;
+    private Status status;
     private LocalDateTime timestamp;
     private BigDecimal monto;
     private String moneda;

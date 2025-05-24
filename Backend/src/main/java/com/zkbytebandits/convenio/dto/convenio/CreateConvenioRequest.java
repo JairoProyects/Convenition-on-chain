@@ -14,8 +14,7 @@ import java.util.List;
 @Data
 public class CreateConvenioRequest {
 
-    @NotBlank(message = "External ID cannot be blank")
-    private String externalId;
+    // Status will be set automatically to CREATED
 
     @NotNull(message = "Monto cannot be null")
     @DecimalMin(value = "0.0", inclusive = false, message = "Monto must be positive")

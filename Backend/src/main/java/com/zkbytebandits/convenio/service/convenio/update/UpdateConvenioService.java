@@ -2,6 +2,7 @@ package com.zkbytebandits.convenio.service.convenio.update;
 
 import com.zkbytebandits.convenio.dto.convenio.UpdateConvenioRequest;
 import com.zkbytebandits.convenio.entity.Convenio;
+
 import com.zkbytebandits.convenio.repository.convenio.ConvenioRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +25,8 @@ public class UpdateConvenioService {
                 .orElseThrow(() -> new EntityNotFoundException("Convenio not found with id: " + id));
 
         // Update fields if they are present in the request
-        if (request.getExternalId() != null) {
-            convenio.setExternalId(request.getExternalId());
+        if (request.getStatus() != null) {
+            convenio.setStatus(request.getStatus());
         }
         if (request.getMonto() != null) {
             convenio.setMonto(request.getMonto());
