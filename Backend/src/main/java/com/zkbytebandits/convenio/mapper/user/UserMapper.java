@@ -20,6 +20,7 @@ public class UserMapper {
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .status(user.getStatus())
+                .profileImageUrl(user.getProfileImageUrl())
                 .build();
     }
 }
