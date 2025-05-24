@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../../services/data_identification_service.dart';
 import '../../services/user_service.dart';
+import '../../services/user_profile_service.dart';
 import '../../domains/user_model.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:debounce_throttle/debounce_throttle.dart';
@@ -55,20 +56,18 @@ class _RegisterPageState extends State<RegisterPage>
     );
 
     _debouncerSubscription = _debouncer.values.listen((_) {
-      print('Debouncer disparado'); // <-- Agrega esto
       _searchByIdentification();
     });
 
     _identificationController.addListener(() {
       final text = _identificationController.text.trim();
-      print('Texto actual: $text');
       if (text.length >= 9) {
-        _debouncer.value = text; // Usa el texto, no null
+        _debouncer.value = text;
       }
     });
   }
 
-  Future<void> _pickProfileImage() async {
+  Future<void> _pickImage() async {
     final pickedFile = await ImagePicker().pickImage(
       source: ImageSource.gallery,
     );
@@ -167,30 +166,48 @@ class _RegisterPageState extends State<RegisterPage>
                   children: [
                     Center(
                       child: GestureDetector(
-                        onTap: _pickProfileImage,
+                        onTap: _pickImage,
                         child: Stack(
                           alignment: Alignment.center,
                           children: [
-                            CircleAvatar(
-                              radius: 50,
-                              backgroundImage:
-                                  _profileImage != null
-                                      ? FileImage(_profileImage!)
-                                      : const NetworkImage(
-                                            'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-zaYQe9sngzvu2DSNu5P9ijXuVuQnk0.png',
-                                          )
-                                          as ImageProvider,
+                            Container(
+                              width: 100,
+                              height: 100,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color:
+                                    _profileImage == null
+                                        ? Colors
+                                            .grey[300] // Fondo por defecto si no hay imagen
+                                        : null,
+                                image:
+                                    _profileImage != null
+                                        ? DecorationImage(
+                                          image: FileImage(_profileImage!),
+                                          fit: BoxFit.cover,
+                                        )
+                                        : null,
+                              ),
+                              child:
+                                  _profileImage == null
+                                      ? const Icon(
+                                        Icons.person,
+                                        size: 48,
+                                        color: Colors.white70,
+                                      )
+                                      : null,
                             ),
                             Container(
                               width: 100,
                               height: 100,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: Colors.black26,
+                                color: Colors.black.withOpacity(0.3),
                               ),
                               child: const Icon(
                                 Icons.camera_alt,
                                 color: Colors.white,
+                                size: 30,
                               ),
                             ),
                           ],
@@ -307,6 +324,7 @@ class _RegisterPageState extends State<RegisterPage>
                                 password: _passwordController.text,
                                 firstName: _firstNameController.text.trim(),
                                 lastName: _lastNameController.text.trim(),
+                                profileImageUrl: _profileImage
                               );
 
                               final user = await UserService().createUser(dto);
