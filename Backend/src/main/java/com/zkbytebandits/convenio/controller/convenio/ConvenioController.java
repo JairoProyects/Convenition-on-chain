@@ -4,6 +4,7 @@ import com.zkbytebandits.convenio.dto.convenio.CreateConvenioRequest;
 import com.zkbytebandits.convenio.dto.convenio.ConvenioResponse;
 import com.zkbytebandits.convenio.dto.convenio.UpdateConvenioRequest;
 import com.zkbytebandits.convenio.entity.Convenio;
+import com.zkbytebandits.convenio.entity.Convenio.Status;
 import com.zkbytebandits.convenio.mapper.convenio.ConvenioMapper;
 import com.zkbytebandits.convenio.service.convenio.create.CreateConvenioService;
 import com.zkbytebandits.convenio.service.convenio.delete.DeleteConvenioService;
@@ -16,6 +17,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/convenios")
@@ -61,12 +64,13 @@ public class ConvenioController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/external/{externalId}")
-    public ResponseEntity<ConvenioResponse> getConvenioByExternalId(@PathVariable String externalId) {
-        return getConvenioService.getConvenioByExternalId(externalId)
+    @GetMapping("/status/{status}")
+    public ResponseEntity<List<ConvenioResponse>> getConveniosByStatus(@PathVariable Status status) {
+        List<Convenio> convenios = getConvenioService.getConveniosByStatus(status);
+        List<ConvenioResponse> responses = convenios.stream()
                 .map(convenioMapper::toConvenioResponse)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .collect(java.util.stream.Collectors.toList());
+        return ResponseEntity.ok(responses);
     }
 
     @GetMapping("/hash/{onChainHash}")

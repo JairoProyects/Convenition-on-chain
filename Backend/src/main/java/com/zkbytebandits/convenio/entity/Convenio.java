@@ -25,8 +25,8 @@ public class Convenio {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "external_id", nullable = false, unique = true)
-    private String externalId;
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
@@ -60,4 +60,12 @@ public class Convenio {
     @OneToMany(mappedBy = "convenio", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private Collection<UserConvenio> userConvenios = new ArrayList<>();
+    
+    public enum Status {
+        CREATED,
+        IN_PROGRESS,
+        COMPLETED,
+        EXPIRED,
+        CANCELLED
+    }
 }
