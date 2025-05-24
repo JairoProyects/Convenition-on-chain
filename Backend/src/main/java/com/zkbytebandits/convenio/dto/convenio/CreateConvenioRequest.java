@@ -32,7 +32,7 @@ public class CreateConvenioRequest {
     @NotNull(message = "Vencimiento is required")
     private LocalDateTime vencimiento;
     
-    private List<String> firmas;
+ //   private List<String> firmas;
     
     private String onChainHash;
 }

@@ -6,7 +6,7 @@ class ConvenioModel {
   final String descripcion;
   final String condiciones;
   final DateTime vencimiento;
-  final List<String> firmas;
+  //final List<String> firmas;
   final String onChainHash;
   final String status; // lo agrego porque viene en la respuesta del backend
 
@@ -18,7 +18,7 @@ class ConvenioModel {
     required this.descripcion,
     required this.condiciones,
     required this.vencimiento,
-    required this.firmas,
+    //required this.firmas,
     required this.onChainHash,
     required this.status,
   });
@@ -31,7 +31,7 @@ class ConvenioModel {
         descripcion: json['descripcion'] as String,
         condiciones: json['condiciones'] as String,
         vencimiento: DateTime.parse(json['vencimiento'] as String),
-        firmas: List<String>.from(json['firmas'] as List),
+        //firmas: List<String>.from(json['firmas'] as List),
         onChainHash: json['onChainHash'] as String,
         status: json['status'] as String,
       );
@@ -44,7 +44,7 @@ class ConvenioModel {
         'descripcion': descripcion,
         'condiciones': condiciones,
         'vencimiento': vencimiento.toIso8601String(),
-        'firmas': firmas,
+        //'firmas': firmas,
         'onChainHash': onChainHash,
         'status': status,
       };
@@ -56,7 +56,7 @@ class CreateConvenioDto {
   final String descripcion;
   final String condiciones;
   final DateTime vencimiento;
-  final List<String> firmas;
+  //final List<String> firmas;
   final String onChainHash;
 
   CreateConvenioDto({
@@ -65,7 +65,7 @@ class CreateConvenioDto {
     required this.descripcion,
     required this.condiciones,
     required this.vencimiento,
-    required this.firmas,
+    //required this.firmas,
     required this.onChainHash,
   });
 
@@ -75,7 +75,7 @@ class CreateConvenioDto {
         'descripcion': descripcion,
         'condiciones': condiciones,
         'vencimiento': vencimiento.toIso8601String(),
-        'firmas': firmas,
+        //'firmas': firmas,
         'onChainHash': onChainHash,
       };
 }
@@ -83,7 +83,7 @@ class UpdateConvenioDto {
   final String? descripcion;
   final String? condiciones;
   final DateTime? vencimiento;
-  final List<String>? firmas;
+  //final List<String>? firmas;
   final String? onChainHash;
   final double? monto;
   final String? moneda;
@@ -93,7 +93,7 @@ class UpdateConvenioDto {
     this.descripcion,
     this.condiciones,
     this.vencimiento,
-    this.firmas,
+    //this.firmas,
     this.onChainHash,
     this.monto,
     this.moneda,
@@ -105,7 +105,7 @@ class UpdateConvenioDto {
     if (descripcion != null) data['descripcion'] = descripcion;
     if (condiciones != null) data['condiciones'] = condiciones;
     if (vencimiento != null) data['vencimiento'] = vencimiento!.toIso8601String();
-    if (firmas != null) data['firmas'] = firmas;
+   // if (firmas != null) data['firmas'] = firmas;
     if (onChainHash != null) data['onChainHash'] = onChainHash;
     if (monto != null) data['monto'] = monto;
     if (moneda != null) data['moneda'] = moneda;
