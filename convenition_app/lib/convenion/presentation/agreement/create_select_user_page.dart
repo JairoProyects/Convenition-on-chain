@@ -57,6 +57,7 @@ class _CreateSelectUserPageState extends State<CreateSelectUserPage>
       vsync: this,
     );
 
+    // Asegurar que todas las animaciones estén en el rango correcto
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
     );
@@ -69,6 +70,7 @@ class _CreateSelectUserPageState extends State<CreateSelectUserPage>
     _scaleAnimation = Tween<double>(begin: 0.95, end: 1.0).animate(
       CurvedAnimation(parent: _scaleController, curve: Curves.elasticOut),
     );
+    // Corregir la animación de la tarjeta de usuario
     _userCardAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _userCardController, curve: Curves.easeOutBack),
     );
@@ -130,11 +132,10 @@ class _CreateSelectUserPageState extends State<CreateSelectUserPage>
     Navigator.push(
       context,
       PageRouteBuilder(
-        pageBuilder:
-            (context, animation, secondaryAnimation) => ReviewAgreementPage(
-              draft: updatedDraft,
-              usuario: _selectedUser!,
-            ),
+        pageBuilder: (context, animation, secondaryAnimation) => ReviewAgreementPage(
+          draft: updatedDraft,
+          usuario: _selectedUser!,
+        ),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return SlideTransition(
             position: Tween<Offset>(
@@ -152,47 +153,45 @@ class _CreateSelectUserPageState extends State<CreateSelectUserPage>
   }
 
   void _showErrorDialog() {
-    final colors =
-        Theme.of(context).brightness == Brightness.dark
-            ? AppColors.dark
-            : AppColors.light;
+    final colors = Theme.of(context).brightness == Brightness.dark
+        ? AppColors.dark
+        : AppColors.light;
 
     showDialog(
       context: context,
-      builder:
-          (context) => AlertDialog(
-            backgroundColor: colors.modalBackground,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            title: Row(
-              children: [
-                Icon(Icons.error_outline, color: Colors.redAccent, size: 24),
-                const SizedBox(width: 8),
-                Text(
-                  "Error",
-                  style: TextStyle(
-                    color: colors.textPrimary,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-            content: Text(
-              "Debés seleccionar un usuario para continuar.",
-              style: TextStyle(color: colors.textSecondary),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  HapticFeedback.lightImpact();
-                  Navigator.pop(context);
-                },
-                style: TextButton.styleFrom(foregroundColor: colors.accentBlue),
-                child: const Text("Entendido"),
+      builder: (context) => AlertDialog(
+        backgroundColor: colors.modalBackground,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        title: Row(
+          children: [
+            Icon(Icons.error_outline, color: Colors.redAccent, size: 24),
+            const SizedBox(width: 8),
+            Text(
+              "Error",
+              style: TextStyle(
+                color: colors.textPrimary,
+                fontWeight: FontWeight.w600,
               ),
-            ],
+            ),
+          ],
+        ),
+        content: Text(
+          "Debés seleccionar un usuario para continuar.",
+          style: TextStyle(color: colors.textSecondary),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              HapticFeedback.lightImpact();
+              Navigator.pop(context);
+            },
+            style: TextButton.styleFrom(foregroundColor: colors.accentBlue),
+            child: const Text("Entendido"),
           ),
+        ],
+      ),
     );
   }
 
@@ -209,10 +208,9 @@ class _CreateSelectUserPageState extends State<CreateSelectUserPage>
   }
 
   Widget _buildProgressIndicator() {
-    final colors =
-        Theme.of(context).brightness == Brightness.dark
-            ? AppColors.dark
-            : AppColors.light;
+    final colors = Theme.of(context).brightness == Brightness.dark
+        ? AppColors.dark
+        : AppColors.light;
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 16),
@@ -233,10 +231,7 @@ class _CreateSelectUserPageState extends State<CreateSelectUserPage>
               duration: const Duration(milliseconds: 500),
               height: 4,
               decoration: BoxDecoration(
-                color:
-                    _selectedUser != null
-                        ? colors.accentBlue
-                        : colors.borderGlow,
+                color: _selectedUser != null ? colors.accentBlue : colors.borderGlow,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -257,10 +252,9 @@ class _CreateSelectUserPageState extends State<CreateSelectUserPage>
   }
 
   Widget _buildAgreementSummary() {
-    final colors =
-        Theme.of(context).brightness == Brightness.dark
-            ? AppColors.dark
-            : AppColors.light;
+    final colors = Theme.of(context).brightness == Brightness.dark
+        ? AppColors.dark
+        : AppColors.light;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 24),
@@ -331,10 +325,7 @@ class _CreateSelectUserPageState extends State<CreateSelectUserPage>
                 _buildSummaryRow(
                   icon: Icons.calendar_today,
                   label: 'Vencimiento',
-                  value:
-                      widget.draft.vencimiento.toLocal().toString().split(
-                        ' ',
-                      )[0],
+                  value: widget.draft.vencimiento.toLocal().toString().split(' ')[0],
                   colors: colors,
                 ),
               ],
@@ -385,18 +376,21 @@ class _CreateSelectUserPageState extends State<CreateSelectUserPage>
   }
 
   Widget _buildUserCard() {
-    final colors =
-        Theme.of(context).brightness == Brightness.dark
-            ? AppColors.dark
-            : AppColors.light;
+    final colors = Theme.of(context).brightness == Brightness.dark
+        ? AppColors.dark
+        : AppColors.light;
 
     return AnimatedBuilder(
       animation: _userCardAnimation,
       builder: (context, child) {
+        // CORRECCIÓN: Asegurar que los valores estén en el rango válido
+        final opacity = _userCardAnimation.value.clamp(0.0, 1.0);
+        final scale = _userCardAnimation.value.clamp(0.0, 1.0);
+        
         return Transform.scale(
-          scale: _userCardAnimation.value,
+          scale: scale,
           child: Opacity(
-            opacity: _userCardAnimation.value,
+            opacity: opacity,
             child: Container(
               margin: const EdgeInsets.only(bottom: 24),
               decoration: BoxDecoration(
@@ -465,9 +459,7 @@ class _CreateSelectUserPageState extends State<CreateSelectUserPage>
                         _buildUserDetailRow(
                           icon: Icons.person_outline,
                           label: 'Nombre',
-                          value:
-                              "${_selectedUser!.firstName ?? ''} ${_selectedUser!.lastName ?? ''}"
-                                  .trim(),
+                          value: "${_selectedUser!.firstName ?? ''} ${_selectedUser!.lastName ?? ''}".trim(),
                           colors: colors,
                         ),
                         const SizedBox(height: 12),
@@ -488,9 +480,7 @@ class _CreateSelectUserPageState extends State<CreateSelectUserPage>
                         _buildUserDetailRow(
                           icon: Icons.info_outline,
                           label: 'Estado',
-                          value:
-                              _selectedUser!.status?.name.toUpperCase() ??
-                              'N/A',
+                          value: _selectedUser!.status?.name.toUpperCase() ?? 'N/A',
                           colors: colors,
                           isStatus: true,
                         ),
@@ -533,31 +523,31 @@ class _CreateSelectUserPageState extends State<CreateSelectUserPage>
               const SizedBox(height: 2),
               isStatus
                   ? Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: colors.accentBlue.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: colors.accentBlue.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        value,
+                        style: TextStyle(
+                          color: colors.accentBlue,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    )
+                  : Text(
                       value,
                       style: TextStyle(
-                        color: colors.accentBlue,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
+                        color: colors.textPrimary,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
-                  )
-                  : Text(
-                    value,
-                    style: TextStyle(
-                      color: colors.textPrimary,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
             ],
           ),
         ),
@@ -566,10 +556,9 @@ class _CreateSelectUserPageState extends State<CreateSelectUserPage>
   }
 
   Widget _buildActionButtons() {
-    final colors =
-        Theme.of(context).brightness == Brightness.dark
-            ? AppColors.dark
-            : AppColors.light;
+    final colors = Theme.of(context).brightness == Brightness.dark
+        ? AppColors.dark
+        : AppColors.light;
 
     return ScaleTransition(
       scale: _scaleAnimation,
@@ -616,24 +605,21 @@ class _CreateSelectUserPageState extends State<CreateSelectUserPage>
             child: Container(
               height: 56,
               decoration: BoxDecoration(
-                gradient:
-                    _selectedUser != null ? colors.buttonSlideToSwap : null,
+                gradient: _selectedUser != null ? colors.buttonSlideToSwap : null,
                 color: _selectedUser == null ? colors.panelBackground : null,
                 borderRadius: BorderRadius.circular(12),
-                boxShadow:
-                    _selectedUser != null
-                        ? [
-                          BoxShadow(
-                            color: colors.accentBlue.withOpacity(0.3),
-                            blurRadius: 12,
-                            offset: const Offset(0, 4),
-                          ),
-                        ]
-                        : null,
+                boxShadow: _selectedUser != null
+                    ? [
+                        BoxShadow(
+                          color: colors.accentBlue.withOpacity(0.3),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                        ),
+                      ]
+                    : null,
               ),
               child: ElevatedButton.icon(
-                onPressed:
-                    _selectedUser != null && !_isLoading ? _confirmUser : null,
+                onPressed: _selectedUser != null && !_isLoading ? _confirmUser : null,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.transparent,
                   shadowColor: Colors.transparent,
@@ -641,33 +627,30 @@ class _CreateSelectUserPageState extends State<CreateSelectUserPage>
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                icon:
-                    _isLoading
-                        ? SizedBox(
-                          width: 18,
-                          height: 18,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              colors.accentBlue,
-                            ),
+                icon: _isLoading
+                    ? SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            colors.accentBlue,
                           ),
-                        )
-                        : Icon(
-                          Icons.arrow_forward,
-                          color:
-                              _selectedUser != null
-                                  ? colors.accentBlue
-                                  : colors.textSecondary,
-                          size: 18,
                         ),
+                      )
+                    : Icon(
+                        Icons.arrow_forward,
+                        color: _selectedUser != null
+                            ? colors.accentBlue
+                            : colors.textSecondary,
+                        size: 18,
+                      ),
                 label: Text(
                   _isLoading ? "Procesando..." : "Siguiente",
                   style: TextStyle(
-                    color:
-                        _selectedUser != null
-                            ? colors.accentBlue
-                            : colors.textSecondary,
+                    color: _selectedUser != null
+                        ? colors.accentBlue
+                        : colors.textSecondary,
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                   ),
@@ -682,10 +665,9 @@ class _CreateSelectUserPageState extends State<CreateSelectUserPage>
 
   @override
   Widget build(BuildContext context) {
-    final colors =
-        Theme.of(context).brightness == Brightness.dark
-            ? AppColors.dark
-            : AppColors.light;
+    final colors = Theme.of(context).brightness == Brightness.dark
+        ? AppColors.dark
+        : AppColors.light;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -742,10 +724,11 @@ class _CreateSelectUserPageState extends State<CreateSelectUserPage>
                     colors: colors,
                     onTap: (idx) {
                       HapticFeedback.lightImpact();
-                      if (idx == 0)
+                      if (idx == 0) {
                         Navigator.popUntil(context, (r) => r.isFirst);
-                      else if (idx == 1)
+                      } else if (idx == 1) {
                         Navigator.pop(context);
+                      }
                     },
                   ),
                 ),
