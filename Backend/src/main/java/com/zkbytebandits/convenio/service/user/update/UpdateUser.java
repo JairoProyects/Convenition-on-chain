@@ -1,6 +1,5 @@
 package com.zkbytebandits.convenio.service.user.update;
 
-
 import java.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 import com.zkbytebandits.convenio.dto.UpdateUserRequest;
@@ -21,9 +20,22 @@ public class UpdateUser {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        user.setFirstName(request.getFirstName());
-        user.setLastName(request.getLastName());
-        user.setStatus(request.getStatus());
+        // Validar contraseña actual
+        if (!user.getPasswordHash().equals(request.getCurrentPassword())) {
+            throw new RuntimeException("La contraseña actual no es válida");
+        }
+
+        // Validar coincidencia de nueva contraseña
+        if (!request.getNewPassword().equals(request.getConfirmNewPassword())) {
+            throw new RuntimeException("La nueva contraseña y su confirmación no coinciden");
+        }
+
+        // Actualizar nombre de usuario y contraseña
+        user.setUsername(request.getUsername());
+        if (request.getNewPassword() != null && !request.getNewPassword().isEmpty()) {
+            user.setPasswordHash(request.getNewPassword()); // Agrega hash aquí si usas BCrypt
+        }
+
         user.setUpdatedAt(LocalDateTime.now());
 
         return UserMapper.toUserDto(userRepository.save(user));

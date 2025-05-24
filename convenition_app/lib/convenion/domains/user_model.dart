@@ -151,21 +151,24 @@ class CreateUserDto {
 
 // DTO para actualización de usuario
 class UpdateUserDto {
-  final String firstName;
-  final String lastName;
-  final String status;
+  final String username;
+  final String currentPassword;
+  final String newPassword;
+  final String confirmNewPassword;
 
   UpdateUserDto({
-    required this.firstName,
-    required this.lastName,
-    required this.status,
+    required this.username,
+    required this.currentPassword,
+    required this.newPassword,
+    required this.confirmNewPassword,
   });
 
   Map<String, dynamic> toJson() => {
-    'firstName': firstName,
-    'lastName': lastName,
-    'status': status,
-  };
+        'username': username,
+        'currentPassword': currentPassword,
+        'newPassword': newPassword,
+        'confirmNewPassword': confirmNewPassword,
+      };
 }
 
 class LoginRequest {

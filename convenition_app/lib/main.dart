@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import './convenion/presentation/login/login_page.dart';
+import './shared/widgets/start_up.dart';
 import 'shared/theme/app_colors.dart';
 import 'shared/theme/app_text_styles.dart';
 import 'shared/theme/theme_provider.dart';
@@ -64,7 +64,7 @@ class MyApp extends StatelessWidget {
       themeMode: themeProvider.themeMode,
       theme: _buildTheme(AppColors.light, Brightness.light),
       darkTheme: _buildTheme(AppColors.dark, Brightness.dark),
-      home: const LoginPage(),
+      home: const SplashRedirectPage(),
     );
   }
 }

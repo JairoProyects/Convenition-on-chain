@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../../services/user_service.dart';
 import '../../../home/bottom_navigation_bar.dart';
+import '../../../shared/config/auth_config.dart';
 
 class LoginEmailPage extends StatefulWidget {
   final bool isDarkMode;
@@ -118,9 +119,11 @@ class _LoginEmailPageState extends State<LoginEmailPage>
             margin: const EdgeInsets.all(16),
           ),
         );
+        await AuthConfig.saveUserSession(response.userId);
+
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const MenuTopTabsPage()),
+          MaterialPageRoute(builder: (context) => MenuTopTabsPage(userId: response.userId)),
         );
       }
     } catch (e) {
