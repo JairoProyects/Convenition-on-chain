@@ -1,9 +1,11 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../../services/data_identification_service.dart';
 import '../../services/user_service.dart';
 import '../../domains/user_model.dart';
+import 'package:image_picker/image_picker.dart';
 
 class RegisterPage extends StatefulWidget {
   final bool isDarkMode;
@@ -28,6 +30,7 @@ class _RegisterPageState extends State<RegisterPage>
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
+  File? _profileImage;
 
   @override
   void initState() {
@@ -40,6 +43,17 @@ class _RegisterPageState extends State<RegisterPage>
       CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
     );
     _animationController.forward();
+  }
+
+  Future<void> _pickProfileImage() async {
+    final pickedFile = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+    );
+    if (pickedFile != null) {
+      setState(() {
+        _profileImage = File(pickedFile.path);
+      });
+    }
   }
 
   @override
@@ -127,23 +141,39 @@ class _RegisterPageState extends State<RegisterPage>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Crear una cuenta',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: colorScheme.textPrimary,
+                    Center(
+                      child: GestureDetector(
+                        onTap: _pickProfileImage,
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            CircleAvatar(
+                              radius: 50,
+                              backgroundImage:
+                                  _profileImage != null
+                                      ? FileImage(_profileImage!)
+                                      : const NetworkImage(
+                                            'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-zaYQe9sngzvu2DSNu5P9ijXuVuQnk0.png',
+                                          )
+                                          as ImageProvider,
+                            ),
+                            Container(
+                              width: 100,
+                              height: 100,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.black26,
+                              ),
+                              child: const Icon(
+                                Icons.camera_alt,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Completá tus datos para comenzar',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: colorScheme.textSecondary,
-                      ),
-                    ),
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 24),
                     _buildTextField(
                       label: 'Cédula',
                       hint: 'Ingrese su número de cédula',

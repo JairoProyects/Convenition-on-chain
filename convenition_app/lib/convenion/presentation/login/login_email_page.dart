@@ -123,7 +123,9 @@ class _LoginEmailPageState extends State<LoginEmailPage>
 
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => MenuTopTabsPage(userId: response.userId)),
+          MaterialPageRoute(
+            builder: (context) => MenuTopTabsPage(userId: response.userId),
+          ),
         );
       }
     } catch (e) {
@@ -200,39 +202,29 @@ class _LoginEmailPageState extends State<LoginEmailPage>
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const SizedBox(height: 20),
-                            Row(
-                              children: [
-                                Text(
-                                  'Hola, ¡bienvenido de nuevo!',
-                                  style: TextStyle(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.bold,
-                                    color: colorScheme.textPrimary,
-                                  ),
+                            Center(
+                              child: Text(
+                                'Bienvenido a Convenio-On-Chain',
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                  color: colorScheme.textPrimary,
                                 ),
-                                TweenAnimationBuilder<double>(
-                                  tween: Tween(begin: 0.0, end: 1.0),
-                                  duration: const Duration(milliseconds: 800),
-                                  builder: (context, value, child) {
-                                    return Transform.rotate(
-                                      angle: value * 0.5,
-                                      child: const Text(
-                                        '👋',
-                                        style: TextStyle(fontSize: 24),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Hola de nuevo, ¡te extrañamos!',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: colorScheme.textSecondary,
+                                textAlign: TextAlign.center,
                               ),
                             ),
+                            const SizedBox(height: 8),
+                            Center(
+                              child: Text(
+                                'Inicia sesión para acceder a tu cuenta y gestionar tus contratos de forma segura.',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: colorScheme.textSecondary,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
                             const SizedBox(height: 40),
                             _buildTextField(
                               label: 'Correo electrónico',

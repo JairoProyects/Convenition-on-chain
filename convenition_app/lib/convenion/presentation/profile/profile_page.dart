@@ -1,8 +1,11 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../../../shared/theme/app_text_styles.dart';
 import '../../../shared/config/auth_config.dart';
 import '../../services/user_service.dart';
+import '../../services/user_profile_service.dart';
 import '../../domains/user_model.dart';
 import '../../presentation/login/login_page.dart';
 
@@ -19,10 +22,14 @@ class _ProfilePageState extends State<ProfilePage> {
   UserModel? _user;
   bool _isLoading = true;
   bool _isEditing = false;
+  bool _obscureCurrentPassword = true;
+  bool _obscureNewPassword = true;
+  bool _obscureConfirmPassword = true;
   final _usernameController = TextEditingController();
   final _currentPasswordController = TextEditingController();
   final _newPasswordController = TextEditingController();
   final _confirmNewPasswordController = TextEditingController();
+  File? _profileImage;
 
   @override
   void initState() {
@@ -45,6 +52,30 @@ class _ProfilePageState extends State<ProfilePage> {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Error al cargar el perfil: $e')));
+    }
+  }
+
+  Future<void> _pickImage() async {
+    final pickedFile = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+    );
+    if (pickedFile != null) {
+      setState(() {
+        _profileImage = File(pickedFile.path);
+      });
+      try {
+        await UserProfileService().uploadProfileImage(
+          userId: widget.userId,
+          imageFile: _profileImage!,
+        );
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Imagen de perfil actualizada')),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error al subir la imagen: $e')));
+      }
     }
   }
 
@@ -129,19 +160,78 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                         child: Column(
                           children: [
-                            Container(
-                              width: 100,
-                              height: 100,
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                                image: DecorationImage(
-                                  image: NetworkImage(
-                                    'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-zaYQe9sngzvu2DSNu5P9ijXuVuQnk0.png',
+                            GestureDetector(
+                              onTap: _pickImage,
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  Container(
+                                    width: 100,
+                                    height: 100,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color:
+                                          (_profileImage == null &&
+                                                  (_user?.profileImageUrl ==
+                                                          null ||
+                                                      _user!
+                                                          .profileImageUrl!
+                                                          .isEmpty))
+                                              ? Colors
+                                                  .grey[300] // Fondo por defecto si no hay imagen
+                                              : null,
+                                      image:
+                                          (_profileImage != null ||
+                                                  (_user
+                                                          ?.profileImageUrl
+                                                          ?.isNotEmpty ??
+                                                      false))
+                                              ? DecorationImage(
+                                                image:
+                                                    _profileImage != null
+                                                        ? FileImage(
+                                                          _profileImage!,
+                                                        )
+                                                        : NetworkImage(
+                                                              _user!
+                                                                  .profileImageUrl!,
+                                                            )
+                                                            as ImageProvider,
+                                                fit: BoxFit.cover,
+                                              )
+                                              : null,
+                                    ),
+                                    child:
+                                        (_profileImage == null &&
+                                                (_user?.profileImageUrl ==
+                                                        null ||
+                                                    _user!
+                                                        .profileImageUrl!
+                                                        .isEmpty))
+                                            ? const Icon(
+                                              Icons.person,
+                                              size: 48,
+                                              color: Colors.white70,
+                                            )
+                                            : null,
                                   ),
-                                  fit: BoxFit.cover,
-                                ),
+                                  Container(
+                                    width: 100,
+                                    height: 100,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.black.withOpacity(0.3),
+                                    ),
+                                    child: const Icon(
+                                      Icons.camera_alt,
+                                      color: Colors.white,
+                                      size: 30,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
+
                             const SizedBox(height: 16),
                             Text(
                               _user != null
@@ -194,32 +284,73 @@ class _ProfilePageState extends State<ProfilePage> {
                                     const SizedBox(height: 12),
                                     TextField(
                                       controller: _currentPasswordController,
-                                      obscureText: true,
-                                      decoration: const InputDecoration(
+                                      obscureText: _obscureCurrentPassword,
+                                      decoration: InputDecoration(
                                         labelText: 'Contraseña actual',
+                                        suffixIcon: IconButton(
+                                          icon: Icon(
+                                            _obscureCurrentPassword
+                                                ? Icons.visibility_off
+                                                : Icons.visibility,
+                                          ),
+                                          onPressed:
+                                              () => setState(
+                                                () =>
+                                                    _obscureCurrentPassword =
+                                                        !_obscureCurrentPassword,
+                                              ),
+                                        ),
                                       ),
                                     ),
                                     const SizedBox(height: 12),
                                     TextField(
                                       controller: _newPasswordController,
-                                      obscureText: true,
-                                      decoration: const InputDecoration(
+                                      obscureText: _obscureNewPassword,
+                                      decoration: InputDecoration(
                                         labelText: 'Nueva contraseña',
+                                        suffixIcon: IconButton(
+                                          icon: Icon(
+                                            _obscureNewPassword
+                                                ? Icons.visibility_off
+                                                : Icons.visibility,
+                                          ),
+                                          onPressed:
+                                              () => setState(
+                                                () =>
+                                                    _obscureNewPassword =
+                                                        !_obscureNewPassword,
+                                              ),
+                                        ),
                                       ),
                                     ),
                                     const SizedBox(height: 12),
                                     TextField(
                                       controller: _confirmNewPasswordController,
-                                      obscureText: true,
-                                      decoration: const InputDecoration(
+                                      obscureText: _obscureConfirmPassword,
+                                      decoration: InputDecoration(
                                         labelText: 'Confirmar nueva contraseña',
+                                        suffixIcon: IconButton(
+                                          icon: Icon(
+                                            _obscureConfirmPassword
+                                                ? Icons.visibility_off
+                                                : Icons.visibility,
+                                          ),
+                                          onPressed:
+                                              () => setState(
+                                                () =>
+                                                    _obscureConfirmPassword =
+                                                        !_obscureConfirmPassword,
+                                              ),
+                                        ),
                                       ),
                                     ),
                                     const SizedBox(height: 16),
-                                    ElevatedButton.icon(
-                                      onPressed: _submitChanges,
-                                      icon: const Icon(Icons.save),
-                                      label: const Text('Guardar cambios'),
+                                    Center(
+                                      child: ElevatedButton.icon(
+                                        onPressed: _submitChanges,
+                                        icon: const Icon(Icons.save),
+                                        label: const Text('Guardar cambios'),
+                                      ),
                                     ),
                                     const SizedBox(height: 20),
                                   ],

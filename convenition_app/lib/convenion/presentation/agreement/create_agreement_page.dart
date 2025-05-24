@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../shared/util/validators.dart';
 import '../../../shared/theme/app_colors.dart';
-import '../../../home/custom_app_bar.dart';
 import '../../../shared/widgets/breadcrumb_widget.dart';
 import 'create_select_user_page.dart';
 
@@ -14,7 +13,6 @@ class CreateAgreementPage extends StatefulWidget {
 
 class _CreateAgreementPageState extends State<CreateAgreementPage> {
   final _formKey = GlobalKey<FormState>();
-  final _searchController = TextEditingController();
   final _montoController = TextEditingController();
   final _descripcionController = TextEditingController();
   final _condicionesController = TextEditingController();
@@ -73,13 +71,34 @@ class _CreateAgreementPageState extends State<CreateAgreementPage> {
             : AppColors.light;
 
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(56),
-        child: Container(
-          color: Colors.transparent,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          child: CustomAppBar(controller: _searchController),
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: colors.panelBackground,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.arrow_back_ios_new,
+              color: colors.textPrimary,
+              size: 16,
+            ),
+          ),
+          onPressed: () => Navigator.of(context).pop(),
         ),
+        title: Text(
+          'Crear Convenio',
+          style: TextStyle(
+            color: colors.textPrimary,
+            fontSize: 18,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        centerTitle: true,
       ),
       body: Container(
         decoration: BoxDecoration(gradient: colors.backgroundMain),

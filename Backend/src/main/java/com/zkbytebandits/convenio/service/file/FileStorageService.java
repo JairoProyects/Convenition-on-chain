@@ -18,7 +18,7 @@ public class FileStorageService {
     @Value("${file.upload-dir:uploads}")
     private String uploadDir;
 
-    @Value("${app.base-url:http://localhost:8080}")
+    @Value("${app.base-url:https://www.devbychris.com/convenio-api}")
     private String baseUrl;
 
     /**

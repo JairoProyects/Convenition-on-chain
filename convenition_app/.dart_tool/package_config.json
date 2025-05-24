@@ -207,9 +207,9 @@
     },
     {
       "name": "image_picker",
-      "rootUri": "file:///C:/Users/Luis/AppData/Local/Pub/Cache/hosted/pub.dev/image_picker-0.8.9",
+      "rootUri": "file:///C:/Users/Luis/AppData/Local/Pub/Cache/hosted/pub.dev/image_picker-1.1.2",
       "packageUri": "lib/",
-      "languageVersion": "2.18"
+      "languageVersion": "3.3"
     },
     {
       "name": "image_picker_android",
@@ -620,7 +620,7 @@
       "languageVersion": "3.7"
     }
   ],
-  "generated": "2025-05-24T07:34:52.324589Z",
+  "generated": "2025-05-24T16:15:09.689295Z",
   "generator": "pub",
   "generatorVersion": "3.7.2",
   "flutterRoot": "file:///C:/Users/Luis/Downloads/flutter",

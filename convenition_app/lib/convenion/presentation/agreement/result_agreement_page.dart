@@ -3,7 +3,6 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../../../shared/theme/app_text_styles.dart';
-import '../../../home/custom_app_bar.dart';
 import '../../domains/convenio_model.dart';
 import '../../domains/user_model.dart';
 
@@ -23,19 +22,38 @@ class AgreementResultPage extends StatelessWidget {
         ? AppColors.dark
         : AppColors.light;
 
-    final searchController = TextEditingController();
-
     final qrData =
         "Convenio: ${convenio.descripcion}\nID: ${convenio.id}\nMonto: ${convenio.moneda}${convenio.monto}\nVence: ${convenio.vencimiento.toLocal().toIso8601String()}";
 
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(56),
-        child: Container(
-          decoration: BoxDecoration(color: colors.panelBackground),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          child: CustomAppBar(controller: searchController),
+       extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: colors.panelBackground,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.arrow_back_ios_new,
+              color: colors.textPrimary,
+              size: 16,
+            ),
+          ),
+          onPressed: () => Navigator.of(context).pop(),
         ),
+        title: Text(
+          'Resultado del Convenio',
+          style: TextStyle(
+            color: colors.textPrimary,
+            fontSize: 18,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        centerTitle: true,
       ),
       body: Container(
         decoration: BoxDecoration(gradient: colors.backgroundMain),
