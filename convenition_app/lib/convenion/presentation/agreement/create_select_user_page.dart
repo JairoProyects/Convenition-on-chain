@@ -3,13 +3,17 @@ import '../../../shared/theme/app_colors.dart';
 import '../../../shared/widgets/user_dropdown_search.dart';
 import '../../../shared/widgets/breadcrumb_widget.dart';
 import '../../domains/user_model.dart';
-import 'review_agreement_page.dart';
-import '../../domains/convenio_model.dart';
+import '../../domains/convenio_model.dart'; // Aquí está AgreementDraft
 
 class CreateSelectUserPage extends StatefulWidget {
-  final void Function(UserModel selectedUser) onUserConfirmed;
+  final AgreementDraft draft;
+  final void Function(UserModel selectedUser, AgreementDraft updatedDraft) onUserConfirmed;
 
-  const CreateSelectUserPage({super.key, required this.onUserConfirmed});
+  const CreateSelectUserPage({
+    super.key,
+    required this.draft,
+    required this.onUserConfirmed,
+  });
 
   @override
   State<CreateSelectUserPage> createState() => _CreateSelectUserPageState();
@@ -19,63 +23,46 @@ class _CreateSelectUserPageState extends State<CreateSelectUserPage> {
   UserModel? _selectedUser;
 
   void _confirmUser() {
-    if (_selectedUser != null) {
-      // Simulación del convenio cargado previamente (ajustá según tu flujo real)
-      final convenioSimulado = ConvenioModel(
-        id: 1,
-        timestamp: DateTime.now(),
-        monto: 1500,
-        moneda: '₡',
-        descripcion: 'Acuerdo de prueba',
-        condiciones: 'Condiciones básicas del acuerdo.',
-        vencimiento: DateTime.now().add(const Duration(days: 30)),
-        firmas: [],
-        onChainHash: '0xFAKEHASH1234',
-          status: "Activo",
-      );
-
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder:
-              (_) => ReviewAgreementPage(
-                convenio: convenioSimulado,
-                usuario: _selectedUser!,
-                onConfirmed: () {
-                  // Aquí colocás la acción posterior al slide final
-                  print("Contrato firmado y confirmado");
-                },
-              ),
-        ),
-      );
-    } else {
+    if (_selectedUser == null) {
       showDialog(
         context: context,
-        builder:
-            (_) => AlertDialog(
-              title: const Text("Error"),
-              content: const Text("Debés seleccionar un usuario."),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text("Entendido"),
-                ),
-              ],
+        builder: (_) => AlertDialog(
+          title: const Text("Error"),
+          content: const Text("Debés seleccionar un usuario."),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Entendido"),
             ),
+          ],
+        ),
       );
+      return;
     }
+
+    // Creamos un nuevo draft incluyendo party2 con la wallet del usuario
+    final updatedDraft = AgreementDraft(
+      monto: widget.draft.monto,
+      moneda: widget.draft.moneda,
+      descripcion: widget.draft.descripcion,
+      condiciones: widget.draft.condiciones,
+      vencimiento: widget.draft.vencimiento,
+      party1: widget.draft.party1,
+      // party2: _selectedUser!.walletAddress,
+      party2: '',
+    );
+
+    // Llamamos al callback, que se encargará de la navegación
+    widget.onUserConfirmed(_selectedUser!, updatedDraft);
   }
 
-  void _goBack() {
-    Navigator.pop(context);
-  }
+  void _goBack() => Navigator.pop(context);
 
   @override
   Widget build(BuildContext context) {
-    final colors =
-        Theme.of(context).brightness == Brightness.dark
-            ? AppColors.dark
-            : AppColors.light;
+    final colors = Theme.of(context).brightness == Brightness.dark
+        ? AppColors.dark
+        : AppColors.light;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -95,7 +82,7 @@ class _CreateSelectUserPageState extends State<CreateSelectUserPage> {
               size: 16,
             ),
           ),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: _goBack,
         ),
         title: Text(
           'Seleccionar Usuario para Contrato',
@@ -114,18 +101,42 @@ class _CreateSelectUserPageState extends State<CreateSelectUserPage> {
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
-                _buildBreadcrumb(context, colors),
+                BreadcrumbWidget(
+                  items: ['Inicio', 'Convenios', 'Seleccionar Usuario'],
+                  colors: colors,
+                  onTap: (idx) {
+                    if (idx == 0) {
+                      Navigator.popUntil(context, (route) => route.isFirst);
+                    } else if (idx == 1) {
+                      Navigator.pop(context);
+                    }
+                  },
+                ),
                 const SizedBox(height: 16),
                 UserDropdownSearch(
                   onUserSelected: (user) {
-                    setState(() {
-                      _selectedUser = user;
-                    });
+                    setState(() => _selectedUser = user);
                   },
                 ),
                 const SizedBox(height: 24),
-                if (_selectedUser != null)
-                  _buildUserInfo(_selectedUser!, colors),
+                if (_selectedUser != null) ...[
+                  Card(
+                    color: colors.panelBackground,
+                    margin: const EdgeInsets.only(bottom: 24),
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Nombre: ${_selectedUser!.firstName ?? ''} ${_selectedUser!.lastName ?? ''}"),
+                          Text("Username: ${_selectedUser!.username ?? 'N/A'}"),
+                          Text("Email: ${_selectedUser!.email ?? 'N/A'}"),
+                          Text("Estado: ${_selectedUser!.status?.name.toUpperCase() ?? 'N/A'}"),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
                 const Spacer(),
                 Row(
                   children: [
@@ -161,37 +172,5 @@ class _CreateSelectUserPageState extends State<CreateSelectUserPage> {
       ),
     );
   }
-
-  Widget _buildBreadcrumb(BuildContext context, AppColorScheme colors) {
-    return BreadcrumbWidget(
-      items: ['Inicio', 'Convenios', 'Seleccionar Usuario'],
-      colors: colors,
-      onTap: (index) {
-        if (index == 0) {
-          Navigator.popUntil(context, (route) => route.isFirst);
-        } else if (index == 1) {
-          Navigator.pop(context);
-        }
-      },
-    );
-  }
-
-  Widget _buildUserInfo(UserModel user, AppColorScheme colors) {
-    return Card(
-      color: colors.panelBackground,
-      margin: const EdgeInsets.only(top: 12),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("Nombre: ${user.firstName ?? ''} ${user.lastName ?? ''}"),
-            Text("Username: ${user.username ?? ''}"),
-            Text("Email: ${user.email ?? ''}"),
-            Text("Estado: ${user.status?.name.toUpperCase() ?? 'N/A'}"),
-          ],
-        ),
-      ),
-    );
-  }
 }
+
